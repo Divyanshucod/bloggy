@@ -15,8 +15,6 @@ export const UserRouter = new Hono<{
   };
 }>();
 
-// signup and signin needs a fix
-
 UserRouter.post("/signup", async (ctx) => {
   const prisma = ctx.get("prisma");
   const body = await ctx.req.json();
