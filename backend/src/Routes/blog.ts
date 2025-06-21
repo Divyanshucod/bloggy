@@ -97,10 +97,21 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
     // verify body using zod
 
     const posts = await prisma.post.findMany({
+      select:{
+        id:true,
+        content:true,
+        title:true,
+        publishedDate:true,
+        author: {
+          select:{
+            name:true
+          }
+        }
+      },
       skip: 10 * page,
       take: 10,
+      
     });
-    console.log(posts);
 
     ctx.status(200);
     return ctx.json({
@@ -123,12 +134,24 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
       where: {
         id: postId,
       },
+      select:{
+        id:true,
+        title:true,
+        content:true,
+        publishedDate:true,
+        author:{
+          select:{
+            name:true
+          }
+        }
+      }
     });
 
     ctx.status(200);
     return ctx.json({
       post,
     });
+    
   } catch (error) {
     ctx.status(500);
     return ctx.json({

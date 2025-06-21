@@ -45,6 +45,12 @@ UserRouter.post("/signup", async (ctx) => {
       token,
     });
   } catch (error) {
+    if(error.code === 'P2002'){
+      ctx.status(403);
+      return ctx.json({
+        message: "Given user email is already exists",
+      });
+    }
     ctx.status(500);
     return ctx.json({
       message: "Server Error!",

@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { mainRouter } from "./mainRouter";
 import { PrismaClient } from "./generated/prisma/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
+import { cors } from "hono/cors";
 
 const app = new Hono<{
   Bindings: {
@@ -14,6 +15,7 @@ const app = new Hono<{
     prisma: any;
   };
 }>();
+app.use('*', cors())
 app.use("*", async (ctx, next) => {
   const prisma = new PrismaClient({
     datasourceUrl: ctx.env.DATABASE_URL,
