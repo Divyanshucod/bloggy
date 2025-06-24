@@ -4,6 +4,7 @@ import { BACKED_URL } from "../config";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { SpinnerSkeleton } from "../components/SpinnerSkeleton";
+import { RichEditor } from "../components/Editor/RichEditor";
 
 export const BlogCreate = () => {
   const [blog, setBlog] = useState<CreateBlogType>({
@@ -35,51 +36,9 @@ export const BlogCreate = () => {
     setBlog({ title: "", content: "" });
   }
   return (
-    <div className="w-screen flex justify-center items-center h-screen">
-      <div className="w-3xl p-5 rounded-sm shadow-sm border-slate-300">
-        <div>
-          <div className="mb-6">
-            <label htmlFor="success" className="block mb-2 text-sm font-medium">
-              Title
-            </label>
-            <input
-              type="text"
-              id="success"
-              className="bg-green-50 border text-gray-600 w-full"
-              placeholder="Title"
-              onChange={(e) =>
-                setBlog((prev) => ({ ...prev, title: e.target.value }))
-              }
-              value={blog.title}
-            />
-          </div>
-        </div>
-        <div>
-          <div className="mb-6">
-            <label htmlFor="success" className="block mb-2 text-sm font-medium">
-              Content
-            </label>
-            <input
-              type="text"
-              id="success"
-              className="bg-green-50 border text-gray-600 w-full"
-              placeholder="Content"
-              onChange={(e) =>
-                setBlog((prev) => ({ ...prev, content: e.target.value }))
-              }
-              value={blog.content}
-            />
-          </div>
-        </div>
-        <div>
-          <button
-            type="button"
-            onClick={createBlog}
-            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-          >
-            {isloading ? <SpinnerSkeleton/> : "Publish"}
-          </button>
-        </div>
+    <div className="w-screen flex justify-center items-center flex-col">
+      <div className="w-full p-1 rounded-sm shadow-sm border-slate-300">
+         <RichEditor/>
       </div>
     </div>
   );
