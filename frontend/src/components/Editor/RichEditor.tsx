@@ -6,17 +6,11 @@ import {
   type RenderLeafProps,
 } from "slate-react";
 import { ToolBar } from "./ToolBar";
-import React, { useState } from "react";
-import { createEditor } from "slate";
+import React, { useEffect, useState } from "react";
+import { createEditor, Editor, Element, Node, Transforms, type Descendant } from "slate";
 import type { CustomElement, CustomText, EditorType } from "./types";
 import { toggleMark } from "./utils";
 import { withHistory } from "slate-history";
-const initialValue = [
-  {
-    type: "paragraph",
-    children: [{ text: "" }],
-  },
-];
 declare module "slate" {
   interface CustomTypes {
     Element: CustomElement;
@@ -24,23 +18,16 @@ declare module "slate" {
     Text: CustomText;
   }
 }
+
 const RenderLeaf = ({ attributes, children, leaf }: RenderLeafProps) => {
-  if (leaf.subscript) {
-    children = <sub>{children}</sub>;
-  }
-  if (leaf.superscript) {
-    children = <sup>{children}</sup>;
-  }
-  if(leaf.code){
+  if (leaf.subscript) children = <sub>{children}</sub>;
+  if (leaf.superscript) children = <sup>{children}</sup>;
+  if (leaf.code)
     return (
-      <pre
-        {...attributes}
-        className="bg-gray-100 rounded "
-      >
+      <pre {...attributes} className="bg-gray-100 rounded">
         <code>{children}</code>
       </pre>
     );
-  }
   return (
     <span
       {...attributes}
@@ -61,129 +48,145 @@ const RenderLeaf = ({ attributes, children, leaf }: RenderLeafProps) => {
     </span>
   );
 };
-const RenderElement = ({
-  attributes,
-  children,
-  element,
-}: RenderElementProps) => {
+
+const RenderElement = ({ attributes, children, element }: RenderElementProps) => {
   const style = { textAlign: element.align };
   switch (element.type) {
-    case 'block-quote':{
-        return (
-            <blockquote {...attributes} style={{...style}} className="border-l-4 border-gray-300 pl-4 italic text-gray-600">
-                {children}
-            </blockquote>
-        )
-    }
-    case "numbered-list": {
+    case "link":
       return (
-        <ol style={style} {...attributes} className="list-decimal list-inside">
-            {children}
+        <a
+          {...attributes}
+          href={element.url}
+          className="underline text-blue-600 cursor-pointer"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => { if (e.metaKey) { window.open(element.url, '_blank') } }}
+        >
+          {children}
+        </a>
+      );
+    case "block-quote":
+      return (
+        <blockquote
+          {...attributes}
+          style={{ ...style }}
+          className="border-l-4 border-gray-300 pl-4 italic text-gray-600"
+        >
+          {children}
+        </blockquote>
+      );
+    case "numbered-list":
+      return (
+        <ol {...attributes} style={style} className="list-decimal list-inside">
+          {children}
         </ol>
       );
-    }
-    case "bulleted-list": {
+    case "bulleted-list":
       return (
-        <ul style={style} {...attributes} className="list-disc list-inside">
+        <ul {...attributes} style={style} className="list-disc list-inside">
           {children}
         </ul>
       );
-    }
-    case "list-item": {
+    case "list-item":
       return (
-        <li style={style} {...attributes}>
+        <li {...attributes} style={style}>
           {children}
         </li>
       );
-    }
-    case "h1": {
+    case "h1":
       return (
-        <h1 style={style} {...attributes} className="text-4xl font-bold mb-2">
+        <h1 {...attributes} style={style} className="text-4xl font-bold mb-2">
           {children}
         </h1>
       );
-    }
-    case "h2": {
-      return ( 
-        <h2 style={style} {...attributes}  className="text-3xl font-bold mb-2">
+    case "h2":
+      return (
+        <h2 {...attributes} style={style} className="text-3xl font-bold mb-2">
           {children}
         </h2>
       );
-    }
-    case "h3": {
+    case "h3":
       return (
-        <h3 style={style} {...attributes}  className="text-2xl font-bold mb-2">
+        <h3 {...attributes} style={style} className="text-2xl font-bold mb-2">
           {children}
         </h3>
       );
-    }
-    case "h4": {
+    case "h4":
       return (
-        <h4 style={style} {...attributes}  className="text-xl font-bold mb-2">
+        <h4 {...attributes} style={style} className="text-xl font-bold mb-2">
           {children}
         </h4>
       );
-    }
-    case "h5": {
+    case "h5":
       return (
-        <h5 style={style} {...attributes}  className="text-md font-semibold mb-2">
+        <h5 {...attributes} style={style} className="text-md font-semibold mb-2">
           {children}
         </h5>
       );
-    }
-    case "h6": {
+    case "h6":
       return (
-        <h6 style={style} {...attributes}  className="text-sm font-semibold mb-2">
+        <h6 {...attributes} style={style} className="text-sm font-semibold mb-2">
           {children}
         </h6>
       );
-    }
-    default: { 
+    case "image":
       return (
-        <p style={style} {...attributes}>
+        <div style={{display:'flex', justifyContent:element.align , width:'100%'}}>
+            <img
+              src={element.url}
+              alt="uploaded"
+              className="h-[300px] w-[300px] rounded"
+              {...attributes} style={{textAlign: element.align}}
+            />
+            </div>
+      );
+    default:
+      return (
+        <p {...attributes} style={style}>
           {children}
         </p>
       );
-    }
   }
 };
-export const RichEditor = React.memo(() => {
-  const [editor] = useState(withHistory(withReact(createEditor())));
-  const onkeydown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
-    const key = event?.key?.toLowerCase();
-    if (key === "b" && event?.ctrlKey) {
-      toggleMark(editor, "bold");
-    }
-    if (key === "y" && event?.ctrlKey) {
-      editor.redo();
-    }
-    if (key === "z" && event?.ctrlKey) {
-      editor.undo();
-    }
+const withLinks = (editor:EditorType) => {
+  const { isInline } = editor;
+
+  editor.isInline = (element) => {
+    return element.type === 'link' ? true : isInline(element);
   };
+
+  return editor;
+};
+export const RichEditor = React.memo(({setBlog,isloading,handleClick,blog}:{setBlog:React.Dispatch<React.SetStateAction<Descendant[]>>,isloading:boolean,handleClick:()=>void,blog:Descendant[]}) => {
+  const [editor] = useState(() => withLinks(withHistory(withReact(createEditor()))));
+  const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+    const key = event?.key?.toLowerCase();
+    if (key === "b" && event.ctrlKey) toggleMark(editor, "bold");
+    if (key === "y" && event.ctrlKey) editor.redo();
+    if (key === "z" && event.ctrlKey) editor.undo();
+  };
+  
   return (
-    <div  className="h-[500px] border rounded shadow px-4 pb-4 bg-white relative">
+    <div className="h-full rounded px-4 pb-4 bg-white relative">
       <Slate
         editor={editor}
-        initialValue={initialValue}
-        onChange={(value) => {
-          console.log(value);
-        }}
+        initialValue={blog}
+        onChange={(value) => setBlog(value) }
       >
-        <ToolBar />
-        <Editable
+        <ToolBar isloading={isloading} handleClick={handleClick}/>
+        <div className="h-full">
+           <Editable
           name="Post"
-          placeholder="Write Post"
+          placeholder="Title"
           autoFocus
           renderLeaf={RenderLeaf}
-          onKeyDown={onkeydown}
+          onKeyDown={onKeyDown}
           renderElement={RenderElement}
           className="overflow-y-auto focus:outline-none px-3 overflow-x-hidden h-full"
-/>
-         <div className="mt-2">
-          for the ctrl+y
-         </div>
+        />
+        </div>
       </Slate>
     </div>
   );
 });
+
