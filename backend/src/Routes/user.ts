@@ -19,8 +19,9 @@ UserRouter.post("/signup", async (ctx) => {
   const prisma = ctx.get("prisma");
   const body = await ctx.req.json();
   //zod validation
-  const { success } = signUpSchema.safeParse(body);
-  if (!success) {
+  const val = signUpSchema.safeParse(body);
+  
+  if (!val.success) {
     ctx.status(411);
     return ctx.json({
       message: "invalid inputs",

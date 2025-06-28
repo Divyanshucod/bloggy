@@ -1,35 +1,32 @@
 import axios from "axios";
 import { useEffect, useState, useTransition } from "react";
-import { BACKED_URL } from "../config";
+import { BACKED_URL, BACKED_URL_LOCAL } from "../config";
 import { toast } from "react-toastify";
 interface Blog {
-  title: string;
   id: string;
-  content: string;
+  htmlContent: string;
+  publishedDate:string;
   author: {
     name: string;
   };
-  publishedDate: string;
 }
 export const useBlog = ({ id }: { id: string }) => {
   const [isloading, setTransition] = useTransition();
   const [blog, setBlog] = useState<Blog>({
-    title: "Learn security services",
     id: "6tfa6q",
-    content:
-      "Security services encompass a wide range of protective measures, including physical security, cybersecurity, and risk management, designed to safeguard individuals, assets, and information. These services can be delivered by individuals, private companies, or government organizations",
+    publishedDate:"Jan 23, 2024, 4:00 AM",
+    htmlContent:"<div>Security services encompass a wide range of protective measures, including physical security, cybersecurity, and risk management, designed to safeguard individuals, assets, and information. These services can be delivered by individuals, private companies, or government organizations</div>",
     author: {
       name: "Joshua",
     },
-    publishedDate: "Jan 20,2023,4:16PM",
   });
   useEffect(() => {
     setTransition(async () => {
       try {
-        const response = await axios.get(`${BACKED_URL}api/v1/blog/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+        const response = await axios.get(`${BACKED_URL_LOCAL}api/v1/blog/${id}`, {
+          headers:{
+            Authorization:`Bearer ${localStorage.getItem("token")}`
+          }
         });
         setBlog(response.data.post);
       } catch (error: any) {
@@ -58,7 +55,7 @@ export const useBlogs = () => {
     setTransition(async () => {
       try {
         const response = await axios.get(
-          `${BACKED_URL}api/v1/blog/bulk/${pages}`
+          `${BACKED_URL_LOCAL}api/v1/blog/bulk/${pages}`
         );
         setBlogs((prev) => [...prev, ...response.data.posts]);
       } catch (error: any) {

@@ -179,7 +179,7 @@ export const ToolBar = ({isloading,handleClick}:{isloading:boolean,handleClick:(
         >
           <option value="paragraph">Paragraph</option>
           {HEADINGS.map((val) => (
-            <option key={val} value={val} dfa>
+            <option key={val} value={val}>
               {val.charAt(0).toUpperCase() + val.slice(1).replace('-', ' ')}
             </option>
           ))}

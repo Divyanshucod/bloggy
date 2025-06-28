@@ -22,33 +22,61 @@ export declare const signInSchema: z.ZodObject<{
     email: string;
     password: string;
 }>;
-export declare const createBlogSchema: z.ZodObject<{
-    title: z.ZodString;
-    content: z.ZodString;
+export declare const TexFormattingtSchema: z.ZodObject<{
+    text: z.ZodString;
+    bold: z.ZodOptional<z.ZodBoolean>;
+    superscript: z.ZodOptional<z.ZodBoolean>;
+    italic: z.ZodOptional<z.ZodBoolean>;
+    underline: z.ZodOptional<z.ZodBoolean>;
+    subscript: z.ZodOptional<z.ZodBoolean>;
+    code: z.ZodOptional<z.ZodBoolean>;
+    highlight: z.ZodOptional<z.ZodBoolean>;
+    strikethrough: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    title: string;
-    content: string;
+    text: string;
+    code?: boolean | undefined;
+    bold?: boolean | undefined;
+    superscript?: boolean | undefined;
+    italic?: boolean | undefined;
+    underline?: boolean | undefined;
+    subscript?: boolean | undefined;
+    highlight?: boolean | undefined;
+    strikethrough?: boolean | undefined;
 }, {
-    title: string;
-    content: string;
+    text: string;
+    code?: boolean | undefined;
+    bold?: boolean | undefined;
+    superscript?: boolean | undefined;
+    italic?: boolean | undefined;
+    underline?: boolean | undefined;
+    subscript?: boolean | undefined;
+    highlight?: boolean | undefined;
+    strikethrough?: boolean | undefined;
+}>;
+export declare const CustomElementSchema: z.ZodType<any>;
+export declare const createBlogSchema: z.ZodObject<{
+    content: z.ZodArray<z.ZodType<any, z.ZodTypeDef, any>, "many">;
+    publishedDate: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    content: any[];
+    publishedDate: string;
+}, {
+    content: any[];
+    publishedDate: string;
 }>;
 export declare const updateBlogSchema: z.ZodObject<{
     postId: z.ZodString;
-    title: z.ZodOptional<z.ZodString>;
-    content: z.ZodOptional<z.ZodString>;
-    published: z.ZodOptional<z.ZodBoolean>;
+    content: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    content: string;
     postId: string;
-    title?: string | undefined;
-    content?: string | undefined;
-    published?: boolean | undefined;
 }, {
+    content: string;
     postId: string;
-    title?: string | undefined;
-    content?: string | undefined;
-    published?: boolean | undefined;
 }>;
 export type SignInType = z.infer<typeof signInSchema>;
 export type SignUpType = z.infer<typeof signUpSchema>;
 export type CreateBlogType = z.infer<typeof createBlogSchema>;
 export type UpdateBlogType = z.infer<typeof updateBlogSchema>;
+export type CustomElementType = z.infer<typeof CustomElementSchema>;
+export type TexFormattingtType = z.infer<typeof TexFormattingtSchema>;

@@ -5,7 +5,7 @@ import type { SignInType, SignUpType } from "@dev0000007/medium-web";
 import { Button } from "./Button";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { BACKED_URL } from "../config";
+import { BACKED_URL, BACKED_URL_LOCAL } from "../config";
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
   const navigate = useNavigate();
   const [signUpDetails, setSignUpDetails] = useState<SignUpType>({
@@ -22,7 +22,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     startTransition(async () => {
       try {
         const response = await axios.post(
-          `${BACKED_URL}api/v1/user/signup`,
+          `${BACKED_URL_LOCAL}api/v1/user/signup`,
           signUpDetails
         );
 
@@ -46,7 +46,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     startTransition(async () => {
       try {
         const response = await axios.post(
-          `${BACKED_URL}api/v1/user/signin`,
+          `${BACKED_URL_LOCAL}api/v1/user/signin`,
           signInDetails
         );
         localStorage.setItem("token", response.data.token);

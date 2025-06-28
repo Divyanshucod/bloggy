@@ -11,18 +11,16 @@ const Blog = () => {
   });
   return (
     <div className="grid grid-cols-12 w-screen p-10">
-      <div className="col-span-12 md:col-span-8">
+      <div className="col-span-12 lg:col-span-8">
          {isloading ? <Stack>
           <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
           <Skeleton variant="rounded" width={600} height={500}/>
          </Stack> : <FullBlog
           id={blog?.id}
-          publishedDate={blog?.publishedDate}
-          title={blog.title}
-          content={blog.content}
+          htmlContent={blog.htmlContent}
         />}
       </div>
-      <div className="hidden md:block rounded-sm shadow-sm border border-gray-300 p-3 w-full col-span-4 ml-2 h-44">
+      <div className="hidden lg:block rounded-sm shadow-sm border border-gray-300 p-3 w-full col-span-4 ml-2 h-44">
          {isloading? <Stack>
           <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
           <Skeleton variant="rounded" width={210} height={60} />

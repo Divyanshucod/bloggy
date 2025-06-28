@@ -1,9 +1,10 @@
 import { useState, useTransition } from "react";
-import { BACKED_URL } from "../config";
+import { BACKED_URL, BACKED_URL_LOCAL } from "../config";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { RichEditor } from "../components/Editor/RichEditor";
 import { Node, type Descendant } from "slate";
+import { getCustomFormattedDate } from "../helperFunctions";
 const initialValue = [
   {
     type: "paragraph",
@@ -18,9 +19,12 @@ export const BlogCreate = () => {
     if(!check){
       return toast.error("Blog can't be empty")
     }
+    console.log(JSON.stringify(blog));
+    
     setTransition(async () => {
       try {
-        const response = await axios.post(`${BACKED_URL}api/v1/blog`, blog, {
+        const customDate = getCustomFormattedDate()
+        const response = await axios.post(`${BACKED_URL_LOCAL}api/v1/blog`, {content:blog,publishedDate:customDate}, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
