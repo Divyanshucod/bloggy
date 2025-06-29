@@ -23,7 +23,7 @@ import { useRef, useState, useEffect } from "react";
 import { Button } from "../Button";
 import { CircularProgress } from "@mui/material";
 
-export const ToolBar = ({isloading,handleClick}:{isloading:boolean,handleClick:()=>void}) => {
+export const ToolBar = ({isloading,handleClick,updateorcreate}:{isloading:boolean,handleClick:()=>void,updateorcreate:boolean}) => {
   const editor = useSlate();
   const [mode, setMode] = useState<"none" | "link">("none");
   const [url, setUrl] = useState("");
@@ -237,7 +237,7 @@ export const ToolBar = ({isloading,handleClick}:{isloading:boolean,handleClick:(
         </div>
         </div>
         {/* Image status indicator */}
-          <Button disableButton={isloading} onClick={handleClick} color="#5df542">{isloading ? <CircularProgress size={10} /> : "Publish"}</Button>
+          <Button disableButton={isloading} onClick={handleClick} color="#5df542">{isloading ? <CircularProgress size={10} /> : updateorcreate ? "Update" : "Publish"}</Button>
         {/* Hidden file input */}
         <input
           ref={fileInputRef}

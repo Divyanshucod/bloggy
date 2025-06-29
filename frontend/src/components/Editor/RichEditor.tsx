@@ -157,7 +157,7 @@ const withLinks = (editor:EditorType) => {
 
   return editor;
 };
-export const RichEditor = React.memo(({setBlog,isloading,handleClick,blog}:{setBlog:React.Dispatch<React.SetStateAction<Descendant[]>>,isloading:boolean,handleClick:()=>void,blog:Descendant[]}) => {
+export const RichEditor = React.memo(({setBlog,isloading,handleClick,blog,updateorcreate=false}:{setBlog:React.Dispatch<React.SetStateAction<Descendant[]>>,isloading:boolean,handleClick:()=>void,blog:Descendant[],updateorcreate:boolean}) => {
   const [editor] = useState(() => withLinks(withHistory(withReact(createEditor()))));
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
     const key = event?.key?.toLowerCase();
@@ -173,7 +173,7 @@ export const RichEditor = React.memo(({setBlog,isloading,handleClick,blog}:{setB
         initialValue={blog}
         onChange={(value) => setBlog(value) }
       >
-        <ToolBar isloading={isloading} handleClick={handleClick}/>
+        <ToolBar isloading={isloading} handleClick={handleClick} updateorcreate={updateorcreate}/>
         <div className="h-full">
            <Editable
           name="Post"

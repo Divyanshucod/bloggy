@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { authMiddleWare } from "../middleware/authMiddleWare";
-import { createBlogSchema, CreateBlogType, updateBlogSchema } from "@dev0000007/medium-web";
+import { createBlogSchema, CreateBlogType, updateBlogSchema, UpdateBlogType } from "@dev0000007/medium-web";
 import { ExtractSmart } from "../HelperFunction/GetPreviewAndTitle";
 import { GenerateHTML } from "../HelperFunction/GenerateHTML";
 
@@ -28,21 +28,26 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
         message: "invalid inputs",
       });
     }
+    const data = body as UpdateBlogType;
     // validate the id
     const post = await prisma.post.findUnique({
       where: {
-        id: body.postId,
+        id: data.postId,
       },
     });
     if (!post) {
       ctx.status(403);
       return ctx.json({
-        message: "there is not post present for given Id",
+        message: "there is no blog present for given Id",
       });
     }
-    const { postId, ...data } = body;
+     // get title and preview (check title empty or not)
+    // convert JSON to HTML
+    const inHtml = GenerateHTML(data.content,post.publishedDate) 
     await prisma.post.update({
-      data,
+      data:{
+        htmlContent:inHtml
+      },
       where: {
         id: body.postId,
       },
@@ -136,6 +141,8 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
       posts,
     });
   } catch (error) {
+    console.log(error);
+    
     ctx.status(500);
     return ctx.json({
       message: "Internal Server error!",
@@ -160,6 +167,34 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
             name:true
           }
         }
+      }
+    });
+
+    ctx.status(200);
+    return ctx.json({
+      post,
+    });
+    
+  } catch (error) {
+    ctx.status(500);
+    return ctx.json({
+      message: "Internal Server error!",
+    });
+  }
+});
+
+BlogRouter.get("/update/:id", authMiddleWare, async (ctx) => {
+  try {
+    const prisma = ctx.get("prisma");
+    const postId = ctx.req.param("id");
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+      select:{
+        id:true,
+        blogJson:true,
       }
     });
 

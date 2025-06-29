@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import { Blogs } from "./pages/Blogs";
 import { AppBar } from "./components/AppBar";
 import { BlogCreate } from "./pages/BlogCreate";
+import { BlogUpdate } from "./pages/BlogUpdate";
 
 function App() {
   const location = useLocation();
@@ -24,7 +25,8 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/blog/:id" element={<Blog />} />
         <Route path="/blogs" element={<Blogs />} />
-        <Route path="/create" element={<BlogCreate />} />
+        <Route path="/blog/create" element={<BlogCreate />} />
+        <Route path="/blog/update/:id" element={<BlogUpdate />} />
       </Routes>
     </>
   );

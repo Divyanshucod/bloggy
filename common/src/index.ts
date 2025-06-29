@@ -36,7 +36,8 @@ export const createBlogSchema = z.object({
 
 export const updateBlogSchema = z.object({
     postId:z.string(),
-    content:z.string().min(1)
+    content:z.array(CustomElementSchema),
+    published:z.boolean().optional()
 })
 export type SignInType = z.infer<typeof signInSchema>
 export type SignUpType = z.infer<typeof signUpSchema>

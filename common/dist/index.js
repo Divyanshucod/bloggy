@@ -34,5 +34,6 @@ exports.createBlogSchema = zod_1.z.object({
 });
 exports.updateBlogSchema = zod_1.z.object({
     postId: zod_1.z.string(),
-    content: zod_1.z.string().min(1)
+    content: zod_1.z.array(exports.CustomElementSchema),
+    published: zod_1.z.boolean().optional()
 });

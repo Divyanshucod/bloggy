@@ -1,3 +1,6 @@
+import type {CustomElementType } from "@dev0000007/medium-web";
+import type { Descendant } from "slate";
+
 export function formattedDate(date:string){
     const dateFormate = new Date(date);
     
@@ -25,3 +28,12 @@ export const getCustomFormattedDate = (date = new Date()) => {
 
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}+00:00`;
 }
+
+export const initialValue = [
+  {
+    type: "paragraph",
+    children: [{ text: "" }],
+  },
+];
+
+// type DataType = {type:string,children:Descendant[]}

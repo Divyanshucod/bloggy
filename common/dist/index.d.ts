@@ -66,13 +66,16 @@ export declare const createBlogSchema: z.ZodObject<{
 }>;
 export declare const updateBlogSchema: z.ZodObject<{
     postId: z.ZodString;
-    content: z.ZodString;
+    content: z.ZodArray<z.ZodType<any, z.ZodTypeDef, any>, "many">;
+    published: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    content: string;
+    content: any[];
     postId: string;
+    published?: boolean | undefined;
 }, {
-    content: string;
+    content: any[];
     postId: string;
+    published?: boolean | undefined;
 }>;
 export type SignInType = z.infer<typeof signInSchema>;
 export type SignUpType = z.infer<typeof signUpSchema>;
