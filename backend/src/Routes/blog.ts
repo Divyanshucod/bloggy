@@ -42,11 +42,10 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
       });
     }
      // get title and preview (check title empty or not)
-    // convert JSON to HTML
-    const inHtml = GenerateHTML(data.content,post.publishedDate) 
     await prisma.post.update({
       data:{
-        htmlContent:inHtml
+        blogJson:data.content,
+        published:data.published ? data.published : post.published
       },
       where: {
         id: body.postId,
@@ -72,7 +71,8 @@ BlogRouter.post("/",authMiddleWare, async (ctx) => {
     // verify body using zod
     //zod validation    
     const val = createBlogSchema.safeParse(body);
-    
+    // we don't need a publish date , get from database.
+    // have a published tag from frontend to know blog is darft or published
     if (!val.success) {
       ctx.status(411);
       return ctx.json({
@@ -80,24 +80,19 @@ BlogRouter.post("/",authMiddleWare, async (ctx) => {
       });
     }
     const data:CreateBlogType = body 
-    // get title and preview
+    // get title and preview , TODO: thing better solution so that all blog should have title and if not then make them a draft
     const {title,preview} =  ExtractSmart(data.content)
     if(title.length === 0){
       ctx.status(411);
-      return ctx.json({
-        message: "Title can't be empty!",
-      });
+      data.published = false
     }
-    // convert JSON to HTML
-    const inHtml = GenerateHTML(data.content,data.publishedDate)
     await prisma.post.create({
       data: {
         title,
         content:preview,
-        publishedDate:data.publishedDate,
-        htmlContent:inHtml,
         blogJson:data.content,
         authorId: ctx.get("userId"),
+        publishedDate:data.published
       },
     });
 
@@ -160,41 +155,13 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
       },
       select:{
         id:true,
-        htmlContent:true,
+        blogJson:true,
         publishedDate:true,
         author:{
           select:{
             name:true
           }
         }
-      }
-    });
-
-    ctx.status(200);
-    return ctx.json({
-      post,
-    });
-    
-  } catch (error) {
-    ctx.status(500);
-    return ctx.json({
-      message: "Internal Server error!",
-    });
-  }
-});
-
-BlogRouter.get("/update/:id", authMiddleWare, async (ctx) => {
-  try {
-    const prisma = ctx.get("prisma");
-    const postId = ctx.req.param("id");
-
-    const post = await prisma.post.findUnique({
-      where: {
-        id: postId,
-      },
-      select:{
-        id:true,
-        blogJson:true,
       }
     });
 

@@ -3,7 +3,7 @@ import { useBlogs } from "../hooks";
 import { BlogsSkeleton } from "../components/BlogsSkeleton";
 
 export const Blogs = () => {
-  const { isloading, setPages, blogs } = useBlogs();
+  const { isloading, blogs } = useBlogs();
   return (
     <div>
       {isloading ? (

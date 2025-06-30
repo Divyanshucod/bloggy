@@ -30,7 +30,7 @@ exports.CustomElementSchema = zod_1.z.lazy(() => zod_1.z.object({
 }));
 exports.createBlogSchema = zod_1.z.object({
     content: zod_1.z.array(exports.CustomElementSchema),
-    publishedDate: zod_1.z.string().min(7)
+    published: zod_1.z.boolean()
 });
 exports.updateBlogSchema = zod_1.z.object({
     postId: zod_1.z.string(),

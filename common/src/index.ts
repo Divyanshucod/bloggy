@@ -31,7 +31,7 @@ export const CustomElementSchema:z.ZodType<any> = z.lazy(() => z.object({
 
 export const createBlogSchema = z.object({
     content:z.array(CustomElementSchema),
-    publishedDate:z.string().min(7)
+    published:z.boolean()
 })
 
 export const updateBlogSchema = z.object({

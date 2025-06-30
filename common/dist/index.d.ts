@@ -56,13 +56,13 @@ export declare const TexFormattingtSchema: z.ZodObject<{
 export declare const CustomElementSchema: z.ZodType<any>;
 export declare const createBlogSchema: z.ZodObject<{
     content: z.ZodArray<z.ZodType<any, z.ZodTypeDef, any>, "many">;
-    publishedDate: z.ZodString;
+    published: z.ZodBoolean;
 }, "strip", z.ZodTypeAny, {
     content: any[];
-    publishedDate: string;
+    published: boolean;
 }, {
     content: any[];
-    publishedDate: string;
+    published: boolean;
 }>;
 export declare const updateBlogSchema: z.ZodObject<{
     postId: z.ZodString;

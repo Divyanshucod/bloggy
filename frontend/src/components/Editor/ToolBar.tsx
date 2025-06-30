@@ -22,8 +22,13 @@ import type { ElementKey, MarkKey, AlignKey } from "./types";
 import { useRef, useState, useEffect } from "react";
 import { Button } from "../Button";
 import { CircularProgress } from "@mui/material";
-
-export const ToolBar = ({isloading,handleClick,updateorcreate}:{isloading:boolean,handleClick:()=>void,updateorcreate:boolean}) => {
+interface toolbarType {
+  isloading:boolean,
+  handleClick?:({createDraft}:{createDraft:boolean})=>void,
+  updateFunction?:() => void,
+  isUpdate?:boolean
+}
+export const ToolBar = (props:toolbarType) => {
   const editor = useSlate();
   const [mode, setMode] = useState<"none" | "link">("none");
   const [url, setUrl] = useState("");
@@ -237,7 +242,8 @@ export const ToolBar = ({isloading,handleClick,updateorcreate}:{isloading:boolea
         </div>
         </div>
         {/* Image status indicator */}
-          <Button disableButton={isloading} onClick={handleClick} color="#5df542">{isloading ? <CircularProgress size={10} /> : updateorcreate ? "Update" : "Publish"}</Button>
+          {!props.isUpdate ? <Button disableButton={props.isloading} onClick={() => props.handleClick?.({createDraft:false})} color="#5df542">{props.isloading ? <CircularProgress size={10} /> :"Draft"}</Button>:null}
+          <Button disableButton={props.isloading} onClick={() => !props.isUpdate ? props.handleClick?.({createDraft:true}) : props.updateFunction?.()} color="#5df542">{props.isloading ? <CircularProgress size={10} /> : props.isUpdate ? "Update" : "Publish"}</Button>
         {/* Hidden file input */}
         <input
           ref={fileInputRef}
