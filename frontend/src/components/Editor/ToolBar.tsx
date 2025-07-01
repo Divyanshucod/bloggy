@@ -1,4 +1,3 @@
-
 import { useSlate } from "slate-react";
 import {
   HEADINGS,
@@ -13,7 +12,6 @@ import {
   toggleBlock,
   toggleMark,
   wrapLink,
-  isLinkActive,
   isInImageBlock,
   getCurrentImageAlignment,
   setImageAlignment,
@@ -23,12 +21,12 @@ import { useRef, useState, useEffect } from "react";
 import { Button } from "../Button";
 import { CircularProgress } from "@mui/material";
 interface toolbarType {
-  isloading:boolean,
-  handleClick?:({createDraft}:{createDraft:boolean})=>void,
-  updateFunction?:() => void,
-  isUpdate?:boolean
+  isloading: boolean;
+  handleClick?: ({ createDraft }: { createDraft: boolean }) => void;
+  updateFunction?: () => void;
+  isUpdate?: boolean;
 }
-export const ToolBar = (props:toolbarType) => {
+export const ToolBar = (props: toolbarType) => {
   const editor = useSlate();
   const [mode, setMode] = useState<"none" | "link">("none");
   const [url, setUrl] = useState("");
@@ -44,19 +42,19 @@ export const ToolBar = (props:toolbarType) => {
   const onMarkClick = (id: RichTextAction) => toggleMark(editor, id as MarkKey);
 
   const getMarkSelectionProps = (id: RichTextAction) =>
-    isMarkActive(editor, id as MarkKey) 
-      ? { backgroundColor: "#3b82f6", color: "white" } 
+    isMarkActive(editor, id as MarkKey)
+      ? { backgroundColor: "#3b82f6", color: "white" }
       : {};
 
   const getBlockSelectionProps = (id: RichTextAction) => {
     if (isInImage && ["left", "center", "right", "justify"].includes(id)) {
       const currentAlign = getCurrentImageAlignment(editor);
-      return currentAlign === id 
-        ? { backgroundColor: "#3b82f6", color: "white" } 
+      return currentAlign === id
+        ? { backgroundColor: "#3b82f6", color: "white" }
         : {};
     }
-    return isBlockActive(editor, id as ElementKey) 
-      ? { backgroundColor: "#3b82f6", color: "white" } 
+    return isBlockActive(editor, id as ElementKey)
+      ? { backgroundColor: "#3b82f6", color: "white" }
       : {};
   };
 
@@ -66,7 +64,10 @@ export const ToolBar = (props:toolbarType) => {
       setError("");
     } else if (id === "image") {
       fileInputRef.current?.click();
-    } else if (isInImage && ["left", "center", "right", "justify"].includes(id)) {
+    } else if (
+      isInImage &&
+      ["left", "center", "right", "justify"].includes(id)
+    ) {
       // Handle image alignment
       setImageAlignment(editor, id as AlignKey);
     } else {
@@ -82,7 +83,9 @@ export const ToolBar = (props:toolbarType) => {
 
     const success = wrapLink(editor, url.trim());
     if (!success) {
-      setError("Invalid URL or no text selected. Please select text first or enter a valid URL.");
+      setError(
+        "Invalid URL or no text selected. Please select text first or enter a valid URL."
+      );
     } else {
       setUrl("");
       setMode("none");
@@ -100,14 +103,14 @@ export const ToolBar = (props:toolbarType) => {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        alert('Please select a valid image file');
+      if (!file.type.startsWith("image/")) {
+        alert("Please select a valid image file");
         return;
       }
 
       // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
+        alert("Image size should be less than 5MB");
         return;
       }
 
@@ -121,13 +124,13 @@ export const ToolBar = (props:toolbarType) => {
       reader.readAsDataURL(file);
     }
     // Reset input value to allow selecting the same file again
-    e.target.value = '';
+    e.target.value = "";
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleLinkSubmit();
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       handleLinkCancel();
     }
   };
@@ -156,14 +159,14 @@ export const ToolBar = (props:toolbarType) => {
               </div>
             )}
             <div className="flex gap-2">
-              <button 
-                onClick={handleLinkSubmit} 
+              <button
+                onClick={handleLinkSubmit}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
               >
                 Add Link
               </button>
-              <button 
-                onClick={handleLinkCancel} 
+              <button
+                onClick={handleLinkCancel}
                 className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
               >
                 Cancel
@@ -172,78 +175,113 @@ export const ToolBar = (props:toolbarType) => {
           </div>
         </div>
       )}
-      
-      <div className=" flex flex-wrap gap-2 items-center p-3 bg-white border border-gray-200 rounded-lg shadow-sm mb-4 sticky top-15 z-10 justify-between">
+
+      <div className=" flex gap-2 items-center p-3 bg-white border border-gray-200 rounded-lg shadow-sm mb-4 sticky top-15 z-10 justify-between overflow-x-auto">
         {/* Headings Dropdown */}
         <div className="flex gap-2 items-center">
-        <select
-          className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          defaultValue="paragraph"
-          onChange={(e) => toggleBlock(editor, e.target.value as ElementKey)}
-          disabled={isInImage}
-        >
-          <option value="paragraph">Paragraph</option>
-          {HEADINGS.map((val) => (
-            <option key={val} value={val}>
-              {val.charAt(0).toUpperCase() + val.slice(1).replace('-', ' ')}
-            </option>
-          ))}
-        </select>
+          <select
+            className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            defaultValue="paragraph"
+            onChange={(e) => toggleBlock(editor, e.target.value as ElementKey)}
+            disabled={isInImage}
+          >
+            <option value="paragraph">Paragraph</option>
+            {HEADINGS.map((val) => (
+              <option key={val} value={val}>
+                {val.charAt(0).toUpperCase() + val.slice(1).replace("-", " ")}
+              </option>
+            ))}
+          </select>
 
-        {/* Divider */}
-        <div className="w-px h-6 bg-gray-300"></div>
+          {/* Divider */}
+          <div className="w-px h-6 bg-gray-300"></div>
 
-        {/* Text Format Options */}
-        <div className="flex gap-1">
-          {TEXT_FORMAT_OPTIONS.map((val) => (
-            <button
-              key={val.id}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                onMarkClick(val.id);
-              }}
-              style={getMarkSelectionProps(val.id)}
-              className="p-2 hover:bg-gray-100 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title={val.id}
-              disabled={isInImage}
-            >
-              <val.icon size={18} />
-            </button>
-          ))}
-        </div>
-
-        {/* Divider */}
-        <div className="w-px h-6 bg-gray-300"></div>
-
-        {/* Block Options */}
-        <div className="flex gap-1">
-          {TEXT_BLOCK_OPTIONS.map((val) => {
-            // Show alignment buttons differently when in image
-            const isAlignButton = ["left", "center", "right", "justify"].includes(val.id);
-            const showButton = !isInImage || isAlignButton;
-            
-            if (!showButton) return null;
-
-            return (
+          {/* Text Format Options */}
+          <div className="flex gap-1">
+            {TEXT_FORMAT_OPTIONS.map((val) => (
               <button
                 key={val.id}
                 onMouseDown={(e) => {
                   e.preventDefault();
-                  onBlockClick(val.id);
+                  onMarkClick(val.id);
                 }}
-                style={getBlockSelectionProps(val.id)}
-                className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-                title={isInImage && isAlignButton ? `Align image ${val.id}` : val.id}
+                style={getMarkSelectionProps(val.id)}
+                className="p-2 hover:bg-gray-100 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title={val.id}
+                disabled={isInImage}
               >
                 <val.icon size={18} />
               </button>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="w-px h-6 bg-gray-300"></div>
+
+          {/* Block Options */}
+          <div className="flex gap-1">
+            {TEXT_BLOCK_OPTIONS.map((val) => {
+              // Show alignment buttons differently when in image
+              const isAlignButton = [
+                "left",
+                "center",
+                "right",
+                "justify",
+              ].includes(val.id);
+              const showButton = !isInImage || isAlignButton;
+
+              if (!showButton) return null;
+
+              return (
+                <button
+                  key={val.id}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    onBlockClick(val.id);
+                  }}
+                  style={getBlockSelectionProps(val.id)}
+                  className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+                  title={
+                    isInImage && isAlignButton
+                      ? `Align image ${val.id}`
+                      : val.id
+                  }
+                >
+                  <val.icon size={18} />
+                </button>
+              );
+            })}
+          </div>
         </div>
         {/* Image status indicator */}
-          {!props.isUpdate ? <Button disableButton={props.isloading} onClick={() => props.handleClick?.({createDraft:false})} color="#5df542">{props.isloading ? <CircularProgress size={10} /> :"Draft"}</Button>:null}
-          <Button disableButton={props.isloading} onClick={() => !props.isUpdate ? props.handleClick?.({createDraft:true}) : props.updateFunction?.()} color="#5df542">{props.isloading ? <CircularProgress size={10} /> : props.isUpdate ? "Update" : "Publish"}</Button>
+        <div className="flex gap-2">
+          {!props.isUpdate ? (
+            <Button
+              disableButton={props.isloading}
+              onClick={() => props.handleClick?.({ createDraft: false })}
+              color="#5df542"
+            >
+              {props.isloading ? <CircularProgress size={10} /> : "Draft"}
+            </Button>
+          ) : null}
+          <Button
+            disableButton={props.isloading}
+            onClick={() =>
+              !props.isUpdate
+                ? props.handleClick?.({ createDraft: true })
+                : props.updateFunction?.()
+            }
+            color="#5df542"
+          >
+            {props.isloading ? (
+              <CircularProgress size={10} />
+            ) : props.isUpdate ? (
+              "Update"
+            ) : (
+              "Publish"
+            )}
+          </Button>
+        </div>
         {/* Hidden file input */}
         <input
           ref={fileInputRef}
@@ -256,5 +294,3 @@ export const ToolBar = (props:toolbarType) => {
     </>
   );
 };
-
-

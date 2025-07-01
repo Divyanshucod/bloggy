@@ -1,18 +1,51 @@
 import axios from "axios";
-import { useEffect, useState, useTransition } from "react";
+import {
+  createContext,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
 import { BACKED_URL, BACKED_URL_LOCAL } from "../config";
 import { toast } from "react-toastify";
-import {initialValue } from "../helperFunctions";
-import {type CustomElementType } from '@dev0000007/medium-web';
+import handleError, { checkAuthor, initialValue } from "../helperFunctions";
+import { type CustomElementType } from "@dev0000007/medium-web";
 interface Blogs {
   id: string;
-  title:string,
-  content:string,
-  publishedDate:string;
+  title: string;
+  content: string;
+  publishedDate: string;
+  published: boolean;
   author: {
     name: string;
   };
 }
+export const useMyBlogs = () => {
+  const [isloading, setTransition] = useTransition();
+  const [blogs, setBlogs] = useState<Blogs[]>([]);
+  const [pages, setPages] = useState(0);
+  useEffect(() => {
+    setTransition(async () => {
+      try {
+        const response = await axios.get(
+          `${BACKED_URL_LOCAL}api/v1/blog/user/${pages}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setBlogs((prev) => [...prev, ...response.data.posts]);
+      } catch (error: any) {
+        return handleError(error);
+      }
+    });
+  }, [pages]);
+  return {
+    isloading,
+    blogs,
+    setPages,
+  };
+};
 export const useBlogs = () => {
   const [isloading, setTransition] = useTransition();
   const [blogs, setBlogs] = useState<Blogs[]>([]);
@@ -25,15 +58,7 @@ export const useBlogs = () => {
         );
         setBlogs((prev) => [...prev, ...response.data.posts]);
       } catch (error: any) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error("Server is unreachable or something went wrong.");
-        }
+        return handleError(error);
       }
     });
   }, [pages]);
@@ -43,122 +68,98 @@ export const useBlogs = () => {
     setPages,
   };
 };
-export const useCreateBlog = ()=>{
-const [blog, setBlog] = useState<CustomElementType[]>(initialValue);
-const [isloading, setTransition] = useTransition();
-async function createBlog({createDraft}:{createDraft:boolean}) {
-  // const check = hasValue(blog) // TODO: add a support to make sure title is given
-  // if(!check){
-  //   return toast.error("Blog can't be empty")
-  // }
-  
-  setTransition(async () => {
-    try {
-      const response = await axios.post(`${BACKED_URL_LOCAL}api/v1/blog`, {content:blog,published:createDraft}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      toast.success(response.data.message);
-      setBlog(initialValue)
-    } catch (error: any) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("Server is unreachable or something went wrong.");
-      }
-      return;
-    }
-  });
-   //TODO: Navigate to /my-daft page or /blogs /published
-}
-return {
-  createBlog,
-  isloading,
-  blog,
-  setBlog,
-}
-}
-export const useUpdateBlog = ({ postId }: { postId: string })=>{
+export const useCreateBlog = () => {
   const [blog, setBlog] = useState<CustomElementType[]>(initialValue);
-  const [isUpdating, setUpdateTransition] = useTransition();
-  const [isloading, setFetchTransition] = useTransition();
-  const [details,setDetails] = useState({
-    id:'',
-    publishedDate:'2025-06-21T15:08:03.091+00:00',
-    author:{
-      name:'Dev'
-    }
-  })
-  useEffect(()=>{
-    async function fetchData() {
-      // const check = hasValue(blog) // TODO: add a support to make sure title is given
-      // if(!check){
-      //   return toast.error("Blog can't be empty")
-      // }
-      setFetchTransition(async () => {
-        try {
-          const response = await axios.get(`${BACKED_URL_LOCAL}api/v1/blog/${postId}`, {
+  const [isloading, setTransition] = useTransition();
+  async function createBlog({ createDraft }: { createDraft: boolean }) {
+    // TODO: add a support to make sure title is given
+    setTransition(async () => {
+      try {
+        const response = await axios.post(
+          `${BACKED_URL_LOCAL}api/v1/blog`,
+          { content: blog, published: createDraft },
+          {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          });
-          const data = response.data.post.blogJson;
-          setBlog(data)
-          setDetails({
-            id:response.data.post.id,
-            publishedDate:response.data.post.id,
-            author: response.data.post.author
-          })
-        } catch (error: any) {
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.message
-          ) {
-            toast.error(error.response.data.message);
-          } else {
-            toast.error("Server is unreachable or something went wrong.");
           }
-          return;
-        }
-      });
-    
-    }
-    fetchData()
-  },[postId])
-  async function updateBlog() {
-    // const check = hasValue(blog) // TODO: add a support to make sure title is given
-    // if(!check){
-    //   return toast.error("Blog can't be empty")
-    // }
-    setUpdateTransition(async () => {
-      try {
-        const response = await axios.put(`${BACKED_URL_LOCAL}api/v1/blog`, {content:blog,postId}, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        );
         toast.success(response.data.message);
-        setBlog(initialValue)
+        setBlog(initialValue);
       } catch (error: any) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error("Server is unreachable or something went wrong.");
-        }
-        return;
+        return handleError(error);
       }
     });
-  
+    //TODO: Navigate to /my-daft page or /blogs /published
+  }
+  return {
+    createBlog,
+    isloading,
+    blog,
+    setBlog,
+  };
+};
+export const useUpdateBlog = ({ postId }: { postId: string }) => {
+  const [blog, setBlog] = useState<CustomElementType[]>(initialValue);
+  const [isUpdating, setUpdateTransition] = useTransition();
+  const [isloading, setFetchTransition] = useTransition();
+  const [details, setDetails] = useState({
+    id: "",
+    publishedDate: "2025-06-21T15:08:03.091+00:00",
+    authorOrNot: false,
+    published: true,
+    author: {
+      name: "Dev",
+    },
+  });
+  useEffect(() => {
+    async function fetchData() {
+      //check the blog is empty
+      setFetchTransition(async () => {
+        try {
+          const response = await axios.get(
+            `${BACKED_URL_LOCAL}api/v1/blog/${postId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          const data = response.data.post.blogJson;
+          setBlog(data);
+
+          setDetails({
+            id: response.data.post.id,
+            publishedDate: response.data.post.id,
+            author: response.data.post.author,
+            authorOrNot: checkAuthor(response.data.post.authorId),
+            published: response.data.post.published,
+          });
+        } catch (error: any) {
+          return handleError(error);
+        }
+      });
+    }
+    fetchData();
+  }, [postId]);
+  async function updateBlog({ published }: { published: boolean }) {
+    setUpdateTransition(async () => {
+      try {
+        const response = await axios.put(
+          `${BACKED_URL_LOCAL}api/v1/blog`,
+          { content: blog, postId, published },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        toast.success(response.data.message);
+        setBlog(initialValue);
+      } catch (error: any) {
+        return handleError(error);
+      }
+    });
   }
   return {
     updateBlog,
@@ -166,6 +167,22 @@ export const useUpdateBlog = ({ postId }: { postId: string })=>{
     isloading,
     blog,
     setBlog,
-    details
-  }
-  }
+    details,
+  };
+};
+
+export interface User {
+  userId: string;
+  name: string;
+  email: string;
+}
+
+// 2. Define the full context shape
+export interface UserContextType {
+  user: User | null;
+  setUser: (user: User | null) => void;
+}
+export const UserInfoContext = createContext<UserContextType>({
+  user: null,
+  setUser: () => {}, // dummy function for default value
+});

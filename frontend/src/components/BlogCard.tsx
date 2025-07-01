@@ -7,6 +7,8 @@ interface BlogCardProps {
   content: string;
   publishedDate: string;
   id: string;
+  published: boolean;
+  isMyBlogs?: boolean;
 }
 export const BlogCard = (props: BlogCardProps) => {
   return (
@@ -27,6 +29,17 @@ export const BlogCard = (props: BlogCardProps) => {
               <span className="text-slate-400 font-thin">
                 {formattedDate(props.publishedDate)}
               </span>
+              {props.isMyBlogs ? (
+                <p
+                  className={`px-2 py-1 rounded-full text-sm font-medium w-fit ${
+                    props.published
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {props.published ? "Published" : "Draft"}
+                </p>
+              ) : null}
             </div>
             <div>
               <div>

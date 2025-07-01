@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { authMiddleWare } from "../middleware/authMiddleWare";
 import { createBlogSchema, CreateBlogType, updateBlogSchema, UpdateBlogType } from "@dev0000007/medium-web";
 import { ExtractSmart } from "../HelperFunction/GetPreviewAndTitle";
-import { GenerateHTML } from "../HelperFunction/GenerateHTML";
+
 
 export const BlogRouter = new Hono<{
   Bindings: {
@@ -120,6 +120,7 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
         content:true,
         title:true,
         publishedDate:true,
+        published:true,
         author: {
           select:{
             name:true
@@ -131,6 +132,49 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
       
     });
 
+    ctx.status(200);
+    return ctx.json({
+      posts,
+    });
+  } catch (error) {
+    console.log(error);
+    
+    ctx.status(500);
+    return ctx.json({
+      message: "Internal Server error!",
+    });
+  }
+});
+BlogRouter.get("/user/:pageno", authMiddleWare, async (ctx) => {
+  
+  const page = parseInt(ctx.req.param("pageno")) || 0;
+  try {
+    const prisma = ctx.get("prisma");
+    // verify body using zod
+    console.log('reached at specific user blogs');
+    
+    const posts = await prisma.post.findMany({
+      select:{
+        id:true,
+        content:true,
+        title:true,
+        publishedDate:true,
+        published:true,
+        author: {
+          select:{
+            name:true
+          }
+        }
+      },
+      where:{
+        authorId: ctx.get('userId')
+      },
+      skip: 10 * page,
+      take: 10,
+      
+    });
+    // console.log(posts);
+    
     ctx.status(200);
     return ctx.json({
       posts,
@@ -157,6 +201,8 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
         id:true,
         blogJson:true,
         publishedDate:true,
+        authorId:true,
+        published:true,
         author:{
           select:{
             name:true

@@ -2,6 +2,7 @@ import { Auth } from "../components/Auth";
 import { Quote } from "../components/Quote";
 
 const SignUp = () => {
+  
   return (
     <div>
       <div className="grid grid-col-1 lg:grid-cols-2">

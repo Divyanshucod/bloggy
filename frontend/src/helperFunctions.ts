@@ -1,39 +1,44 @@
-import type {CustomElementType } from "@dev0000007/medium-web";
-import type { Descendant } from "slate";
+import { toast } from "react-toastify";
 
-export function formattedDate(date:string){
-    const dateFormate = new Date(date);
-    
-    const formatted = dateFormate.toLocaleString('en-US', {
-      month: 'short',   // "Dec"
-      day: 'numeric',   // "3"
-      year: 'numeric',  // "2023"
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    });
-    return formatted;
-    }
+export function formattedDate(date: string) {
+  const dateFormate = new Date(date);
 
-export const getCustomFormattedDate = (date = new Date()) => {
-  const pad = (n: number) => n.toString().padStart(2, '0');
-
-  const year = date.getUTCFullYear();
-  const month = pad(date.getUTCMonth() + 1);
-  const day = pad(date.getUTCDate());
-  const hours = pad(date.getUTCHours());
-  const minutes = pad(date.getUTCMinutes());
-  const seconds = pad(date.getUTCSeconds());
-  const milliseconds = date.getUTCMilliseconds().toString().padStart(3, '0');
-
-  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}+00:00`;
+  const formatted = dateFormate.toLocaleString("en-US", {
+    month: "short", // "Dec"
+    day: "numeric", // "3"
+    year: "numeric", // "2023"
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+  return formatted;
 }
-
 export const initialValue = [
   {
     type: "paragraph",
     children: [{ text: "" }],
   },
 ];
+export const checkAuthor = (authorId: string) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return false;
+  }
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace("-", "+").replace("_", "/");
+  const val = JSON.parse(window.atob(base64));
 
-// type DataType = {type:string,children:Descendant[]}
+  if (authorId === val.userId) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export default function handleError(error: any) {
+  if (error.response && error.response.data && error.response.data.message) {
+    toast.error(error.response.data.message);
+  } else {
+    toast.error("Server is unreachable or something went wrong.");
+  }
+}

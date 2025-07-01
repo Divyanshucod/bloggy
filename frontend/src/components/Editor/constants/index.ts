@@ -15,7 +15,7 @@ import {
   Underline,
   Bold,
   Image,
-  Link
+  Link,
 } from "lucide-react";
 
 export enum RichTextAction {
@@ -38,12 +38,12 @@ export enum RichTextAction {
   Undo = "undo",
   Redo = "redo",
   Link = "link",
-  Image = "image"
+  Image = "image",
 }
 
 export const TEXT_FORMAT_OPTIONS = [
   { id: RichTextAction.Bold, icon: Bold, label: "Bold" },
-  { id: RichTextAction.Italics, icon: Italic , label: "Italics" },
+  { id: RichTextAction.Italics, icon: Italic, label: "Italics" },
   { id: RichTextAction.Underline, icon: Underline, label: "Underline" },
   {
     id: RichTextAction.Highlight,
@@ -110,14 +110,14 @@ export const TEXT_BLOCK_OPTIONS = [
     label: "Numbered List",
   },
   {
-    id:RichTextAction.Link,
+    id: RichTextAction.Link,
     icon: Link,
-    label:'Link'
+    label: "Link",
   },
   {
-    id:RichTextAction.Image,
+    id: RichTextAction.Image,
     icon: Image,
-    label:'Image'
+    label: "Image",
   },
 ];
 

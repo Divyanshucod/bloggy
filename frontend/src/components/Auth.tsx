@@ -21,12 +21,11 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
   async function handleSignUp() {
     startTransition(async () => {
       try {
-        const response = await axios.post(
+        await axios.post(
           `${BACKED_URL_LOCAL}api/v1/user/signup`,
           signUpDetails
         );
-
-        localStorage.setItem("token", response.data.token);
+        // call /me endpoint to get userdata
         navigate("/blogs");
       } catch (error: any) {
         if (
@@ -45,11 +44,11 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
   async function handleSignIn() {
     startTransition(async () => {
       try {
-        const response = await axios.post(
+        await axios.post(
           `${BACKED_URL_LOCAL}api/v1/user/signin`,
           signInDetails
         );
-        localStorage.setItem("token", response.data.token);
+        // call /me endpoint to get userdata use cookies for verification
         navigate("/blogs");
       } catch (error: any) {
         if (

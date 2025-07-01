@@ -1,6 +1,4 @@
-import {
-  withReact,
-} from "slate-react";
+import { withReact } from "slate-react";
 import React, { useState } from "react";
 import { createEditor, type Descendant } from "slate";
 import type { CustomElement, CustomText, EditorType } from "./types";
@@ -15,17 +13,27 @@ declare module "slate" {
   }
 }
 interface RichEditorProps {
-   setBlog:React.Dispatch<React.SetStateAction<Descendant[]>>
-   blog:Descendant[],
-   handleClick?:({createDraft}:{createDraft:boolean})=>void,
-   isloading:boolean
+  setBlog: React.Dispatch<React.SetStateAction<Descendant[]>>;
+  blog: Descendant[];
+  handleClick?: ({ createDraft }: { createDraft: boolean }) => void;
+  isloading: boolean;
 }
-export const RichEditor = React.memo(({setBlog,isloading,handleClick,blog}:RichEditorProps) => {
-  const [editor] = useState(() => withLinks(withHistory(withReact(createEditor()))));
-  return (
-    <>
-     <MainEditor isloading={isloading} blog={blog} setBlog={setBlog} handleClick={handleClick} editor={editor} readonly={false}/>
-    </>
-  );
-});
-
+export const RichEditor = React.memo(
+  ({ setBlog, isloading, handleClick, blog }: RichEditorProps) => {
+    const [editor] = useState(() =>
+      withLinks(withHistory(withReact(createEditor())))
+    );
+    return (
+      <>
+        <MainEditor
+          isloading={isloading}
+          blog={blog}
+          setBlog={setBlog}
+          handleClick={handleClick}
+          editor={editor}
+          readonly={false}
+        />
+      </>
+    );
+  }
+);
