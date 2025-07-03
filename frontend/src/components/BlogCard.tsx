@@ -12,7 +12,7 @@ interface BlogCardProps {
   isMyBlogs?: boolean;
 }
 export const BlogCard = React.memo((props: BlogCardProps) => {
-  console.log('memoized');
+ 
   
   return (
     <Link to={`/blog/${props.id}`}>

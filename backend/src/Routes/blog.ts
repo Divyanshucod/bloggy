@@ -101,7 +101,6 @@ BlogRouter.post("/",authMiddleWare, async (ctx) => {
       message: "post added!",
     });
   } catch (error) {
-     console.log(error);
      
     ctx.status(500);
     return ctx.json({

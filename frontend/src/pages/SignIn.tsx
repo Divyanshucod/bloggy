@@ -13,7 +13,7 @@ const SignIn = () => {
       <div className="hidden lg:block">
         <Quote />
       </div>
-    </div>s
+    </div>
     </div>
   );
 };

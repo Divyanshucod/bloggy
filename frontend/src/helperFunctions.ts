@@ -37,8 +37,6 @@ export const checkAuthor = (authorId: string) => {
 
 export default function handleError(error: any) {
   if (error.response && error.response.data && error.response.data.message) {
-    console.log(error.response);
-    
     toast.error(error.response.data.message);
   } else {
     toast.error("Server is unreachable or something went wrong.");
