@@ -16,3 +16,5 @@ export type customElementChildren = {
     highlight?: boolean | undefined;
     strikethrough?: boolean | undefined;
 }[];
+
+export const cookie_name = 'medium-cookie'

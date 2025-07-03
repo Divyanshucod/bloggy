@@ -1,20 +1,13 @@
 import { BlogCard } from "../components/BlogCard";
-import { useMyBlogs, UserInfoContext } from "../hooks";
+import { useMyBlogs } from "../hooks";
 import { BlogsSkeleton } from "../components/BlogsSkeleton";
-import { useContext } from "react";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 export const MyBlogs = () => {
-  const { isloading, blogs } = useMyBlogs();
-  const {user} = useContext(UserInfoContext)
-  const navigate = useNavigate()
-  if(!user){
-    toast.error('Session Expired!')
-    setTimeout(()=>navigate('/signup'),1000)
-  }
+  const { isloading, blogs,isMoreBlog,setPages } = useMyBlogs();
   return (
     <div>
+      <ToastContainer />
       {isloading ? (
         <div>
           {Array.from({ length: 5 }).map((_, index) => (
@@ -23,6 +16,7 @@ export const MyBlogs = () => {
         </div>
       ) : (
         <div className="mt-12">
+          <div>
           {blogs.map((val) => (
             <BlogCard
               key={val.id}
@@ -35,6 +29,8 @@ export const MyBlogs = () => {
               published={val.published}
             />
           ))}
+        </div>
+        {isMoreBlog ? <button className="flex justify-center" onClick={()=>  setPages((prev) => prev+1)}>More</button> :null}
         </div>
       )}
     </div>

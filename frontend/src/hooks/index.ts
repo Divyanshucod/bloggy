@@ -23,17 +23,20 @@ export const useMyBlogs = () => {
   const [isloading, setTransition] = useTransition();
   const [blogs, setBlogs] = useState<Blogs[]>([]);
   const [pages, setPages] = useState(0);
+  const [isMoreBlog,setIsMoreBlog] = useState(false)
   useEffect(() => {
     setTransition(async () => {
       try {
         const response = await axios.get(
-          `${BACKED_URL_LOCAL}api/v1/blog/user/${pages}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+          `${BACKED_URL_LOCAL}api/v1/blog/user/${pages}`,{
+            headers:{
+              Authorization:localStorage.getItem('token')
+            }
           }
         );
+        if(response.data.posts.length < 3){
+          setIsMoreBlog(false)
+        }
         setBlogs((prev) => [...prev, ...response.data.posts]);
       } catch (error: any) {
         return handleError(error);
@@ -44,18 +47,23 @@ export const useMyBlogs = () => {
     isloading,
     blogs,
     setPages,
+    isMoreBlog,
   };
 };
 export const useBlogs = () => {
   const [isloading, setTransition] = useTransition();
   const [blogs, setBlogs] = useState<Blogs[]>([]);
   const [pages, setPages] = useState(0);
+  const [isMoreBlog,setIsMoreBlog] = useState(true)
   useEffect(() => {
     setTransition(async () => {
       try {
         const response = await axios.get(
           `${BACKED_URL_LOCAL}api/v1/blog/bulk/${pages}`
         );
+        if(response.data.posts.length < 3){
+          setIsMoreBlog(false)
+        }
         setBlogs((prev) => [...prev, ...response.data.posts]);
       } catch (error: any) {
         return handleError(error);
@@ -66,6 +74,8 @@ export const useBlogs = () => {
     isloading,
     blogs,
     setPages,
+    isMoreBlog,
+    setIsMoreBlog
   };
 };
 export const useCreateBlog = () => {
@@ -79,9 +89,9 @@ export const useCreateBlog = () => {
           `${BACKED_URL_LOCAL}api/v1/blog`,
           { content: blog, published: createDraft },
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            headers:{
+              Authorization:localStorage.getItem('token')
+            }
           }
         );
         toast.success(response.data.message);
@@ -119,11 +129,6 @@ export const useUpdateBlog = ({ postId }: { postId: string }) => {
         try {
           const response = await axios.get(
             `${BACKED_URL_LOCAL}api/v1/blog/${postId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
           );
           const data = response.data.post.blogJson;
           setBlog(data);
@@ -149,9 +154,9 @@ export const useUpdateBlog = ({ postId }: { postId: string }) => {
           `${BACKED_URL_LOCAL}api/v1/blog`,
           { content: blog, postId, published },
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            headers:{
+              Authorization:localStorage.getItem('token')
+            }
           }
         );
         toast.success(response.data.message);

@@ -1,21 +1,20 @@
 import { verify } from "hono/jwt";
-
 export const authMiddleWare = async (ctx: any, next: any) => {
-  const authHeader = ctx.req.header("authorization");
-  if (!authHeader) {
+  const cookie = ctx.req.header('Authorization');
+  
+  if (!cookie) {
     ctx.status(411);
     return ctx.json({
-      message: "un-authorized access!",
+      message: "un-authorized access!"
     });
   }
-  const token = authHeader.split(" ")[1];
   //verify token
   try {
-    const val = await verify(token, ctx.env.MY_SECRET);
+    const val = await verify(cookie, ctx.env.MY_SECRET);
     if (!val) {
       ctx.status(403);
       return ctx.json({
-        message: "un-authorize access",
+        message: "session expired login again!",
       });
     }
     ctx.set("userId", val.userId);

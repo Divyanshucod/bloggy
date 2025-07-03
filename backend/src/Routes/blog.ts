@@ -92,7 +92,7 @@ BlogRouter.post("/",authMiddleWare, async (ctx) => {
         content:preview,
         blogJson:data.content,
         authorId: ctx.get("userId"),
-        publishedDate:data.published
+        published:data.published
       },
     });
 
@@ -101,7 +101,8 @@ BlogRouter.post("/",authMiddleWare, async (ctx) => {
       message: "post added!",
     });
   } catch (error) {
-    
+     console.log(error);
+     
     ctx.status(500);
     return ctx.json({
       message: "Internal Server error!",
@@ -127,8 +128,8 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
           }
         }
       },
-      skip: 10 * page,
-      take: 10,
+      skip: 3 * page,
+      take: 3,
       
     });
 

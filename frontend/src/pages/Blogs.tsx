@@ -1,11 +1,15 @@
 import { BlogCard } from "../components/BlogCard";
 import { useBlogs } from "../hooks";
 import { BlogsSkeleton } from "../components/BlogsSkeleton";
+import { ToastContainer } from "react-toastify";
 
 export const Blogs = () => {
-  const { isloading, blogs } = useBlogs();
+  const { isloading, blogs,setPages,isMoreBlog } = useBlogs();
+  console.log(blogs);
+
   return (
     <div>
+      <ToastContainer />
       {isloading ? (
         <div>
           {Array.from({ length: 5 }).map((_, index) => (
@@ -13,7 +17,8 @@ export const Blogs = () => {
           ))}
         </div>
       ) : (
-        <div className="mt-12">
+        <div className="mt-12"> 
+        <div>
           {blogs.map((val) => (
             <BlogCard
               key={val.id}
@@ -26,6 +31,8 @@ export const Blogs = () => {
             />
           ))}
         </div>
+          {isMoreBlog ? <button className="flex justify-center" onClick={()=>  setPages((prev) => prev+1)}>More</button> :null}
+       </div>
       )}
     </div>
   );

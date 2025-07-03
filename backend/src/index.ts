@@ -4,6 +4,7 @@ import { PrismaClient } from "./generated/prisma/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { cors } from "hono/cors";
 
+
 const app = new Hono<{
   Bindings: {
     MY_SECRET: string;
@@ -23,5 +24,6 @@ app.use("*", async (ctx, next) => {
   ctx.set("prisma", prisma);
   await next();
 });
+
 app.route("/api/v1", mainRouter);
 export default app;

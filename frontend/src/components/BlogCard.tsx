@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { formattedDate } from "../helperFunctions";
+import React from "react";
 
 interface BlogCardProps {
   authorName: string;
@@ -10,7 +11,9 @@ interface BlogCardProps {
   published: boolean;
   isMyBlogs?: boolean;
 }
-export const BlogCard = (props: BlogCardProps) => {
+export const BlogCard = React.memo((props: BlogCardProps) => {
+  console.log('memoized');
+  
   return (
     <Link to={`/blog/${props.id}`}>
       <div className=" w-screen p-4 flex justify-center cursor-pointer">
@@ -64,4 +67,4 @@ export const BlogCard = (props: BlogCardProps) => {
       </div>
     </Link>
   );
-};
+});

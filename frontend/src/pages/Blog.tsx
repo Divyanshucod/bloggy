@@ -1,18 +1,11 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { UserInfoContext, useUpdateBlog } from "../hooks";
+import {  useParams } from "react-router-dom";
+import {  useUpdateBlog } from "../hooks";
 import { FullBlog } from "../components/FullBlog";
 import { AuthorCard } from "../components/AuthorCard";
-import { Skeleton, Stack } from "@mui/material";
-import { toast } from "react-toastify";
-import { useContext } from "react";
+import { Skeleton, Stack}  from "@mui/material";
+import { ToastContainer } from "react-toastify";
 
 const Blog = () => {
-  const {user} = useContext(UserInfoContext)
-  const navigate = useNavigate()
-  if(!user){
-    toast.error('Session Expired!')
-    setTimeout(()=>navigate('/signup'),1000)
-  }
   const { id } = useParams();
   const { isloading, blog, setBlog, updateBlog, isUpdating, details } =
     useUpdateBlog({
@@ -20,6 +13,7 @@ const Blog = () => {
     });
   return (
     <div className="grid grid-cols-12 w-screen p-5 md:p-10">
+      <ToastContainer />
       <div className="col-span-12 lg:col-span-8">
         {isloading ? (
           <Stack>
