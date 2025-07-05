@@ -23,7 +23,7 @@ export const useMyBlogs = () => {
   const [isloading, setTransition] = useTransition();
   const [blogs, setBlogs] = useState<Blogs[]>([]);
   const [pages, setPages] = useState(0);
-  const [isMoreBlog,setIsMoreBlog] = useState(false)
+  const [isMoreBlog,setIsMoreBlog] = useState(true)
   useEffect(() => {
     setTransition(async () => {
       try {
@@ -129,6 +129,11 @@ export const useUpdateBlog = ({ postId }: { postId: string }) => {
         try {
           const response = await axios.get(
             `${BACKED_URL_LOCAL}api/v1/blog/${postId}`,
+            {
+              headers:{
+                Authorization:localStorage.getItem('token')
+              }
+            }
           );
           const data = response.data.post.blogJson;
           setBlog(data);

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { formattedDate } from "../helperFunctions";
 import React from "react";
+import { Avatar } from "./Avatar";
 
 interface BlogCardProps {
   authorName: string;
@@ -11,60 +12,46 @@ interface BlogCardProps {
   published: boolean;
   isMyBlogs?: boolean;
 }
+
 export const BlogCard = React.memo((props: BlogCardProps) => {
- 
-  
   return (
-    <Link to={`/blog/${props.id}`}>
-      <div className=" w-screen p-4 flex justify-center cursor-pointer">
-        <div className=" w-3xl border-b-slate-200 border-b-1">
-          <div className="flex flex-col gap-2 min-h-44 overflow-hidden">
-            <div className="flex gap-2 items-center mb-1">
-              <div className="flex gap-2 items-center">
-                <div className="rounded-full bg-gray-500 text-white px-4 py-2">
-                  {props.authorName[0]}
-                </div>
-                <p className="text-slate-600 font-semibold">
-                  {props.authorName}
-                </p>
-              </div>
-              <p className="text-xl">&#8226;</p>
-              <span className="text-slate-400 font-thin">
+      <div className="min-w-full px-4 py-3 flex mx-auto flex-col">
+          <Link to={`/blog/${props.id}`} className="w-full flex justify-center">
+        <div className="w-full max-w-3xl p-6 rounded-lg shadow bg-white dark:bg-gray-900 transition">
+          <div className="flex flex-col gap-2 min-h-44">
+            <div className="flex gap-3 items-center mb-2 text-sm">
+             <Avatar user={props.authorName[0]}/>
+              <p className="text-slate-700 dark:text-slate-200 font-semibold">
+                {props.authorName}
+              </p>
+              <span className="text-xl text-gray-400">•</span>
+              <span className="text-slate-500 dark:text-slate-400">
                 {formattedDate(props.publishedDate)}
               </span>
-              {props.isMyBlogs ? (
-                <p
-                  className={`px-2 py-1 rounded-full text-sm font-medium w-fit ${
+              {props.isMyBlogs && (
+                <span
+                  className={`ml-auto px-2 py-0.5 rounded-full text-xs font-medium ${
                     props.published
                       ? "bg-green-100 text-green-800"
                       : "bg-red-100 text-red-800"
                   }`}
                 >
                   {props.published ? "Published" : "Draft"}
-                </p>
-              ) : null}
+                </span>
+              )}
             </div>
-            <div>
-              <div>
-                <p className="font-semibold text-2xl mb-1">
-                  {`${props.title.slice(0, 50)} ${
-                    props.title.length > 50 ? "..." : ""
-                  }`}{" "}
-                </p>
-              </div>
-              <div className="h-10">
-                <p className="font-thin text-xl text-gray-600">{`${props.content.slice(
-                  0,
-                  200
-                )} ${props.content.length > 200 ? "..." : ""}`}</p>
-              </div>
-            </div>
-          </div>
-          <div className="text-slate-700 font-thin mt-5">
-            {`${Math.floor(props.content.length / 100)} min read`}
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+              {props.title}
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-base ">
+              {props.content}
+            </p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-4">
+              {Math.max(1, Math.floor(props.content.length / 100))} min read
+            </p>
           </div>
         </div>
+        </Link>
       </div>
-    </Link>
   );
 });

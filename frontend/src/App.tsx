@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
@@ -8,18 +8,17 @@ import { AppBar } from "./components/AppBar";
 import { BlogCreate } from "./pages/BlogCreate";
 import { MyBlogs } from "./pages/MyBlogs";
 
+import { ThemeProvider } from "./components/ThemeProvider";
+import { Error } from "./components/Error";
+
 
 
 function App() {
-  
   return (
-    <> 
-      {location.pathname === "/signin" ||
-      location.pathname === "/signup" ? null : (
+    <ThemeProvider> 
         <div className="mb-14">
           <AppBar />
         </div>
-      )}
       <Routes>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
@@ -27,8 +26,9 @@ function App() {
         <Route path="/blog/:id" element={<Blog />} />
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/blog/create" element={<BlogCreate />} />
+        <Route path="/" element={<Error/>}/>
       </Routes>
-    </>
+    </ThemeProvider>
   );
 }
 

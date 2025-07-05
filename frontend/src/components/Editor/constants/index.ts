@@ -49,7 +49,6 @@ export const TEXT_FORMAT_OPTIONS = [
     id: RichTextAction.Highlight,
     icon: Highlighter,
     label: "Highlight",
-    fontSize: 10,
   },
   {
     id: RichTextAction.Strikethrough,

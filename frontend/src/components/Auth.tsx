@@ -67,119 +67,113 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     setSignInDetails({ email: "", password: "" });
   }
   return (
-    <div className="h-screen flex flex-col items-center justify-center">
-      <div className="border border-slate-400 shadow-xl w-[70%] p-5 sm:p-10 rounded-xl">
-        <div>
-          <div className="text-2xl font-bold">
-            {type == "signup" ? "Create an account" : "Welcome back"}
-          </div>
-          <div>
-            {type == "signup" ? (
-              <p className="text-gray-500">
-                Already have an account{" "}
-                <Link className="underline" to="/signin">
-                  login
-                </Link>
-              </p>
-            ) : (
-              <p>
-                Create a new account?{" "}
-                <Link className="underline" to="/signup">
-                  signup
-                </Link>
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="mt-2.5 w-full">
-          {type == "signup" ? (
-            <div>
-              <LabelledInput
-                label="Username"
-                type="text"
-                onChange={(e) =>
-                  setSignUpDetails((prev) => ({
-                    ...prev,
-                    name: e.target.value,
-                  }))
-                }
-                placeholder="Divyanshu Prajapati.."
-                value={signUpDetails.name}
-              />
-              <LabelledInput
-                label="Email"
-                type="text"
-                onChange={(e) =>
-                  setSignUpDetails((prev) => ({
-                    ...prev,
-                    email: e.target.value,
-                  }))
-                }
-                placeholder="dev123@gmail.com.."
-                value={signUpDetails.email}
-              />
-              <LabelledInput
-                label="Password"
-                type="password"
-                onChange={(e) =>
-                  setSignUpDetails((prev) => ({
-                    ...prev,
-                    password: e.target.value,
-                  }))
-                }
-                placeholder="123456"
-                value={signUpDetails.password}
-              />
-            </div>
+  <div className="h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 transition">
+    <div className="border border-slate-300 dark:border-gray-700 shadow-xl w-[90%] sm:w-[80%] md:w-[60%] p-6 sm:p-10 rounded-xl bg-white dark:bg-gray-800">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          {type === "signup" ? "Create an account" : "Welcome back"}
+        </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          {type === "signup" ? (
+            <>
+              Already have an account?{" "}
+              <Link className="underline text-blue-600" to="/signin">
+                Sign in
+              </Link>
+            </>
           ) : (
-            <div>
-              <LabelledInput
-                label="Email"
-                type="text"
-                onChange={(e) =>
-                  setSignInDetails((prev) => ({
-                    ...prev,
-                    email: e.target.value,
-                  }))
-                }
-                placeholder="dev123@gmail.com.."
-                value={signInDetails.email}
-              />
-              <LabelledInput
-                label="Password"
-                type="password"
-                onChange={(e) =>
-                  setSignInDetails((prev) => ({
-                    ...prev,
-                    password: e.target.value,
-                  }))
-                }
-                placeholder="123456"
-                value={signInDetails.password}
-              />
-            </div>
+            <>
+              Don’t have an account?{" "}
+              <Link className="underline text-blue-600" to="/signup">
+                Sign up
+              </Link>
+            </>
           )}
-        </div>
-        <div className="mt-3 flex w-full items-center justify-center">
-          {type == "signup" ? (
-            <Button
-              color="#24292F"
-              disableButton={isPending}
-              onClick={handleSignUp}
-            >
-              Sign up
-            </Button>
-          ) : (
-            <Button
-              color="#24292F"
-              disableButton={isPending}
-              onClick={handleSignIn}
-            >
-              Sign in
-            </Button>
-          )}
-        </div>
+        </p>
+      </div>
+
+      {/* Form */}
+      <div className="space-y-4">
+        {type === "signup" ? (
+          <>
+            <LabelledInput
+              label="Username"
+              type="text"
+              onChange={(e) =>
+                setSignUpDetails((prev) => ({
+                  ...prev,
+                  name: e.target.value,
+                }))
+              }
+              placeholder="Divyanshu Prajapati.."
+              value={signUpDetails.name}
+            />
+            <LabelledInput
+              label="Email"
+              type="text"
+              onChange={(e) =>
+                setSignUpDetails((prev) => ({
+                  ...prev,
+                  email: e.target.value,
+                }))
+              }
+              placeholder="dev123@gmail.com"
+              value={signUpDetails.email}
+            />
+            <LabelledInput
+              label="Password"
+              type="password"
+              onChange={(e) =>
+                setSignUpDetails((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
+              placeholder="123456"
+              value={signUpDetails.password}
+            />
+          </>
+        ) : (
+          <>
+            <LabelledInput
+              label="Email"
+              type="text"
+              onChange={(e) =>
+                setSignInDetails((prev) => ({
+                  ...prev,
+                  email: e.target.value,
+                }))
+              }
+              placeholder="dev123@gmail.com"
+              value={signInDetails.email}
+            />
+            <LabelledInput
+              label="Password"
+              type="password"
+              onChange={(e) =>
+                setSignInDetails((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
+              placeholder="123456"
+              value={signInDetails.password}
+            />
+          </>
+        )}
+      </div>
+
+      {/* Button */}
+      <div className="mt-6 w-full flex justify-center">
+        <Button
+          disableButton={isPending}
+          onClick={type === "signup" ? handleSignUp : handleSignIn}
+        >
+          {type === "signup" ? "Sign up" : "Sign in"}
+        </Button>
       </div>
     </div>
-  );
+  </div>
+);
+
 };
