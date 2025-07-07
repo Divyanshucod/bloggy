@@ -8,7 +8,8 @@ export const BlogRouter = new Hono<{
   Bindings: {
     MY_SECRET: string;
     DATABASE_URL: string;
-    OPTIMIZE_API_KEY: string;
+    ENVIRONMENT:string;
+    PRO_ORIGIN:string;
   };
   Variables: {
     userId: string;
@@ -127,8 +128,8 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
           }
         }
       },
-      skip: 3 * page,
-      take: 3,
+      skip: 5 * page,
+      take: 5,
       
     });
 
@@ -150,8 +151,6 @@ BlogRouter.get("/user/:pageno", authMiddleWare, async (ctx) => {
   const page = parseInt(ctx.req.param("pageno")) || 0;
   try {
     const prisma = ctx.get("prisma");
-    // verify body using zod
-    console.log('reached at specific user blogs');
     
     const posts = await prisma.post.findMany({
       select:{
@@ -169,8 +168,8 @@ BlogRouter.get("/user/:pageno", authMiddleWare, async (ctx) => {
       where:{
         authorId: ctx.get('userId')
       },
-      skip: 10 * page,
-      take: 10,
+      skip: 5 * page,
+      take: 5,
       
     });
     // console.log(posts);

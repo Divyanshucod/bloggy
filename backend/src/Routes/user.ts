@@ -2,15 +2,16 @@ import { signInSchema, signUpSchema } from "@dev0000007/medium-web";
 import { Hono } from "hono";
 import { sign } from "hono/jwt";
 import { hashPassword, verifyPassword } from "../passwordHashing";
-import { deleteCookie, setCookie } from "hono/cookie";
 import { cookie_name } from "../types";
 import { authMiddleWare } from "../middleware/authMiddleWare";
+import { serialize } from "cookie-es";
 
 export const UserRouter = new Hono<{
   Bindings: {
     MY_SECRET: string;
     DATABASE_URL: string;
-    OPTIMIZE_API_KEY: string;
+    ENVIRONMENT:string;
+    PRO_ORIGIN:string;
   };
   Variables: {
     userId: string;
@@ -42,13 +43,14 @@ UserRouter.post("/signup", async (ctx) => {
     });
     /// token creation
     const token = await sign({ userId: user.id }, ctx.env.MY_SECRET);
-    // set_cookie(ctx,token);
+    const serialized = set_cookie(ctx,token);
+    ctx.header('Set-Cookie',serialized);
     ctx.status(200);
     return ctx.json({
       message: "logged in!",
       token
     });
-  } catch (error) {
+  } catch (error:any) {
     if(error.code === 'P2002'){
       ctx.status(403);
       return ctx.json({
@@ -100,11 +102,11 @@ UserRouter.post("/signin", async (ctx) => {
     //creating token
     const token = await sign({ userId: user.id }, ctx.env.MY_SECRET);
     
-    // set_cookie(ctx,token);
+    const serialized = set_cookie(ctx,token);
+    ctx.header('Set-Cookie',serialized)
     ctx.status(200);
     return ctx.json({
       message: "logged in!",
-      token
     });
   } catch (error) {
     ctx.status(500);
@@ -117,9 +119,8 @@ UserRouter.post("/signin", async (ctx) => {
 });
 UserRouter.get('/logout',authMiddleWare,(ctx:any)=>{
    try{
-       deleteCookie(ctx,cookie_name,{
-        secure:true
-       })
+       const serialized = delete_cookie(ctx);
+       ctx.header('Set-Cookie',serialized)
        ctx.status(200)
        return ctx.json({
         message:'you have logged out!'
@@ -131,12 +132,23 @@ UserRouter.get('/logout',authMiddleWare,(ctx:any)=>{
       })
    }
 })
-function set_cookie(ctx: any, token: any) {
-  setCookie(ctx, cookie_name, token, {
-    httpOnly: true,
-    secure: false,       
-    sameSite: 'Lax',      
+function set_cookie(ctx:any,token: any) {
+  const serialized = serialize(cookie_name, token, {
     path: '/',
-    maxAge: 60 * 60 * 24, 
+    maxAge: 60 * 60 * 24,
+    sameSite: ctx.env.DEV === 'dev' ? 'lax' : 'none',
+    httpOnly: true,
+    secure: ctx.env.DEV === 'dev' ? false : true,
   });
+  return serialized;
+}
+function delete_cookie(ctx:any){
+  const serialized = serialize(cookie_name, "", {
+    path: '/',
+    expires: new Date(0), // expire the cookie for in logout 
+    sameSite: ctx.env.ENVIRONMENT === 'dev' ? 'lax' : 'none',
+    httpOnly: true,
+    secure: ctx.env.ENVIRONMENT === 'dev' ? false : true,
+  });
+  return serialized;
 }

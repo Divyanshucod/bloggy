@@ -7,7 +7,7 @@ export const mainRouter = new Hono<{
   Bindings: {
     MY_SECRET: string;
     DATABASE_URL: string;
-    OPTIMIZE_API_KEY: string;
+    ENVIRONMENT:string
   };
   Variables: {
     userId: string;
@@ -22,7 +22,6 @@ mainRouter.route("/blog", BlogRouter);
 mainRouter.get('/me',authMiddleWare,async(ctx)=>{
   const userid = ctx.get('userId')
   const prisma = ctx.get('prisma')
-  console.log('hi in the me');
   
   //get user details
    try {

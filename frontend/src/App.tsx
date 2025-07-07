@@ -9,25 +9,45 @@ import { BlogCreate } from "./pages/BlogCreate";
 import { MyBlogs } from "./pages/MyBlogs";
 
 import { ThemeProvider } from "./components/ThemeProvider";
-import { Error } from "./components/Error";
-
+import { Home } from "./pages/Home";
+import { Protector } from "./components/Protector";
+import { ToastContainer } from "react-toastify";
 
 
 function App() {
   return (
     <ThemeProvider> 
-        <div className="mb-14">
           <AppBar />
-        </div>
       <Routes>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
-        <Route path="/blog/user/myblogs" element={<MyBlogs/>}/>
-        <Route path="/blog/:id" element={<Blog />} />
-        <Route path="/blogs" element={<Blogs />} />
-        <Route path="/blog/create" element={<BlogCreate />} />
-        <Route path="/" element={<Error/>}/>
+        <Route path="/blog/user/myblogs" element={
+          <Protector>
+          <MyBlogs/>
+          </Protector>
+          }/>
+        <Route path="/blog/:id" element={
+          <Protector>
+          <Blog />
+          </Protector>
+          } />
+        <Route path="/blogs" element={
+          <Protector><Blogs /></Protector>} />
+        <Route path="/blog/create" element={
+          <Protector><BlogCreate />
+          </Protector>} />
+        <Route path="/" element={<Protector><Home/></Protector>}/>
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored" 
+      />
     </ThemeProvider>
   );
 }

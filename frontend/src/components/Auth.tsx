@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useNavigate } from "react-router-dom";
 import { LabelledInput } from "./LabelledInput";
 import {useState, useTransition } from "react";
@@ -6,7 +7,10 @@ import { Button } from "./Button";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { BACKED_URL, BACKED_URL_LOCAL } from "../config";
+import { useAppDispatch } from "../hooks";
+import { fetchMe } from "../features/User/UserSlice";
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
+  const dispatch = useAppDispatch()
   const [signUpDetails, setSignUpDetails] = useState<SignUpType>({
     email: "",
     password: "",
@@ -21,12 +25,12 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
   async function handleSignUp() {
     startTransition(async () => {
       try {
-        const res = await axios.post(
+         await axios.post(
           `${BACKED_URL_LOCAL}api/v1/user/signup`,
-          signUpDetails
+          signUpDetails,
+          {withCredentials:true}
         );
-        // call /me
-        localStorage.setItem('token',res.data.token)
+        await dispatch(fetchMe()).unwrap()
         navigate("/blogs");
       } catch (error: any) {
         if (
@@ -45,13 +49,13 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
   async function handleSignIn() {
     startTransition(async () => {
       try {
-       const res = await axios.post(
+         await axios.post(
           `${BACKED_URL_LOCAL}api/v1/user/signin`,
-          signInDetails
+          signInDetails,
+          {withCredentials:true}
         );
-        // call /me endpoint to get userdata
-        localStorage.setItem('token',res.data.token)
-        navigate("/blogs");
+        await dispatch(fetchMe()).unwrap()
+        navigate('/blogs')
       } catch (error: any) {
         if (
           error.response &&
