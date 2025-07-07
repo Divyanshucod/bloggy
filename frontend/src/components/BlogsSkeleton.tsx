@@ -1,6 +1,6 @@
 export const BlogsSkeleton = () => {
   return (
-    <div className="w-full p-4 bg-white dark:bg-gray-900 rounded-lg shadow-sm animate-pulse">
+    <div className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow-sm animate-pulse">
       <div className="flex items-center gap-4 mb-4">
         <div className="rounded-full bg-gray-300 dark:bg-gray-700 h-10 w-10" />
         <div className="flex-1 space-y-2">

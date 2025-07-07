@@ -17,12 +17,17 @@ import { Button } from "../Button";
 import { CircularProgress } from "@mui/material";
 import { ToolBarButton, type TextFormateButtonProps } from "../ToolBarButton";
 import { LinkComp } from "../LinkComponent";
+import { useSelector } from "react-redux";
+import { createBlog } from "../../features/Blogs/BlogSlice";
+import { toast } from "react-toastify";
+import type { RootState } from "../../store";
+import { useAppDispatch } from "../../hooks";
 interface toolbarType {
-  isloading: boolean;
-  handleClick?: ({ createDraft }: { createDraft: boolean }) => void;
   isUpdate?: boolean;
 }
 export const ToolBar = (props: toolbarType) => {
+  const dispatch = useAppDispatch()
+  const {isPublishing_drafting} = useSelector((state:RootState)=>state.BlogSlice)
   const editor = useSlate();
   const [mode, setMode] = useState<"none" | "link">("none");
   const [url, setUrl] = useState("");
@@ -35,6 +40,22 @@ export const ToolBar = (props: toolbarType) => {
       toggleBlock(editor, id as ElementKey);
     }
   };
+  const handleDraft = async()=>{
+    try {
+      const res = await dispatch(createBlog({ createDraft: false })).unwrap()
+      toast.success(res)
+    } catch (error:any) {
+      toast.error(error)
+    }
+  }
+  const handlePublish = async()=>{
+    try {
+      const res = await dispatch(createBlog({ createDraft: true })).unwrap()
+      toast.success(res)
+    } catch (error:any) {
+      toast.error(error)
+    }
+  }
   return (
     <>
       {mode === "link" && (
@@ -63,7 +84,7 @@ export const ToolBar = (props: toolbarType) => {
           {/* Text Format Options */}
           <div className="flex gap-1">
             {TEXT_FORMAT_OPTIONS.map((val:TextFormateButtonProps) => (
-               <ToolBarButton props={val} onClick={() => toggleMark(editor,val.id as MarkKey)} isActive={isMarkActive(editor,val.id as MarkKey)}/>
+               <ToolBarButton key={val.id} props={val} onClick={() => toggleMark(editor,val.id as MarkKey)} isActive={isMarkActive(editor,val.id as MarkKey)}/>
             ))}
           </div>
 
@@ -71,26 +92,24 @@ export const ToolBar = (props: toolbarType) => {
           <div className="w-px h-6 bg-gray-300"></div>
           <div className="flex gap-1">
                 {TEXT_BLOCK_OPTIONS.map((val)=>(
-                  <ToolBarButton props={val} onClick={()=> onBlockClick(val.id)} isActive={isBlockActive(editor, val.id as ElementKey)} />
+                  <ToolBarButton key={val.id} props={val} onClick={()=> onBlockClick(val.id)} isActive={isBlockActive(editor, val.id as ElementKey)} />
                 ))}
           </div>
         </div>
         <div className="flex gap-2">
           {!props.isUpdate ? (
             <Button
-              disableButton={props.isloading}
-              onClick={() => props.handleClick?.({ createDraft: false })}
+              disableButton={isPublishing_drafting === 'pending'}
+              onClick={handleDraft}
             >
-              {props.isloading ? <CircularProgress size={10} /> : "Draft"}
+              {isPublishing_drafting === 'pending' ? <CircularProgress size={10} /> : "Draft"}
             </Button>
           ) : null}
            {props.isUpdate ? null : <Button
-            disableButton={props.isloading}
-            onClick={() =>
-               props.handleClick?.({ createDraft: true })
-            }
+            disableButton={isPublishing_drafting === 'pending'}
+            onClick={handlePublish}
           >
-            {props.isloading ? (
+            {isPublishing_drafting === 'pending' ? (
               <CircularProgress size={10} />
             ) : (
               "Publish"

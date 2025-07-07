@@ -1,3 +1,4 @@
+
 import { toast } from "react-toastify";
 
 export function formattedDate(date: string) {
@@ -19,21 +20,6 @@ export const initialValue = [
     children: [{ text: "" }],
   },
 ];
-export const checkAuthor = (authorId: string) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    return false;
-  }
-  const base64Url = token.split(".")[1];
-  const base64 = base64Url.replace("-", "+").replace("_", "/");
-  const val = JSON.parse(window.atob(base64));
-
-  if (authorId === val.userId) {
-    return true;
-  } else {
-    return false;
-  }
-};
 
 export default function handleError(error: any) {
   if (error.response && error.response.data && error.response.data.message) {

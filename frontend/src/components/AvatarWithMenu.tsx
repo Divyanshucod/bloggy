@@ -14,6 +14,11 @@ import {
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { BACKED_URL_LOCAL } from "../config";
+import handleError from "../helperFunctions";
+import { clearUserDetails } from "../features/User/UserSlice";
 
 export default function AccountMenu({
   username,
@@ -23,6 +28,7 @@ export default function AccountMenu({
   email: string;
 }) {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
@@ -34,7 +40,16 @@ export default function AccountMenu({
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  
+  const handleLogout = async ()=>{
+    try {
+      await axios.get(`${BACKED_URL_LOCAL}api/v1/user/logout`,{withCredentials:true})
+      dispatch(clearUserDetails())
+      window.location.reload()
+    } catch (error) {
+        handleError(error)
+    }
+  }
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -113,7 +128,7 @@ export default function AccountMenu({
           MyBlogs
         </MenuItem>
 
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

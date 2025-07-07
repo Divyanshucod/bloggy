@@ -20,7 +20,7 @@ export const BlogCard = React.memo((props: BlogCardProps) => {
         <div className="w-full max-w-3xl p-6 rounded-lg shadow bg-white dark:bg-gray-900 transition">
           <div className="flex flex-col gap-2 min-h-44">
             <div className="flex gap-3 items-center mb-2 text-sm">
-             <Avatar user={props.authorName[0]}/>
+             <Avatar user={props.authorName??[0]}/>
               <p className="text-slate-700 dark:text-slate-200 font-semibold">
                 {props.authorName}
               </p>
@@ -47,7 +47,7 @@ export const BlogCard = React.memo((props: BlogCardProps) => {
               {props.content}
             </p>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-4">
-              {Math.max(1, Math.floor(props.content.length / 100))} min read
+              {Math.max(1, Math.floor(props.content?.length / 100))} min read
             </p>
           </div>
         </div>

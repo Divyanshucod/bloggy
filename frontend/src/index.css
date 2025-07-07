@@ -1,3 +1,26 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* For modern browsers */
+::-webkit-scrollbar {
+    width: 1px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #4b5563; /* Tailwind: gray-600 */
+    border-radius: 9999px;
+/* padding effect */
+  }
+  
+  /* Dark mode support */
+  .dark ::-webkit-scrollbar-track {
+    background: #0f172a; /* Tailwind: slate-900 */
+  }
+  
+  .dark ::-webkit-scrollbar-thumb {
+    background-color: #334155; /* Tailwind: slate-700 */
+    border-color: #0f172a;
+  }
+  
+  /* Firefox support */
+  

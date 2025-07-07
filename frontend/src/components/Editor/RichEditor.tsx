@@ -13,25 +13,21 @@ declare module "slate" {
   }
 }
 interface RichEditorProps {
-  setBlog: React.Dispatch<React.SetStateAction<Descendant[]>>;
   blog: Descendant[];
-  handleClick?: ({ createDraft }: { createDraft: boolean }) => void;
-  isloading: boolean;
+  isCreatingBlog?:boolean
 }
 export const RichEditor = React.memo(
-  ({ setBlog, isloading, handleClick, blog }: RichEditorProps) => {
+  ({ blog , isCreatingBlog}: RichEditorProps) => {
     const [editor] = useState(() =>
       withLinks(withHistory(withReact(createEditor())))
     );
     return (
       <>
         <MainEditor
-          isloading={isloading}
           blog={blog}
-          setBlog={setBlog}
-          handleClick={handleClick}
           editor={editor}
           readonly={false}
+          isCreatingBlog={isCreatingBlog}
         />
       </>
     );

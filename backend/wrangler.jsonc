@@ -6,6 +6,8 @@
   "vars": {
     "DATABASE_URL":"",
     "MY_SECRET":"",
+    "ENVIRONMENT":"",
+    "PRO_ORIGIN":""
   }
   // "compatibility_flags": [
   //   "nodejs_compat"

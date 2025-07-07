@@ -9,7 +9,7 @@ export const NoBlogs = () => {
          No blogs found.
       </p>
       <button
-        onClick={() => navigate('/') }
+        onClick={() => navigate('/blogs') }
         className="bg-slate-800 hover:bg-zinc-900 text-white px-6 py-2 rounded-md shadow-sm transition-all mt-3"
       >
         Go to home page

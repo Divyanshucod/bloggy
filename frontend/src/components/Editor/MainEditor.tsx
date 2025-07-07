@@ -8,20 +8,20 @@ import { ToolBar } from "./ToolBar";
 import { Eye } from "lucide-react";
 import { useState } from "react";
 import { Tooltip } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { setCreateBlog, setUpdateBlog } from "../../features/Blogs/BlogSlice";
 
 interface editorType {
-  setBlog: React.Dispatch<React.SetStateAction<Descendant[]>>;
-  isloading: boolean;
-  handleClick?: ({ createDraft }: { createDraft: boolean }) => void;
   blog: Descendant[];
   editor: EditorType;
   isUpdate?: boolean;
   readonly: boolean;
+  isCreatingBlog?:boolean
 }
 
 export const MainEditor = (props: editorType) => {
   const [togglePreview, setTogglePreview] = useState(props.readonly);
-
+  const dispatch = useDispatch()
   const isReadOnly = props.isUpdate ? props.readonly : togglePreview;
 
   return (
@@ -29,14 +29,12 @@ export const MainEditor = (props: editorType) => {
       <Slate
         editor={props.editor}
         initialValue={props.blog}
-        onChange={(value) => props.setBlog(value)}
+        onChange={(value) => props.isCreatingBlog ? dispatch(setCreateBlog(value)) : dispatch(setUpdateBlog(value))}
       >
         {/* Toolbar only in edit mode */}
         {(!isReadOnly && props.isUpdate) || (!props.isUpdate && !togglePreview) ? (
           <div className="mb-4 sticky top-20 z-10">
             <ToolBar
-              isloading={props.isloading}
-              handleClick={props.handleClick ?? (() => {})}
               isUpdate={props.isUpdate}
             />
           </div>
@@ -59,15 +57,15 @@ export const MainEditor = (props: editorType) => {
 
         {/* Preview toggle (only when not update mode) */}
         {!props.isUpdate && (
-          <Tooltip title='Preview' placement="top-start">
           <button
             onClick={() => setTogglePreview(!togglePreview)}
             className="fixed right-4 bottom-[50%] p-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
             title={togglePreview ? "Edit Mode" : "Preview Mode"}
           >
+            <Tooltip title='Preview' placement="top-start">
             <Eye size={18} className="text-gray-800 dark:text-white" />
+            </Tooltip>
           </button>
-          </Tooltip>
         )}
       </Slate>
     </div>
