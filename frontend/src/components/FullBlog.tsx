@@ -3,7 +3,7 @@ import { MainEditor } from "./Editor/MainEditor";
 import { withLinks } from "./Editor/utils/Link";
 import { withHistory } from "slate-history";
 import { withReact } from "slate-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SquarePen } from "lucide-react";
 import { Button } from "./Button";
 import { CircularProgress, Tooltip } from "@mui/material";
@@ -12,6 +12,7 @@ import { updateBlog } from "../features/Blogs/BlogSlice";
 import { toast, ToastContainer } from "react-toastify";
 import type { RootState } from "../store";
 import { useAppDispatch } from "../hooks";
+import { CustomElementType } from "@dev0000007/medium-web";
 interface FullBlogProps {
   blog: Descendant[];
   authorOrNot: boolean;
@@ -20,7 +21,8 @@ interface FullBlogProps {
 }
 
 export const FullBlog = (props: FullBlogProps) => {
-  const { isUpdating } = useSelector((state:RootState)=>state.BlogSlice)
+  const { isUpdating} = useSelector((state:RootState)=>state.BlogSlice)
+  const [staleBlog,setStaleBlog] = useState<CustomElementType>([])
   const dispatch = useAppDispatch()
   const [editor] = useState(() =>
     withLinks(withHistory(withReact(createEditor())))
@@ -38,7 +40,9 @@ export const FullBlog = (props: FullBlogProps) => {
         toast.error(error)
       }
   }
-  
+  useEffect(()=>{
+    setStaleBlog(props.blog)
+  },[])
   return (
     <div className="w-full h-full pt-15">
       {/* Top Actions */}
@@ -54,7 +58,7 @@ export const FullBlog = (props: FullBlogProps) => {
               </Button>
             )}
             <Button
-              disableButton={isUpdating === 'pending'}
+              disableButton={isUpdating === 'pending' || JSON.stringify(props.blog) === JSON.stringify(staleBlog)}
               onClick={() => handleUpdate(props.published)}
             >
               {isUpdating === 'pending' ? <CircularProgress size={16} /> : "Update"}

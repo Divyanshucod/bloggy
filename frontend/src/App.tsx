@@ -32,7 +32,7 @@ function App() {
           </Protector>
           } />
         <Route path="/blogs" element={
-          <Protector><Blogs /></Protector>} />
+         <Blogs />} />
         <Route path="/blog/create" element={
           <Protector><BlogCreate />
           </Protector>} />
