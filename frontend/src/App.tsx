@@ -31,8 +31,8 @@ function App() {
           <Blog />
           </Protector>
           } />
-        <Route path="/blogs" element={
-         <Blogs />} />
+        <Route path="/blogs" element={<Protector>
+         <Blogs /></Protector>} />
         <Route path="/blog/create" element={
           <Protector><BlogCreate />
           </Protector>} />
