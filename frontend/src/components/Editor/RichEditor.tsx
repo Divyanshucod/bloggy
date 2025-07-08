@@ -5,6 +5,7 @@ import type { CustomElement, CustomText, EditorType } from "./types";
 import { withHistory } from "slate-history";
 import { withLinks } from "./utils/Link";
 import { MainEditor } from "./MainEditor";
+import { withImages } from "./utils/Images";
 declare module "slate" {
   interface CustomTypes {
     Element: CustomElement;
@@ -19,7 +20,7 @@ interface RichEditorProps {
 export const RichEditor = React.memo(
   ({ blog , isCreatingBlog}: RichEditorProps) => {
     const [editor] = useState(() =>
-      withLinks(withHistory(withReact(createEditor())))
+      withImages(withLinks(withHistory(withReact(createEditor()))))
     );
     return (
       <>

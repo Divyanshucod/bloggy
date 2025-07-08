@@ -6,13 +6,14 @@ import {
   RichTextAction,
 } from "./constants";
 import {
+  insertImage,
   isBlockActive,
   isMarkActive,
   toggleBlock,
   toggleMark,
 } from "./utils";
 import type { ElementKey, MarkKey } from "./types";
-import {useState } from "react";
+import {useRef, useState } from "react";
 import { Button } from "../Button";
 import { CircularProgress } from "@mui/material";
 import { ToolBarButton, type TextFormateButtonProps } from "../ToolBarButton";
@@ -31,8 +32,22 @@ export const ToolBar = (props: toolbarType) => {
   const {isPublishing_drafting,Blog} = useSelector((state:RootState)=>state.BlogSlice)
   const editor = useSlate();
   const [mode, setMode] = useState<"none" | "link">("none");
+  const [isImage,setImage] = useState(false)
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
+  const imageRef = useRef<HTMLInputElement>(null);
+  const handleImage = ()=>{
+       if(imageRef){
+        imageRef.current?.click()
+       }
+  }
+  const handleImageUpload = (e:React.ChangeEvent<HTMLInputElement>) => {
+    if(!e.target.files)return;
+    const file = e.target.files[0];
+    const url = window.URL.createObjectURL(file)
+    insertImage(editor,url)
+    
+  }
   const onBlockClick = (id: RichTextAction) => {
     if (id === "link") {
       setMode("link");
@@ -76,15 +91,15 @@ export const ToolBar = (props: toolbarType) => {
         <div className="flex gap-2 items-center">
           <select
             className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white  dark:border-gray-800"
-            defaultValue="paragraph"
+            defaultValue="h1"
             onChange={(e) => toggleBlock(editor, e.target.value as ElementKey)}
           >
-            <option value="paragraph">Paragraph</option>
             {HEADINGS.map((val) => (
               <option key={val} value={val}>
-                {val.charAt(0).toUpperCase() + val.slice(1).replace("-", " ")}
+                {val.toUpperCase()}
               </option>
             ))}
+            <option value="paragraph">Paragraph</option>
           </select>
 
           {/* Divider */}
@@ -101,7 +116,9 @@ export const ToolBar = (props: toolbarType) => {
           <div className="w-px h-6 bg-gray-300"></div>
           <div className="flex gap-1">
                 {TEXT_BLOCK_OPTIONS.map((val)=>(
-                  <ToolBarButton key={val.id} props={val} onClick={()=> onBlockClick(val.id)} isActive={isBlockActive(editor, val.id as ElementKey)} />
+                  <ToolBarButton key={val.id} props={val} onClick={()=>  {
+                    val.label === 'Image' ? handleImage() : onBlockClick(val.id)
+                  }} isActive={isBlockActive(editor, val.id as ElementKey)} />
                 ))}
           </div>
         </div>
@@ -125,6 +142,7 @@ export const ToolBar = (props: toolbarType) => {
             )}
           </Button>}
         </div>
+        <input hidden={true} ref={imageRef} type="file" accept="image/png, image/jpeg, image/jpg" onChange={handleImageUpload}/>
       </div>
     </>
   );
