@@ -55,7 +55,7 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
 
     ctx.status(200);
     return ctx.json({
-      message: "post updated!",
+      message: "blog updated!",
     });
   } catch (error) {
     ctx.status(500);
@@ -99,7 +99,7 @@ BlogRouter.post("/",authMiddleWare, async (ctx) => {
 
     ctx.status(200);
     return ctx.json({
-      message: "post added!",
+      message: "blog added!",
     });
   } catch (error) {
      
