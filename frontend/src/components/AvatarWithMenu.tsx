@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { BACKED_URL_LOCAL } from "../config";
-import handleError from "../helperFunctions";
+import {handleError} from "../helperFunctions";
 import { clearUserDetails } from "../features/User/UserSlice";
 
 export default function AccountMenu({

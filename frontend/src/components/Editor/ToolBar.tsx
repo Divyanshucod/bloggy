@@ -22,12 +22,13 @@ import { createBlog } from "../../features/Blogs/BlogSlice";
 import { toast } from "react-toastify";
 import type { RootState } from "../../store";
 import { useAppDispatch } from "../../hooks";
+import { checkBlog } from "../../helperFunctions";
 interface toolbarType {
   isUpdate?: boolean;
 }
 export const ToolBar = (props: toolbarType) => {
   const dispatch = useAppDispatch()
-  const {isPublishing_drafting} = useSelector((state:RootState)=>state.BlogSlice)
+  const {isPublishing_drafting,Blog} = useSelector((state:RootState)=>state.BlogSlice)
   const editor = useSlate();
   const [mode, setMode] = useState<"none" | "link">("none");
   const [url, setUrl] = useState("");
@@ -42,6 +43,10 @@ export const ToolBar = (props: toolbarType) => {
   };
   const handleDraft = async()=>{
     try {
+      if(checkBlog(Blog).length === 0){
+        toast.error("Blog can't be empty!");
+        return;
+      }
       const res = await dispatch(createBlog({ createDraft: false })).unwrap()
       toast.success(res)
     } catch (error:any) {
@@ -50,6 +55,10 @@ export const ToolBar = (props: toolbarType) => {
   }
   const handlePublish = async()=>{
     try {
+      if(checkBlog(Blog).length === 0){
+        toast.error("Blog can't be empty!");
+        return;
+      }
       const res = await dispatch(createBlog({ createDraft: true })).unwrap()
       toast.success(res)
     } catch (error:any) {

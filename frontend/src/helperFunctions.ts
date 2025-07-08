@@ -1,5 +1,7 @@
 
+import type { CustomElementType } from "@dev0000007/medium-web";
 import { toast } from "react-toastify";
+import { Node } from "slate";
 
 export function formattedDate(date: string) {
   const dateFormate = new Date(date);
@@ -21,10 +23,14 @@ export const initialValue = [
   },
 ];
 
-export default function handleError(error: any) {
+export const handleError = (error: any) => {
   if (error.response && error.response.data && error.response.data.message) {
     toast.error(error.response.data.message);
   } else {
     toast.error("Server is unreachable or something went wrong.");
   }
+}
+
+export const checkBlog = (nodes:CustomElementType)=>{
+  return nodes.map(n => Node.string(n)).join('\n')
 }
