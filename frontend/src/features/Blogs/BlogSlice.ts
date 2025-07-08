@@ -142,7 +142,7 @@ export const fetchAllBlogs = createAsyncThunk("blog/fetchAllBlogs", async (_arg,
       return response.data.posts;
      } catch (error) {
       return thunkAPI.rejectWithValue(
-        err?.response?.data?.message || "Something went wrong"
+        error?.response?.data?.message || "Something went wrong"
       );
      }
   });
@@ -195,6 +195,8 @@ export const BlogSlice = createSlice({
       (state,) => {
         state.isPublishing_drafting = "succeeded";
         state.BlogToCreate = initialValue
+        state.hasAllBlogFetched = false;
+        state.hasUserBlogFetched = false;
       }
     );
     builder.addCase(createBlog.pending, (state) => {

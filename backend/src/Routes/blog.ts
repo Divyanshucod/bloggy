@@ -128,6 +128,10 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
           }
         }
       },
+      orderBy: [{
+        publishedDate:'desc'
+      }
+      ],
       skip: 5 * page,
       take: 5,
       
@@ -168,6 +172,11 @@ BlogRouter.get("/user/:pageno", authMiddleWare, async (ctx) => {
       where:{
         authorId: ctx.get('userId')
       },
+      orderBy: [
+        {
+          publishedDate:'desc'
+        }
+      ],
       skip: 5 * page,
       take: 5,
       
