@@ -1,5 +1,5 @@
 import { Editor, Element, Path, Transforms, Range, Node } from "slate";
-import type { AlignKey, EditorType, ElementKey, MarkKey } from "../types";
+import type { AlignKey, CustomElement, EditorType, ElementKey, MarkKey } from "../types";
 
 export const isMarkActive = (editor: EditorType, format: MarkKey) => {
   return !!Editor.marks(editor)?.[format];
@@ -124,80 +124,16 @@ export const wrapLink = (editor: EditorType, url: string) => {
   return true;
 };
 
-export const insertImage = (editor: EditorType, url: string) => {
-  const imageBlock: Element = {
-    type: "image",
-    url,
-    align: "left",
-    children: [{ text: "" }],
-  };
-
-  const { selection } = editor;
-  if (!selection) return;
-
-  const [match] = Editor.nodes(editor, {
-    match: (n) => Element.isElement(n) && n.type === "paragraph",
-  });
-
-  if (match) {
-    const [node, path] = match;
-    const isEmpty = Node.string(node).length === 0;
-
-    if (isEmpty) {
-      Transforms.setNodes(editor, imageBlock, { at: path });
-      const paragraphBlock: Element = {
-        type: "paragraph",
-        children: [{ text: "" }],
-      };
-      Transforms.insertNodes(editor, paragraphBlock, { at: Path.next(path) });
-      Transforms.select(editor, Editor.start(editor, Path.next(path)));
-      return;
+export const insertImage = (editor:EditorType,url:string) => {
+    const ImageElement:CustomElement = {
+      type:'Image',
+      url,
+      children:[{text:''}],
+    } 
+    Transforms.insertNodes(editor,ImageElement);
+    const paragraphElement:CustomElement= {
+      type:'paragraph',
+      children:[{text:''}]
     }
-  }
-  const [_, currentPath] =
-    Editor.above(editor, {
-      match: (n) => Editor.isBlock(editor, n),
-    }) || [];
-
-  const insertPath = currentPath
-    ? Path.next(currentPath)
-    : [editor.children.length];
-  Transforms.insertNodes(editor, imageBlock, { at: insertPath });
-  const paragraphBlock: Element = {
-    type: "paragraph",
-    children: [{ text: "" }],
-  };
-  const nextPath = Path.next(insertPath);
-  Transforms.insertNodes(editor, paragraphBlock, { at: nextPath });
-  Transforms.select(editor, Editor.start(editor, nextPath));
-};
-export const isInImageBlock = (editor: EditorType) => {
-  const [match] = Editor.nodes(editor, {
-    match: (n) => Element.isElement(n) && n.type === "image",
-  });
-  return !!match;
-};
-
-export const getCurrentImageAlignment = (
-  editor: EditorType
-): AlignKey | undefined => {
-  const [match] = Editor.nodes(editor, {
-    match: (n) => Element.isElement(n) && n.type === "image",
-  });
-
-  if (match) {
-    const [node] = match;
-    return (node as any).align;
-  }
-  return undefined;
-};
-export const setImageAlignment = (editor: EditorType, align: AlignKey) => {
-  const [match] = Editor.nodes(editor, {
-    match: (n) => Element.isElement(n) && n.type === "image",
-  });
-
-  if (match) {
-    const [, path] = match;
-    Transforms.setNodes(editor, { align }, { at: path });
-  }
-};
+    Transforms.insertNodes(editor,paragraphElement);
+}

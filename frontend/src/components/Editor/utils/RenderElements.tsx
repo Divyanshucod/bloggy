@@ -1,4 +1,6 @@
 import type { RenderElementProps } from "slate-react";
+import { ImageResizable } from "../../ImageResizable";
+
 
 export const RenderElement = ({
   attributes,
@@ -124,23 +126,9 @@ export const RenderElement = ({
         </h6>
       );
 
-    case "image":
+    case "Image":
       return (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: element.align,
-            width: "100%",
-          }}
-        >
-          <img
-            src={element.url}
-            alt="uploaded"
-            className="h-[300px] w-[300px] rounded"
-            {...attributes}
-            style={{ textAlign: element.align }}
-          />
-        </div>
+        <ImageResizable children={children} element={element} attributes={attributes} />
       );
 
     default:

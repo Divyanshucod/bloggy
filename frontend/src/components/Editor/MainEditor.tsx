@@ -25,7 +25,7 @@ export const MainEditor = (props: editorType) => {
   const isReadOnly = props.isUpdate ? props.readonly : togglePreview;
 
   return (
-    <div className="relative w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pb-6 pt-3 shadow-sm transition-all">
+    <div className="relative w-full max-h-screen rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pb-6 pt-3 shadow-sm transition-all">
       <Slate
         editor={props.editor}
         initialValue={props.blog}
@@ -51,7 +51,7 @@ export const MainEditor = (props: editorType) => {
             onKeyDown={(event) => onKeyDown({ event, editor: props.editor })}
             renderElement={RenderElement}
             className="min-h-[450px] focus:outline-none"
-            style={{maxHeight:'650px', overflowY:'auto', minHeight:'200px'}}
+            style={{maxHeight:'480px', overflowY:'auto', minHeight:'200px'}}
           />
         </div>
 
