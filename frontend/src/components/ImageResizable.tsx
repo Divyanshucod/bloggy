@@ -52,7 +52,7 @@ export const ImageResizable = ({
     >
       <button
         onClick={() => Transforms.removeNodes(editor, { at: path })}
-        className="absolute top-1 right-1 z-10 text-white bg-red-500 hover:bg-red-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold shadow-md group-hover:opacity-100 opacity-0 transition-opacity"
+        className="absolute top-1 right-1 z-10 text-white opacity-50 bg-red-500 hover:bg-red-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold shadow-md group-hover:opacity-100 transition-opacity"
       >
         ×
       </button>
