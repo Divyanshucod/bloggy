@@ -43,7 +43,7 @@ export const LinkComp = ({ props }: { props: LinkProps }) => {
   };
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] max-w-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-6 transition-all">
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 z-50 w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] max-w-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-6 transition-all">
       <div className="flex flex-col gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -59,16 +59,12 @@ export const LinkComp = ({ props }: { props: LinkProps }) => {
           />
         </div>
 
-        {props.error && (
-          <div className="text-sm text-red-600 bg-red-100 dark:bg-red-900 dark:text-red-300 p-2 rounded border border-red-300 dark:border-red-600">
-            {props.error}
-          </div>
-        )}
+        {props.error && <p className="text-red-500 text-sm">{props.error}</p>}
 
         <div className="flex gap-3 justify-end">
           <button
             onClick={handleLinkSubmit}
-            className="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="px-4 py-2 text-sm font-medium rounded-md bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           >
             Add Link
           </button>

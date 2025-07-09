@@ -7,12 +7,13 @@ import { useEffect, useState } from "react";
 import { SquarePen } from "lucide-react";
 import { Button } from "./Button";
 import { CircularProgress, Tooltip } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateBlog } from "../features/Blogs/BlogSlice";
 import { toast, ToastContainer } from "react-toastify";
 import type { RootState } from "../store";
 import { useAppDispatch } from "../hooks";
-import { CustomElementType } from "@dev0000007/medium-web";
+import { type CustomElementType } from "@dev0000007/medium-web";
+import { setPreview, togglePreviewButton } from "../features/Preview/PreviewSlice";
 interface FullBlogProps {
   blog: Descendant[];
   authorOrNot: boolean;
@@ -24,10 +25,11 @@ export const FullBlog = (props: FullBlogProps) => {
   const { isUpdating} = useSelector((state:RootState)=>state.BlogSlice)
   const [staleBlog,setStaleBlog] = useState<CustomElementType>([])
   const dispatch = useAppDispatch()
+  // const preview = useSelector((state:RootState) => state.PreviewSlice)
+  const dispatch2 = useDispatch()
   const [editor] = useState(() =>
     withLinks(withHistory(withReact(createEditor())))
   );
-  const [toggleEdit, setToggleEdit] = useState(true);
   const handleUpdate = async (val:boolean)=>{
       try {
         const res = await dispatch(updateBlog({
@@ -41,7 +43,9 @@ export const FullBlog = (props: FullBlogProps) => {
       }
   }
   useEffect(()=>{
-    setStaleBlog(props.blog)
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    setStaleBlog(props.blog),
+    dispatch2(setPreview(true))
   },[])
   return (
     <div className="w-full h-full pt-15">
@@ -66,7 +70,7 @@ export const FullBlog = (props: FullBlogProps) => {
           </div>
           
           <button
-            onClick={() => setToggleEdit((prev) => !prev)}
+            onClick={() => dispatch2(togglePreviewButton())}
             className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition"
             title="Toggle edit mode"
           >
@@ -80,9 +84,7 @@ export const FullBlog = (props: FullBlogProps) => {
       {/* Editor */}
       <MainEditor
         blog={props.blog}
-        isUpdate={true}
         editor={editor}
-        readonly={toggleEdit}
       />
       <ToastContainer/>
     </div>
