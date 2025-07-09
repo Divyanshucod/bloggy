@@ -6,24 +6,22 @@ import { onKeyDown } from "./utils/keyBinding";
 import { RenderElement } from "./utils/RenderElements";
 import { ToolBar } from "./ToolBar";
 import { Eye } from "lucide-react";
-import { useState } from "react";
 import { Tooltip } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setCreateBlog, setUpdateBlog } from "../../features/Blogs/BlogSlice";
+import { togglePreviewButton } from "../../features/Preview/PreviewSlice";
+import type { RootState } from "../../store";
 
 interface editorType {
   blog: Descendant[];
   editor: EditorType;
-  isUpdate?: boolean;
-  readonly: boolean;
   isCreatingBlog?:boolean
 }
 
 export const MainEditor = (props: editorType) => {
-  const [togglePreview, setTogglePreview] = useState(props.readonly);
   const dispatch = useDispatch()
-  const isReadOnly = props.isUpdate ? props.readonly : togglePreview;
-
+  const preview = useSelector((state:RootState) => state.PreviewSlice)
+  
   return (
     <div className="relative w-full max-h-screen rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pb-6 pt-3 shadow-sm transition-all">
       <Slate
@@ -32,10 +30,9 @@ export const MainEditor = (props: editorType) => {
         onChange={(value) => props.isCreatingBlog ? dispatch(setCreateBlog(value)) : dispatch(setUpdateBlog(value))}
       >
         {/* Toolbar only in edit mode */}
-        {(!isReadOnly && props.isUpdate) || (!props.isUpdate && !togglePreview) ? (
+        {(!preview.value) ? (
           <div className="mb-4 sticky top-20 z-10">
             <ToolBar
-              isUpdate={props.isUpdate}
             />
           </div>
         ) : null}
@@ -43,7 +40,7 @@ export const MainEditor = (props: editorType) => {
         {/* Main Editable Area */}
         <div className="overflow-y-auto rounded-md bg-white  dark:bg-gray-700 px-4 py-3 focus:outline-none text-gray-800 dark:text-gray-100 text-base leading-relaxed whitespace-pre-wrap">
           <Editable
-            readOnly={isReadOnly}
+            readOnly={preview.value}
             name="Post"
             placeholder="Start writing your story..."
             autoFocus
@@ -56,13 +53,13 @@ export const MainEditor = (props: editorType) => {
         </div>
 
         {/* Preview toggle (only when not update mode) */}
-        {!props.isUpdate && (
+        {!preview.isForUpdateBlog && (
           <button
-            onClick={() => setTogglePreview(!togglePreview)}
+            onClick={() => {dispatch(togglePreviewButton())
+            }}
             className="fixed right-4 bottom-[50%] p-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-            title={togglePreview ? "Edit Mode" : "Preview Mode"}
           >
-            <Tooltip title='Preview' placement="top-start">
+            <Tooltip title={preview.value ? "Preview mode" : "Edit Mode"} placement="top-start">
             <Eye size={18} className="text-gray-800 dark:text-white" />
             </Tooltip>
           </button>

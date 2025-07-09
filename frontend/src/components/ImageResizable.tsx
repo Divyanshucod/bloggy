@@ -1,10 +1,12 @@
 
 import React, { useRef, useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Transforms} from "slate";
 import { ReactEditor, useSlate, type RenderElementProps } from "slate-react";
+import type { RootState } from "../store";
 
 
-export const ImageResizable = ({
+export const ImageResizable = React.memo(({
   attributes,
   children,
   element
@@ -12,6 +14,7 @@ export const ImageResizable = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(200);
   const editor = useSlate();
+  const preview = useSelector((state:RootState) =>state.PreviewSlice )
   const [isResizing, setIsResizing] = useState(false);
   const path = ReactEditor.findPath(editor, element)
   const startResizing = (e: React.MouseEvent) => {
@@ -42,7 +45,8 @@ export const ImageResizable = ({
       window.removeEventListener("mouseup", stopResizing);
     };
   }, [isResizing]);
-
+  console.log(preview);
+  
   return (
     <div
       ref={containerRef}
@@ -50,14 +54,12 @@ export const ImageResizable = ({
       style={{ width }}
       contentEditable={false}
     >
-      <button
+     {!preview.value ? <button
         onClick={() => Transforms.removeNodes(editor, { at: path })}
         className="absolute top-1 right-1 z-10 text-white opacity-50 bg-red-500 hover:bg-red-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold shadow-md group-hover:opacity-100 transition-opacity"
       >
-        ×
-      </button>
-
-      {/* Image */}
+        
+      </button> : null}
       <img
         src={element.url}
         alt="Resizable"
@@ -72,4 +74,4 @@ export const ImageResizable = ({
       />
     </div>
   );
-};
+});

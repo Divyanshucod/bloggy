@@ -6,14 +6,13 @@ import {
   RichTextAction,
 } from "./constants";
 import {
-  insertImage,
   isBlockActive,
   isMarkActive,
   toggleBlock,
   toggleMark,
 } from "./utils";
 import type { ElementKey, MarkKey } from "./types";
-import {useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "../Button";
 import { CircularProgress } from "@mui/material";
 import { ToolBarButton, type TextFormateButtonProps } from "../ToolBarButton";
@@ -24,30 +23,16 @@ import { toast } from "react-toastify";
 import type { RootState } from "../../store";
 import { useAppDispatch } from "../../hooks";
 import { checkBlog } from "../../helperFunctions";
-interface toolbarType {
-  isUpdate?: boolean;
-}
-export const ToolBar = (props: toolbarType) => {
+import { ImageModal } from "../ImageModal";
+export const ToolBar = () => {
   const dispatch = useAppDispatch()
   const {isPublishing_drafting,Blog} = useSelector((state:RootState)=>state.BlogSlice)
   const editor = useSlate();
   const [mode, setMode] = useState<"none" | "link">("none");
-  const [isImage,setImage] = useState(false)
-  const [url, setUrl] = useState("");
+  const [isImage,setIsImage] = useState(false)
+  const preview = useSelector((state:RootState) => state.PreviewSlice)
+  const [linkUrl, setLinkUrl] = useState("");
   const [error, setError] = useState("");
-  const imageRef = useRef<HTMLInputElement>(null);
-  const handleImage = ()=>{
-       if(imageRef){
-        imageRef.current?.click()
-       }
-  }
-  const handleImageUpload = (e:React.ChangeEvent<HTMLInputElement>) => {
-    if(!e.target.files)return;
-    const file = e.target.files[0];
-    const url = window.URL.createObjectURL(file)
-    insertImage(editor,url)
-    
-  }
   const onBlockClick = (id: RichTextAction) => {
     if (id === "link") {
       setMode("link");
@@ -84,8 +69,11 @@ export const ToolBar = (props: toolbarType) => {
     <>
       {mode === "link" && (
          <LinkComp props={
-          {setError,url,setMode,setUrl,editor,error}
+          {setError,url:linkUrl,setMode,setUrl:setLinkUrl,editor,error}
          } />
+      )}
+      {isImage && (
+         <ImageModal setIsImage={setIsImage} editor={editor}/>
       )}
       <div className="flex gap-2 items-center p-3 bg-white border border-gray-200 rounded-lg shadow-sm mb-4 justify-between overflow-x-auto dark:bg-slate-900 dark:text-white dark:border-gray-800">
         <div className="flex gap-2 items-center">
@@ -117,13 +105,14 @@ export const ToolBar = (props: toolbarType) => {
           <div className="flex gap-1">
                 {TEXT_BLOCK_OPTIONS.map((val)=>(
                   <ToolBarButton key={val.id} props={val} onClick={()=>  {
-                    val.label === 'Image' ? handleImage() : onBlockClick(val.id)
+                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                    val.label === 'Image' ? setIsImage(true) : onBlockClick(val.id)
                   }} isActive={isBlockActive(editor, val.id as ElementKey)} />
                 ))}
           </div>
         </div>
         <div className="flex gap-2">
-          {!props.isUpdate ? (
+          {!preview.isForUpdateBlog ? (
             <Button
               disableButton={isPublishing_drafting === 'pending'}
               onClick={handleDraft}
@@ -131,7 +120,7 @@ export const ToolBar = (props: toolbarType) => {
               {isPublishing_drafting === 'pending' ? <CircularProgress size={10} /> : "Draft"}
             </Button>
           ) : null}
-           {props.isUpdate ? null : <Button
+           {preview.isForUpdateBlog ? null : <Button
             disableButton={isPublishing_drafting === 'pending'}
             onClick={handlePublish}
           >
@@ -142,7 +131,6 @@ export const ToolBar = (props: toolbarType) => {
             )}
           </Button>}
         </div>
-        <input hidden={true} ref={imageRef} type="file" accept="image/png, image/jpeg, image/jpg" onChange={handleImageUpload}/>
       </div>
     </>
   );
