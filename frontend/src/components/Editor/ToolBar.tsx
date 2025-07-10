@@ -120,7 +120,7 @@ export const ToolBar = () => {
               disableButton={isPublishing_drafting === 'pending'}
               onClick={handleDraft}
             >
-              {isPublishing_drafting === 'pending' ? <CircularProgress size={10} /> : "Draft"}
+              {isPublishing_drafting === 'pending' ? <CircularProgress size={10} color="inherit" /> : "Draft"}
             </Button>
           ) : null}
            {preview.isForUpdateBlog ? null : <Button
@@ -128,7 +128,7 @@ export const ToolBar = () => {
             onClick={handlePublish}
           >
             {isPublishing_drafting === 'pending' ? (
-              <CircularProgress size={10} />
+              <CircularProgress color="inherit" size={10} />
             ) : (
               "Publish"
             )}

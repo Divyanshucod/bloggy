@@ -58,14 +58,14 @@ export const FullBlog = (props: FullBlogProps) => {
                 disableButton={isUpdating === 'pending'}
                 onClick={() => handleUpdate(true)}
               >
-                {isUpdating === 'pending' ? <CircularProgress size={16} /> : "Publish"}
+                {isUpdating === 'pending' ? <CircularProgress size={16} color="inherit" /> : "Publish"}
               </Button>
             )}
             <Button
               disableButton={isUpdating === 'pending' || JSON.stringify(props.blog) === JSON.stringify(staleBlog)}
               onClick={() => handleUpdate(props.published)}
             >
-              {isUpdating === 'pending' ? <CircularProgress size={16} /> : "Update"}
+              {isUpdating === 'pending' ? <CircularProgress size={16} color="inherit" /> : "Update"}
             </Button>
           </div>
           
