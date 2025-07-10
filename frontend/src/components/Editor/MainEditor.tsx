@@ -23,7 +23,7 @@ export const MainEditor = (props: editorType) => {
   const preview = useSelector((state:RootState) => state.PreviewSlice)
   
   return (
-    <div className="relative w-full max-h-screen rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pb-6 pt-3 shadow-sm transition-all">
+    <div className="relative w-full h-screen rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pb-6 pt-3 shadow-sm transition-all">
       <Slate
         editor={props.editor}
         initialValue={props.blog}
@@ -38,17 +38,17 @@ export const MainEditor = (props: editorType) => {
         ) : null}
 
         {/* Main Editable Area */}
-        <div className="overflow-y-auto rounded-md bg-white  dark:bg-gray-700 px-4 py-3 focus:outline-none text-gray-800 dark:text-gray-100 text-base leading-relaxed whitespace-pre-wrap">
+        <div className="overflow-y-auto rounded-md bg-white  dark:bg-gray-700 px-4 py-3 focus:outline-none text-gray-800 dark:text-gray-100 text-base leading-relaxed whitespace-pre-wrap h-[450px] md:h-[90%]">
           <Editable
             readOnly={preview.value}
             name="Post"
-            placeholder="Start writing your story..."
+            placeholder="Use H1,H2 for Title:"
             autoFocus
             renderLeaf={RenderLeaf}
             onKeyDown={(event) => onKeyDown({ event, editor: props.editor })}
             renderElement={RenderElement}
-            className="min-h-[450px] focus:outline-none"
-            style={{maxHeight:'480px', overflowY:'auto', minHeight:'200px'}}
+            className="min-h-[450px] max-h-full focus:outline-none"
+            style={{maxHeight:'650px', overflowY:'auto', minHeight:'200px'}}
           />
         </div>
 

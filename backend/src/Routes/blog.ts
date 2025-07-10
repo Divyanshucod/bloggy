@@ -128,6 +128,9 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
           }
         }
       },
+      where:{
+        published:true
+      },
       orderBy: [{
         publishedDate:'desc'
       }

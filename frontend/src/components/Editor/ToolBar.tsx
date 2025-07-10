@@ -26,7 +26,7 @@ import { checkBlog } from "../../helperFunctions";
 import { ImageModal } from "../ImageModal";
 export const ToolBar = () => {
   const dispatch = useAppDispatch()
-  const {isPublishing_drafting,Blog} = useSelector((state:RootState)=>state.BlogSlice)
+  const {isPublishing_drafting,BlogToCreate} = useSelector((state:RootState)=>state.BlogSlice)
   const editor = useSlate();
   const [mode, setMode] = useState<"none" | "link">("none");
   const [isImage,setIsImage] = useState(false)
@@ -43,24 +43,27 @@ export const ToolBar = () => {
   };
   const handleDraft = async()=>{
     try {
-      if(checkBlog(Blog).length === 0){
+      if(checkBlog(BlogToCreate).length === 0){
         toast.error("Blog can't be empty!");
         return;
       }
       const res = await dispatch(createBlog({ createDraft: false })).unwrap()
       toast.success(res)
+      window.location.reload()
     } catch (error:any) {
       toast.error(error)
     }
   }
   const handlePublish = async()=>{
     try {
-      if(checkBlog(Blog).length === 0){
+      const val = checkBlog(BlogToCreate)
+      if(val.length === 0){
         toast.error("Blog can't be empty!");
         return;
       }
       const res = await dispatch(createBlog({ createDraft: true })).unwrap()
       toast.success(res)
+      window.location.reload()
     } catch (error:any) {
       toast.error(error)
     }
@@ -79,15 +82,15 @@ export const ToolBar = () => {
         <div className="flex gap-2 items-center">
           <select
             className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white  dark:border-gray-800"
-            defaultValue="h1"
+            defaultValue="paragraph"
             onChange={(e) => toggleBlock(editor, e.target.value as ElementKey)}
           >
+             <option value="paragraph">Paragraph</option>
             {HEADINGS.map((val) => (
               <option key={val} value={val}>
                 {val.toUpperCase()}
               </option>
             ))}
-            <option value="paragraph">Paragraph</option>
           </select>
 
           {/* Divider */}
