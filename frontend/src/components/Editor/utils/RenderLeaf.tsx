@@ -8,12 +8,8 @@ export const RenderLeaf = ({ attributes, children, leaf }: RenderLeafProps) => {
 
   if (leaf.code)
     return (
-      <pre
-        {...attributes}
-        className="bg-gray-100 dark:bg-gray-800 text-sm px-2 py-1 rounded overflow-x-auto inline-block text-red-500 font-mono"
-      >
-        <code>{children}</code>
-      </pre>
+        <code  {...attributes}
+        className="bg-gray-100 dark:bg-gray-800 text-sm px-2 py-1 rounded overflow-x-auto inline-block text-red-500 font-mono">{children}</code>
     );
 
   return (

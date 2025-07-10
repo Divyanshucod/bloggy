@@ -4,11 +4,12 @@ import { useSelector } from "react-redux";
 import { Transforms} from "slate";
 import { ReactEditor, useSlate, type RenderElementProps } from "slate-react";
 import type { RootState } from "../store";
+import CloseIcon from '@mui/icons-material/Close';
+import { deleteImage } from "../helperFunctions";
 
 
 export const ImageResizable = React.memo(({
   attributes,
-  children,
   element
 }: RenderElementProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -55,10 +56,13 @@ export const ImageResizable = React.memo(({
       contentEditable={false}
     >
      {!preview.value ? <button
-        onClick={() => Transforms.removeNodes(editor, { at: path })}
+        onClick={() => {
+          deleteImage([element.url || ""])
+          Transforms.removeNodes(editor, { at: path })
+        }}
         className="absolute top-1 right-1 z-10 text-white opacity-50 bg-red-500 hover:bg-red-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold shadow-md group-hover:opacity-100 transition-opacity"
       >
-        
+      <CloseIcon/>
       </button> : null}
       <img
         src={element.url}
