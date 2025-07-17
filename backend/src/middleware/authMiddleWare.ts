@@ -21,6 +21,7 @@ export const authMiddleWare = async (ctx: any, next: any) => {
       });
     }
     ctx.set("userId", val.userId);
+    
     await next();
   } catch (error) {
     ctx.status(403);

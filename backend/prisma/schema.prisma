@@ -20,6 +20,10 @@ model User{
   name String 
   password String
   posts Post[]
+  comments Comment[]
+  followedBy User[]  @relation("UserFollows")
+  following  User[]  @relation("UserFollows")
+  reactions Reaction[]
 }
 model Post{
   id String @id @default(uuid())
@@ -30,4 +34,50 @@ model Post{
   authorId String
   publishedDate DateTime @default(now())
   blogJson Json
+  comments Comment[]
+  reactions Reaction[]
+  tags Tag[]
+}
+
+model Comment{
+  id String @id @default(uuid())
+  comment String
+  commentor User @relation(fields: [commentorId], references: [id])
+  commentorId String 
+  post Post @relation(fields: [postId], references: [id])
+  postId String 
+  commentedAt DateTime @default(now())
+}
+
+model Reaction{
+  id Int @id @default(autoincrement())
+  likeDislike LikeDislike @default(NONE)
+  reaction React @default(NONE)
+  post Post @relation(fields: [postId],references: [id])
+  postId String 
+  user User @relation(fields: [userId],references: [id])
+  userId String 
+  @@unique([postId,userId])
+}
+
+model Tag{
+  id Int @id @default(autoincrement())
+  title String
+  post Post @relation(fields: [postId],references: [id])
+  postId String
+}
+
+
+enum LikeDislike {
+   NONE
+   LIKE
+   DISLIKE
+}
+
+enum React{
+  NONE
+  SMILE
+  INSIGHTFULL
+  HEART
+  IDEA
 }
