@@ -12,6 +12,8 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { Home } from "./pages/Home";
 import { Protector } from "./components/Protector";
 import { ToastContainer } from "react-toastify";
+import { CommentCard } from "./components/CommentCard";
+import { CommentSection } from "./components/CommentSection";
 
 
 function App() {
@@ -34,9 +36,10 @@ function App() {
         <Route path="/blogs" element={<Protector>
          <Blogs /></Protector>} />
         <Route path="/blog/create" element={
-          <Protector><BlogCreate />
-          </Protector>} />
+          <BlogCreate />
+          } />
         <Route path="/" element={<Protector><Home/></Protector>}/>
+        <Route path="/comment" element={<CommentSection/>}/>
       </Routes>
       <ToastContainer
         position="top-right"

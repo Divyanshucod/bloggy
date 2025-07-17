@@ -56,6 +56,8 @@ export const ToolBar = () => {
   }
   const handlePublish = async()=>{
     try {
+      console.log(BlogToCreate);
+      
       const val = checkBlog(BlogToCreate)
       if(val.length === 0){
         toast.error("Blog can't be empty!");
