@@ -1,4 +1,4 @@
-import type { Descendant } from "slate";
+
 import type { EditorType } from "./types";
 import { Editable, Slate } from "slate-react";
 import { RenderLeaf } from "./utils/RenderLeaf";
@@ -8,12 +8,14 @@ import { ToolBar } from "./ToolBar";
 import { Eye } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setCreateBlog, setUpdateBlog } from "../../features/Blogs/BlogSlice";
+import { setCreateBlog, setCreateBlogTitle, setUpdateBlog, type BlogType } from "../../features/Blogs/BlogSlice";
 import { togglePreviewButton } from "../../features/Preview/PreviewSlice";
 import type { RootState } from "../../store";
+import { Tags } from "../Tags";
+import { useState } from "react";
 
 interface editorType {
-  blog: Descendant[];
+  blog: BlogType;
   editor: EditorType;
   isCreatingBlog?:boolean
 }
@@ -21,12 +23,12 @@ interface editorType {
 export const MainEditor = (props: editorType) => {
   const dispatch = useDispatch()
   const preview = useSelector((state:RootState) => state.PreviewSlice)
-  
+  const [tagOnFocused,setTagOnFocused] = useState(false)
   return (
     <div className="relative w-full h-screen rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pb-6 pt-3 shadow-sm transition-all">
       <Slate
         editor={props.editor}
-        initialValue={props.blog}
+        initialValue={props.blog.content}
         onChange={(value) => props.isCreatingBlog ? dispatch(setCreateBlog(value)) : dispatch(setUpdateBlog(value))}
       >
         {/* Toolbar only in edit mode */}
@@ -36,19 +38,22 @@ export const MainEditor = (props: editorType) => {
             />
           </div>
         ) : null}
-
-        {/* Main Editable Area */}
         <div className="overflow-y-auto rounded-md bg-white  dark:bg-gray-700 px-4 py-3 focus:outline-none text-gray-800 dark:text-gray-100 text-base leading-relaxed whitespace-pre-wrap h-[450px] md:h-[90%]">
+        {/* header */}
+        <textarea onFocus={() => setTagOnFocused(false)} placeholder="title" autoFocus className="field-sizing-content w-full text-3xl focus:outline-none font-bold p-0 border-r-white resize-none overflow-hidden" rows={1} readOnly={preview.value} value={props.blog.title} onChange={(e) => dispatch(setCreateBlogTitle(e.target.value))}/>
+        {/* tags */}
+        <Tags isCreatingBlog={props.isCreatingBlog} tags={props.blog.tags} onFocused={tagOnFocused} setOnFocused={setTagOnFocused}/>
+                {/* Main Editable Area */}
           <Editable
             readOnly={preview.value}
             name="Post"
-            placeholder="Use H1,H2 for Title:"
-            autoFocus
+            placeholder="Write your story..."
             renderLeaf={RenderLeaf}
             onKeyDown={(event) => onKeyDown({ event, editor: props.editor })}
             renderElement={RenderElement}
             className="min-h-[450px] max-h-full focus:outline-none"
             style={{maxHeight:'650px', overflowY:'auto', minHeight:'200px'}}
+            onFocus={()=> setTagOnFocused(false)}
           />
         </div>
 

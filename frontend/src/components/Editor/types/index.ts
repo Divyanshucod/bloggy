@@ -38,4 +38,5 @@ export type ElementKey =
   | "bulleted-list"
   | "list-item"
   | "link"
-  | "image";
+  | "image"
+  | "video"

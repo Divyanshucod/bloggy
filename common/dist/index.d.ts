@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 export declare const signUpSchema: z.ZodObject<{
     email: z.ZodString;
     password: z.ZodString;
@@ -55,25 +55,65 @@ export declare const TexFormattingtSchema: z.ZodObject<{
 }>;
 export declare const CustomElementSchema: z.ZodType<any>;
 export declare const createBlogSchema: z.ZodObject<{
-    content: z.ZodArray<z.ZodType<any, z.ZodTypeDef, any>, "many">;
+    content: z.ZodObject<{
+        tags: z.ZodArray<z.ZodString, "many">;
+        content: z.ZodArray<z.ZodType<any, z.ZodTypeDef, any>, "many">;
+        title: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        content: any[];
+        tags: string[];
+        title: string;
+    }, {
+        content: any[];
+        tags: string[];
+        title: string;
+    }>;
     published: z.ZodBoolean;
 }, "strip", z.ZodTypeAny, {
-    content: any[];
+    content: {
+        content: any[];
+        tags: string[];
+        title: string;
+    };
     published: boolean;
 }, {
-    content: any[];
+    content: {
+        content: any[];
+        tags: string[];
+        title: string;
+    };
     published: boolean;
 }>;
 export declare const updateBlogSchema: z.ZodObject<{
     postId: z.ZodString;
-    content: z.ZodArray<z.ZodType<any, z.ZodTypeDef, any>, "many">;
+    content: z.ZodObject<{
+        tags: z.ZodArray<z.ZodString, "many">;
+        content: z.ZodArray<z.ZodType<any, z.ZodTypeDef, any>, "many">;
+        title: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        content: any[];
+        tags: string[];
+        title: string;
+    }, {
+        content: any[];
+        tags: string[];
+        title: string;
+    }>;
     published: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    content: any[];
+    content: {
+        content: any[];
+        tags: string[];
+        title: string;
+    };
     postId: string;
     published?: boolean | undefined;
 }, {
-    content: any[];
+    content: {
+        content: any[];
+        tags: string[];
+        title: string;
+    };
     postId: string;
     published?: boolean | undefined;
 }>;

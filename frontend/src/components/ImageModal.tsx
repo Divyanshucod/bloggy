@@ -1,17 +1,14 @@
 import { useRef, useState } from "react";
 import { Button } from "./Button";
-import { LabelledInput } from "./LabelledInput";
 import type { EditorType } from "./Editor/types";
-import { insertImage } from "./Editor/utils";
+import { insertImageOrVideo } from "./Editor/utils";
 import { getS3Url } from "../helperFunctions";
+import { LinkInput } from "./LinkInput";
 
-export const ImageModal = ({ setIsImage, editor }: { setIsImage: (val: boolean) => void; editor: EditorType }) => {
+export const ImageModel = ({ setIsImage, editor }: { setIsImage: (val: boolean) => void; editor: EditorType }) => {
   const imageRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
-
-  // Image URL regex
-  const imageUrlRegex = /^https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg|bmp)(\?.*)?$/i;
 
   const handleImageInUrl = () => {
     if (!url.trim()) {
@@ -19,12 +16,13 @@ export const ImageModal = ({ setIsImage, editor }: { setIsImage: (val: boolean) 
       return;
     }
 
-    if (!imageUrlRegex.test(url)) {
-      setError("Invalid image URL. Make sure it ends with a valid image extension.");
+    const success = insertImageOrVideo(editor, url,'image');
+    console.log(success);
+    
+    if(!success){
+      setError('enter a valid image url jpg,png,jpeg')
       return;
     }
-
-    insertImage(editor, url);
     setIsImage(false);
   };
 
@@ -45,7 +43,7 @@ export const ImageModal = ({ setIsImage, editor }: { setIsImage: (val: boolean) 
     }
     const url = await getS3Url(file)
     if(url.length == "")return;
-    insertImage(editor, url);
+    insertImageOrVideo(editor, url,'image');
     setIsImage(false);
   };
 
@@ -53,18 +51,8 @@ export const ImageModal = ({ setIsImage, editor }: { setIsImage: (val: boolean) 
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2  z-100 w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] max-w-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl p-6 space-y-6 transition-all">
       
       {/* URL Input */}
-      <div className="space-y-2">
-        <LabelledInput
-          label="Image URL"
-          placeholder="https://example.com/image.jpg"
-          type="text"
-          value={url}
-          onChange={(e) => {
-            setUrl(e.target.value);
-            if (error) setError(""); // clear error on typing
-          }}
-        />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+      <LinkInput setUrl={setUrl} handleSubmit={handleImageInUrl} error={error} url={url}/>
+      <div className="space-y-2">                    
         <Button onClick={handleImageInUrl}>
           Insert from URL
         </Button>
@@ -87,7 +75,7 @@ export const ImageModal = ({ setIsImage, editor }: { setIsImage: (val: boolean) 
 
       {/* Cancel */}
       <div className="flex justify-end pt-2">
-        <Button color="outline" onClick={() => setIsImage(false)}>
+        <Button color="cancel" onClick={() => setIsImage(false)}>
           Cancel
         </Button>
       </div>

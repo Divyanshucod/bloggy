@@ -3,6 +3,8 @@ import { authMiddleWare } from "../middleware/authMiddleWare";
 import {
   createBlogSchema,
   CreateBlogType,
+  updateBlogSchema,
+  UpdateBlogType,
 } from "@dev0000007/medium-web";
 import { ExtractSmart } from "../HelperFunction/GetPreviewAndTitle";
 import {
@@ -27,26 +29,29 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
   
   try {
     const prisma = ctx.get('prisma')
-    const data = await ctx.req.json();    
-    //zod validation
-    // const { success } = updateBlogSchema.safeParse(body);
-    // if (!success) {
-    //   ctx.status(411);
-    //   return ctx.json({
-    //     message: "invalid inputs",
-    //   });
-    // }
-    // const data = body as UpdateBlogType;
-    // validate the id   // TODO: update the zod validation to add tags there
+    const body = await ctx.req.json();    
+    const { success } = updateBlogSchema.safeParse(body);
+    if (!success) {
+      ctx.status(411);
+      return ctx.json({
+        message: "invalid inputs",
+      });
+    }
+    const data = body as UpdateBlogType;
     
     const post = await ValidateBlogId(data.postId, prisma);
     // get title and preview (check title empty or not)
+    if(data.content.title.length === 0 && post.published === true){
+      ctx.status(411);
+      return ctx.json({
+        message:"Title can't be empty!"
+      })
+    }
     await prisma.$transaction(async(tx)=>{
-      console.log('before the update has performed');
-      
       await tx.post.update({
         data: {
-          blogJson: data.content,
+          title:data.content.title,
+          blogJson: data.content.content,
           published: data.published ? data.published : post.published,
         },
         where: {
@@ -55,8 +60,8 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
       });
       // tags update
       const map = new Map<string, boolean>();
-      for (let i = 0; i < data.tags.length; i++) {
-        map.set(data.tags[i], true);
+      for (let i = 0; i < data.content.tags.length; i++) {
+        map.set(data.content.tags[i], true);
       }
       const tags = await tx.tag.findMany({
         where: {
@@ -71,7 +76,7 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
         .filter((tag) => !map.get(tag.title))
         .map((tag) => tag.title);
   
-        const needToAdd = data.tags
+        const needToAdd = data.content.tags
         .filter((tag) => !map2.get(tag))
         .map((tag) => tag);
       
@@ -153,39 +158,37 @@ BlogRouter.post("/", authMiddleWare, async (ctx) => {
   try {
     const prisma = ctx.get("prisma");
     const body = await ctx.req.json();
-    // verify body using zod
     //zod validation
-    const val = createBlogSchema.safeParse(body);
-    const tags = body.tags;
-    // we don't need a publish date , get from database.
-    // have a published tag from frontend to know blog is darft or published
-    if (!val.success) {
+    const {success} = createBlogSchema.safeParse(body);
+    if (!success) {
       ctx.status(411);
       return ctx.json({
         message: "invalid inputs",
       });
     }
-    const data: CreateBlogType = body;
+    const data = body as CreateBlogType;
     // get title and preview , TODO: thing better solution so that all blog should have title and if not then make them a draft
-    const { title, preview } = ExtractSmart(data.content);
-    if (title.length === 0) {
+    const {preview } = ExtractSmart(data.content.content);
+    if (data.content.title.length === 0) {
       ctx.status(411);
-      data.published = false;
+      return ctx.json({
+        message:"Title can't be empty!"
+      })
     }
     await prisma.$transaction(async(tx)=>{
       const post = await tx.post.create({
         data: {
-          title,
+          title:data.content.title,
           content: preview,
-          blogJson: data.content,
+          blogJson: data.content.content,
           authorId: ctx.get("userId"),
           published: data.published,
         },
       });
       // add tags
-      if (tags.length > 0) {
+      if (data.content.tags.length > 0) {
         await tx.tag.createMany({
-          data: tags.map((title: string) => ({
+          data: data.content.tags.map((title: string) => ({
             title: title,
             postId: post.id,
           })),
@@ -351,6 +354,7 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
         publishedDate: true,
         authorId: true,
         published: true,
+        title:true,
         author: {
           select: {
             name: true,
@@ -383,6 +387,7 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
         publishedDate:post.publishedDate,
         authorId:post.authorId,
         author:post.author,
+        title:post.title,
         tags,
         reactions:{
           like,

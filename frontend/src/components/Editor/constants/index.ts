@@ -16,6 +16,7 @@ import {
   Bold,
   Image,
   Link,
+  Video
 } from "lucide-react";
 
 export enum RichTextAction {
@@ -39,6 +40,7 @@ export enum RichTextAction {
   Redo = "redo",
   Link = "link",
   Image = "image",
+  Video = 'video'
 }
 
 export const TEXT_FORMAT_OPTIONS = [
@@ -117,6 +119,11 @@ export const TEXT_BLOCK_OPTIONS = [
     id: RichTextAction.Image,
     icon: Image,
     label: "Image",
+  },
+  {
+    id: RichTextAction.Video,
+    icon: Video,
+    label: "Video",
   },
 ];
 

@@ -25,10 +25,14 @@ interface authorDetails {
     name: string;
   };
 }
-
+export interface BlogType {
+  content : CustomElementType[],
+  tags: string[],
+  title:string
+}
 interface CreateBlogProps {
-  Blog: CustomElementType[];
-  BlogToCreate: CustomElementType[];
+  Blog: BlogType,
+  BlogToCreate: BlogType,
   isloading: "idle" | "pending" | "succeeded" | "idle";
   isPublishing_drafting:"idle" | "pending" | "succeeded";
   isUpdating:"idle" | "pending" | "succeeded";
@@ -180,14 +184,32 @@ export const BlogSlice = createSlice({
       state.hasAllBlogFetched = false
     },
     setCreateBlog: (state, action) => {
-      state.BlogToCreate = action.payload;
+      state.BlogToCreate.content = action.payload;
     },
     setUpdateBlog: (state, action) => {
-      state.Blog = action.payload;
+      state.Blog.content = action.payload;
     },
     setAuthorDetails: (state, action) => {
       state.authorDetails = action.payload;
     },
+    setCreateBlogTitle:(state,action) => {
+      state.BlogToCreate.title = action.payload
+    },
+    setCreateBlogTags:(state,action) => {
+      state.BlogToCreate.tags = [...state.BlogToCreate.tags,action.payload]
+    },
+    deleteCreateBlogTags:(state,action) => {
+      state.BlogToCreate.tags = state.BlogToCreate.tags.filter(val=> val != action.payload)
+    },
+    setUpdateBlogTitle:(state,action) => {
+      state.BlogToCreate.title = action.payload
+    },
+    setUpdateBlogTags:(state,action) => {
+      state.BlogToCreate.tags = [...state.BlogToCreate.tags,action.payload]
+    },
+    deleteUpdateBlogTags:(state,action) => {
+      state.BlogToCreate.tags = state.BlogToCreate.tags.filter(val=> val != action.payload)
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(
@@ -264,6 +286,12 @@ export const BlogSlice = createSlice({
 
 export const {setAllBlogPages,setAuthorDetails,setCreateBlog,
   setUpdateBlog,
-  setUserPages
+  setUserPages,
+  setCreateBlogTags,
+  setCreateBlogTitle,
+  setUpdateBlogTags,
+  setUpdateBlogTitle,
+  deleteCreateBlogTags,
+  deleteUpdateBlogTags
 } = BlogSlice.actions
 export default BlogSlice.reducer;

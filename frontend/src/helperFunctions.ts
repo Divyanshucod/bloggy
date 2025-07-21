@@ -18,12 +18,16 @@ export function formattedDate(date: string) {
   });
   return formatted;
 }
-export const initialValue = [
-  {
-    type: "paragraph",
-    children: [{ text: "" }],
-  },
-];
+export const initialValue = {
+  title:'',
+  content: [
+    {
+      type: "paragraph",
+      children: [{ text: "" }],
+    },
+  ],
+  tags:[]
+}
 
 export const handleError = (error: any) => {
   if (error.response && error.response.data && error.response.data.message) {

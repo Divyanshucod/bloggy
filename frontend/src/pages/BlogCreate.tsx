@@ -5,6 +5,10 @@ import type { RootState } from "../store";
 
 export const BlogCreate = () => {
   const { isloading, BlogToCreate } = useSelector((state:RootState)=> state.BlogSlice)
+  window.addEventListener("beforeunload", function(e){
+    e.preventDefault();
+ }, false);
+ 
   return (
     <>
     {isloading === 'pending' ? <div className="w-screen h-screen animate-pulse bg-white dark:bg-gray-900"></div> : <div className="w-screen h-full relative rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 pb-6 shadow-sm transition-all pt-14">

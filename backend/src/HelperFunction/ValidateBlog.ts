@@ -1,3 +1,5 @@
+import { CreateBlogType } from "@dev0000007/medium-web";
+
 export const ValidateBlogId = async (postId:string,prisma:any)=>{
       try {
         const blog = await prisma.post.findFirst({

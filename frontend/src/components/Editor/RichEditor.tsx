@@ -8,6 +8,7 @@ import { MainEditor } from "./MainEditor";
 import { withImages } from "./utils/Images";
 import { useDispatch } from "react-redux";
 import { setPreview } from "../../features/Preview/PreviewSlice";
+import type { BlogType } from "../../features/Blogs/BlogSlice";
 declare module "slate" {
   interface CustomTypes {
     Element: CustomElement;
@@ -16,7 +17,7 @@ declare module "slate" {
   }
 }
 interface RichEditorProps {
-  blog: Descendant[];
+  blog:BlogType ;
   isCreatingBlog?:boolean
 }
 export const RichEditor = React.memo(
@@ -33,7 +34,6 @@ export const RichEditor = React.memo(
         <MainEditor
           blog={blog}
           editor={editor}
-          readonly={false}
           isCreatingBlog={isCreatingBlog}
         />
       </>

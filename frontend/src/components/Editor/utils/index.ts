@@ -71,62 +71,58 @@ export const toggleBlock = (editor: EditorType, format: ElementKey) => {
   Transforms.setNodes<Editor>(editor, newProperties);
 };
 
-const isUrl = (str: string) => {
-  try {
-    new URL(str);
-    return true;
-  } catch {
-    return /^https?:\/\/.+/.test(str);
+
+const isUrlValid = (url: string, format: ElementKey): boolean => {
+  const imageRegex = /\.(png|jpg|jpeg)$/i;
+  const videoRegex = /^(https?:\/\/)?((www\.)?(youtube\.com|youtu\.be|vimeo\.com|soundcloud\.com|twitch\.tv|dailymotion\.com|mixcloud\.com|facebook\.com|streamable\.com|wistia\.com|vidyard\.com|file:\/\/.+))\/?.*/i;
+  const linkRegex = /^https:\/\/[^\s/$.?#].[^\s]*$/i;
+
+  if (format === 'image') {
+    return imageRegex.test(url);
+  } else if (format === 'video') {
+    return videoRegex.test(url);
+  } else {
+    return linkRegex.test(url);
   }
 };
 
-export const isLinkActive = (editor: EditorType) => {
-  const [link] = Editor.nodes(editor, {
-    match: (n) =>
-      !Editor.isEditor(n) && Element.isElement(n) && n.type === "link",
-  });
-  return !!link;
-};
 
-export const wrapLink = (editor: EditorType, url: string) => {
-  if (!isUrl(url)) return false;
+export const wrapLink = (editor: Editor, url: string) => {
+  if (!url) return false;
   const { selection } = editor;
   if (!selection || Range.isCollapsed(selection)) return false;
-  if (isLinkActive(editor)) {
-    Transforms.setNodes(
-      editor,
-      { url },
-      {
-        match: (n) =>
-          !Editor.isEditor(n) && Element.isElement(n) && n.type === "link",
-      }
-    );
-  } else {
-    // Create new inline link
-    const link: Element = {
-      type: "link",
-      url,
-      children: [],
-    };
 
-    Transforms.wrapNodes(editor, link, { split: true });
+  // If already inside a link, unwrap first
+  const [match] = Editor.nodes(editor, {
+    match: n =>
+      !Editor.isEditor(n) &&
+      Element.isElement(n) &&
+      n.type === 'link',
+  });
+  if (match) {
+    Transforms.unwrapNodes(editor, {
+      match: n =>
+        !Editor.isEditor(n) &&
+        Element.isElement(n) &&
+        n.type === 'link',
+    });
   }
 
-  Transforms.collapse(editor, { edge: "end" });
-  const { selection: newSelection } = editor;
-  if (newSelection) {
-    const after = Editor.after(editor, newSelection);
-    if (after) {
-      Transforms.select(editor, after);
-    }
-  }
-
+  // Wrap the selected text in an inline link node
+  Transforms.wrapNodes(
+    editor,
+    { type: 'link', url, children: [] },
+    { split: true }
+  );
+  Transforms.collapse(editor, { edge: 'end' });
   return true;
 };
 
-export const insertImage = (editor:EditorType,url:string) => {
+
+export const insertImageOrVideo = (editor:EditorType,url:string,format:ElementKey) => {
+    if(!isUrlValid(url,format)) return false
     const ImageElement:CustomElement = {
-      type:'Image',
+      type:format === 'video' ? 'Video' : 'Image',
       url,
       children:[{text:''}],
     } 
@@ -136,4 +132,5 @@ export const insertImage = (editor:EditorType,url:string) => {
       children:[{text:''}]
     }
     Transforms.insertNodes(editor,paragraphElement);
+    return true
 }

@@ -1,6 +1,6 @@
 import type { RenderElementProps } from "slate-react";
 import { ImageResizable } from "../../ImageResizable";
-
+import { VideoPlayer } from "../../VideoPlayer";
 
 export const RenderElement = ({
   attributes,
@@ -130,7 +130,10 @@ export const RenderElement = ({
       return (
         <ImageResizable children={children} element={element} attributes={attributes} />
       );
-
+    case 'Video':
+      return  (
+          <VideoPlayer children={children} element={element} attributes={attributes} />
+      )
     default:
       return (
         <p

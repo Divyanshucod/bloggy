@@ -36,7 +36,7 @@ function App() {
         <Route path="/blogs" element={<Protector>
          <Blogs /></Protector>} />
         <Route path="/blog/create" element={
-          <BlogCreate />
+         <Protector> <BlogCreate /></Protector>
           } />
         <Route path="/" element={<Protector><Home/></Protector>}/>
         <Route path="/comment" element={<CommentSection/>}/>
