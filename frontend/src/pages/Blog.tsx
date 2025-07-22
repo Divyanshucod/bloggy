@@ -21,7 +21,6 @@ const Blog = () => {
     }
      fetch();
   },[])
-  console.log(Blog);
   
   return (
     <div className="min-h-screen px-4 py-6 md:px-10 bg-white dark:bg-gray-950 transition">

@@ -8,14 +8,14 @@ import { SquarePen } from "lucide-react";
 import { Button } from "./Button";
 import { CircularProgress, Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { updateBlog } from "../features/Blogs/BlogSlice";
+import { updateBlog, type BlogType } from "../features/Blogs/BlogSlice";
 import { toast, ToastContainer } from "react-toastify";
 import type { RootState } from "../store";
 import { useAppDispatch } from "../hooks";
 import { type CustomElementType } from "@dev0000007/medium-web";
 import { setPreview, togglePreviewButton } from "../features/Preview/PreviewSlice";
 interface FullBlogProps {
-  blog: Descendant[];
+  blog: BlogType;
   authorOrNot: boolean;
   published: boolean;
   blogId:string

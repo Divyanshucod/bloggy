@@ -8,11 +8,12 @@ import { ToolBar } from "./ToolBar";
 import { Eye } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setCreateBlog, setCreateBlogTitle, setUpdateBlog, type BlogType } from "../../features/Blogs/BlogSlice";
+import { setCreateBlog, setCreateBlogTitle, setUpdateBlog, setUpdateBlogTitle, type BlogType } from "../../features/Blogs/BlogSlice";
 import { togglePreviewButton } from "../../features/Preview/PreviewSlice";
 import type { RootState } from "../../store";
 import { Tags } from "../Tags";
 import { useState } from "react";
+import  EmojiReactionToggler  from "../Reactions";
 
 interface editorType {
   blog: BlogType;
@@ -40,9 +41,11 @@ export const MainEditor = (props: editorType) => {
         ) : null}
         <div className="overflow-y-auto rounded-md bg-white  dark:bg-gray-700 px-4 py-3 focus:outline-none text-gray-800 dark:text-gray-100 text-base leading-relaxed whitespace-pre-wrap h-[450px] md:h-[90%]">
         {/* header */}
-        <textarea onFocus={() => setTagOnFocused(false)} placeholder="title" autoFocus className="field-sizing-content w-full text-3xl focus:outline-none font-bold p-0 border-r-white resize-none overflow-hidden" rows={1} readOnly={preview.value} value={props.blog.title} onChange={(e) => dispatch(setCreateBlogTitle(e.target.value))}/>
+        <textarea onFocus={() => setTagOnFocused(false)} placeholder="title" autoFocus className="field-sizing-content w-full text-3xl focus:outline-none font-bold p-0 border-r-white resize-none overflow-hidden" rows={1} readOnly={preview.value} value={props.blog.title} onChange={(e) => props.isCreatingBlog ? dispatch(setCreateBlogTitle(e.target.value)) : dispatch(setUpdateBlogTitle(e.target.value))}/>
         {/* tags */}
-        <Tags isCreatingBlog={props.isCreatingBlog} tags={props.blog.tags} onFocused={tagOnFocused} setOnFocused={setTagOnFocused}/>
+        <div className="mb-2">
+        <Tags isCreatingBlog={props.isCreatingBlog} onFocused={tagOnFocused} setOnFocused={setTagOnFocused} tags={props.blog.tags}/>
+        </div>
                 {/* Main Editable Area */}
           <Editable
             readOnly={preview.value}
@@ -56,7 +59,8 @@ export const MainEditor = (props: editorType) => {
             onFocus={()=> setTagOnFocused(false)}
           />
         </div>
-
+        {preview.isForUpdateBlog && <div className="absolute bottom-2 right-1.5">
+          <EmojiReactionToggler/></div>}
         {/* Preview toggle (only when not update mode) */}
         {!preview.isForUpdateBlog && (
           <button

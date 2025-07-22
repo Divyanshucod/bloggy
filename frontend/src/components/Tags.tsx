@@ -14,7 +14,6 @@ interface tagsType {
 
 export const Tags = (props:tagsType)=>{
     const dispatch = useDispatch()
-    const {BlogToCreate} = useSelector((state:RootState)=> state.BlogSlice)
     const preview = useSelector((state:RootState) => state.PreviewSlice)
     const [tagTitle,setTagTitle] = useState('')
     function handleTagsCreation(){
@@ -27,10 +26,11 @@ export const Tags = (props:tagsType)=>{
         }
         setTagTitle('')
     }
+    console.log(props.tags);
     
     return <div>
         <div className="">
-           {BlogToCreate.tags.map(val => (
+           {props.tags.map(val => (
             <Tag title={val} isCreatingBlog={props.isCreatingBlog}/>
            ))}
         </div>

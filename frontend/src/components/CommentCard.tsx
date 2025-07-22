@@ -1,7 +1,8 @@
 import { Tooltip } from "@mui/material";
-import { Edit, Reply, ThumbsDown, ThumbsUp } from "lucide-react";
-import { Emojis } from "./Emojis";
+import { Edit } from "lucide-react";
+
 import { Avatar } from "./Avatar";
+// import { Reactions } from "./Reactions";
 
 export const CommentCard = () => {
   return (
@@ -28,18 +29,7 @@ export const CommentCard = () => {
       </div>
 
       {/* Actions */}
-      <div className="flex gap-5 items-center text-gray-800 dark:text-gray-100">
-        <Tooltip title="Like">
-          <ThumbsUp size={20} className="cursor-pointer hover:text-green-600" />
-        </Tooltip>
-        <Tooltip title="Dislike">
-          <ThumbsDown size={20} className="cursor-pointer hover:text-red-500" />
-        </Tooltip>
-        <Emojis />
-        <Tooltip title="Reply">
-          <Reply size={20} className="cursor-pointer hover:text-blue-500" />
-        </Tooltip>
-      </div>
+      {/* <Reactions/> */}
     </div>
   );
 };

@@ -123,14 +123,20 @@ export const fetchBlogById = createAsyncThunk("blog/fetchBlogById", async ({ blo
       }
     );
     const user_details = {
-      id: response.data.post.id,
-      publishedDate: response.data.post.id,
-      author: response.data.post.author,
-      authorOrNot: response.data.post.authorId === state.UserSlice.user?.id,
-      published: response.data.post.published,
+      id: response.data.blog.id,
+      publishedDate: response.data.blog.id,
+      author: response.data.blog.author,
+      authorOrNot: response.data.blog.authorId === state.UserSlice.user?.id,
+      published: response.data.blog.published,
     };
     dispatch(BlogSlice.actions.setAuthorDetails(user_details));
-    return response.data.post.blogJson;
+    const {content,title,tags,reactions} = response.data.blog;
+    return {
+      content,
+      title,
+      tags,
+      reactions
+    };
     } catch (err) {
       return thunkAPI.rejectWithValue(
         err?.response?.data?.message || "Something went wrong"
@@ -202,13 +208,13 @@ export const BlogSlice = createSlice({
       state.BlogToCreate.tags = state.BlogToCreate.tags.filter(val=> val != action.payload)
     },
     setUpdateBlogTitle:(state,action) => {
-      state.BlogToCreate.title = action.payload
+      state.Blog.title = action.payload
     },
     setUpdateBlogTags:(state,action) => {
-      state.BlogToCreate.tags = [...state.BlogToCreate.tags,action.payload]
+      state.Blog.tags = [...state.Blog.tags,action.payload]
     },
     deleteUpdateBlogTags:(state,action) => {
-      state.BlogToCreate.tags = state.BlogToCreate.tags.filter(val=> val != action.payload)
+      state.Blog.tags = state.Blog.tags.filter(val=> val != action.payload)
     }
   },
   extraReducers: (builder) => {
