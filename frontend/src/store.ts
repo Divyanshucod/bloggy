@@ -3,13 +3,15 @@ import  UserSlice  from './features/User/UserSlice'
 import ThemeSlice  from './features/Theme/ThemeSlice'
 import BlogSlice from './features/Blogs/BlogSlice'
 import  PreviewSlice from './features/Preview/PreviewSlice'
+import  CommentSlice  from './features/comment/CommentSlice'
 
 export const store = configureStore({
   reducer: {
     UserSlice,
     ThemeSlice,
     BlogSlice,
-    PreviewSlice
+    PreviewSlice,
+    CommentSlice
   },
 })
 

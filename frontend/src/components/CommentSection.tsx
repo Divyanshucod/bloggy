@@ -1,13 +1,33 @@
+import { useEffect } from "react";
 import { Button } from "./Button"
 import { CommentCard } from "./CommentCard"
+import { Pagination } from "./Pagination"
+import { useSelector } from "react-redux";
+import type { RootState } from "../store";
+import { useAppDispatch } from "../hooks";
+import { fetchComments } from "../features/comment/CommentSlice";
+import { toast } from "react-toastify";
 
-export const CommentSection = () => {
-  function handleClick() {
-    // handle submit
+export const CommentSection = ({blogId}:{blogId:string}) => {
+  const { pageNo,} = useSelector((state:RootState)=>state.CommentSlice);
+  const dispatch2 = useAppDispatch()
+  useEffect(()=>{
+    async function fetch(){
+      try {
+          const res = await dispatch2(fetchComments({blogId:blogId})).unwrap()
+          toast.success(res)
+        } catch (error:any) {
+          toast.error(error)
+        }
+  }
+  fetch();
+  },[pageNo])
+  function handleClick(): void {
+   
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center bg-white dark:bg-gray-900 px-4 py-20">
+    <div className="min-h-screen w-full flex flex-col items-center bg-white dark:bg-gray-900 px-4 py-20 relative">
       {/* Comment Input */}
       <div className="w-full max-w-3xl rounded-xl bg-gray-100 dark:bg-gray-800 p-4 mb-6 shadow">
         <textarea
@@ -38,6 +58,9 @@ export const CommentSection = () => {
         <CommentCard />
         {/* Add more <CommentCard /> as needed */}
       </div>
+      <footer className="fixed bottom-2 flex justify-center items-end">
+        <Pagination cnt={20} type="comments"/>
+      </footer>
     </div>
   )
 }

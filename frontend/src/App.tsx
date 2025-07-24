@@ -14,6 +14,7 @@ import { Protector } from "./components/Protector";
 import { ToastContainer } from "react-toastify";
 import { CommentCard } from "./components/CommentCard";
 import { CommentSection } from "./components/CommentSection";
+import UserProfilePage from "./components/UserProfile";
 
 
 function App() {
@@ -39,7 +40,7 @@ function App() {
          <Protector> <BlogCreate /></Protector>
           } />
         <Route path="/" element={<Protector><Home/></Protector>}/>
-        <Route path="/comment" element={<CommentSection/>}/>
+        <Route path="/profile" element={<UserProfilePage/>}/>
       </Routes>
       <ToastContainer
         position="top-right"

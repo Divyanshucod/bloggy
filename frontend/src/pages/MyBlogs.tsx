@@ -7,9 +7,10 @@ import {useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchUserBlogs, setUserPages } from "../features/Blogs/BlogSlice";
 import type { RootState } from "../store";
+import { Pagination } from "../components/Pagination";
 
 export const MyBlogs = () => {
-   const { isloading,UserBlogs, isMoreUserBlogs ,userBlogsPage, hasUserBlogFetched} = useSelector((state:RootState)=>state.BlogSlice);
+   const { isloading,UserBlogs,userBlogsPage, hasUserBlogFetched} = useSelector((state:RootState)=>state.BlogSlice);
   const dispatch = useAppDispatch()
   useEffect(()=>{
     async function fetch(){
@@ -25,14 +26,14 @@ export const MyBlogs = () => {
   },[userBlogsPage])
 
   return (
-    <div className="min-h-screen px-4 py-6 md:px-10 bg-white dark:bg-gray-950 transition">
+    <div className="min-h-screen w-full px-4 py-6 md:px-10 bg-white dark:bg-gray-950 transition">
       <ToastContainer />
       {isloading === 'pending' ? (
-        <div className="space-y-6">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <BlogsSkeleton key={index} />
-          ))}
-        </div>
+         <div className="flex flex-col gap-6 max-w-3xl mx-auto mt-8">
+         {Array.from({ length: 5 }).map((_, index) => (
+           <BlogsSkeleton key={index} />
+         ))}
+       </div>
       ) : UserBlogs.length === 0 ? (
         <div className="text-center text-gray-600 dark:text-gray-300 text-lg mt-20">
           <NoBlogs />
@@ -50,15 +51,9 @@ export const MyBlogs = () => {
               published={val.published}
             />
           ))}
-
-          {isMoreUserBlogs && (
-            <button
-              onClick={() =>dispatch(setUserPages())}
-              className="mx-auto mt-4 px-5 py-2 rounded bg-green-600 hover:bg-green-700 text-white text-sm transition"
-            >
-              Load More
-            </button>
-          )}
+          <footer className="fixed bottom-2 right-[50%] translate-x-[50%]">
+        <Pagination cnt={42} type="myBlogs"/>
+      </footer>
         </div>
       )}
     </div>

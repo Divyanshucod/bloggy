@@ -1,27 +1,38 @@
+import { Avatar } from "@mui/material";
+
+
 export const AuthorCard = ({
   authorName,
-  bioData,
+  setProfileOpen
 }: {
   authorName: string;
-  bioData: string;
+  setProfileOpen: (prev: boolean) => void;
 }) => {
   return (
-    <div className="w-full">
-      <div className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
-        Author
+    <div className="w-full p-4 border rounded-xl shadow-md bg-white dark:bg-gray-800 transition-colors">
+  <div className="text-xs uppercase tracking-wide font-semibold text-gray-400 dark:text-gray-500 mb-2">
+    Written by
+  </div>
+
+  <div className="flex items-center gap-4 mb-4">
+    <Avatar/>
+    <div>
+      <div className="text-md font-semibold text-gray-900 dark:text-white">
+        {authorName}
       </div>
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-500 text-white font-bold text-lg">
-          {authorName[0]}
-        </div>
-        <div className="text-gray-900 dark:text-white font-semibold text-xl">
-          {authorName}
-        </div>
+      <div className="text-sm text-gray-500 dark:text-gray-400">
+        Author & Contributor
       </div>
-      <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-        {bioData.slice(0, 100)}
-        {bioData.length > 100 && "..."}
-      </p>
     </div>
+  </div>
+
+  <button
+    onClick={() => setProfileOpen(true)}
+    className="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+  >
+    View Profile
+  </button>
+</div>
+
   );
 };

@@ -5,25 +5,25 @@ import { NoBlogs } from "../components/NoBlogs";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import React, { useEffect } from "react";
-import { fetchAllBlogs } from "../features/Blogs/BlogSlice";
+import {fetchFilteredBlogs } from "../features/Blogs/BlogSlice";
 import { useAppDispatch } from "../hooks";
 import { Pagination } from "../components/Pagination";
+import { useSearchParams } from "react-router-dom";
 
-export const Blogs = React.memo(() => {
-  const { isloading, AllBlogs,allBlogPages, hasAllBlogFetched } = useSelector((state:RootState)=>state.BlogSlice);
+export const FilteredBlogs = React.memo(() => {
+  const filter = useSearchParams()[0].get("filter") || "all";
+  const { isloading,filteredBlogPages,filteredBlogs } = useSelector((state:RootState)=>state.BlogSlice);
   const dispatch = useAppDispatch()
   useEffect(()=>{
     async function fetch(){
       try {
-         await dispatch(fetchAllBlogs()).unwrap();
+         await dispatch(fetchFilteredBlogs({filter})).unwrap();
      } catch (error:any) {
        toast(error)
      }
     }
-    if(!hasAllBlogFetched){
     fetch()
-    }
-  },[allBlogPages])
+  },[filteredBlogPages])
   return (
     <div className="min-h-screen w-screen px-4 py-6 md:px-8 bg-gray-50 dark:bg-gray-950 transition-all">
       <ToastContainer />
@@ -34,14 +34,13 @@ export const Blogs = React.memo(() => {
             <BlogsSkeleton key={index} />
           ))}
         </div>
-      ) : AllBlogs.length === 0 ? (
+      ) : filteredBlogs.length === 0 ? (
         <div className=" h-screen text-center text-gray-600 dark:text-gray-300 text-lg mt-20">
           <NoBlogs />
         </div>
       ) : (
-        
         <div className="flex min-h-screen flex-col gap-6 max-w-3xl mx-auto mt-8 w-full">
-          {AllBlogs.map((val) => (
+          {filteredBlogs.map((val) => (
             <BlogCard
               key={val.id}
               id={val.id}
@@ -53,7 +52,7 @@ export const Blogs = React.memo(() => {
             />
           ))}
           <footer className="fixed bottom-2 right-[50%] translate-x-[50%]">
-        <Pagination cnt={42} type="blogs"/>
+        <Pagination cnt={42} type="blogs"/> //adjust the type and count as needed
       </footer>
         </div>
       )}

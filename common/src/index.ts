@@ -38,7 +38,13 @@ export const createBlogSchema = z.object({
   }),
   published: z.boolean(),
 });
-
+export const userUpdateDetailsSchema = z.object({
+  bio : z.string().min(3).optional(),
+  password: z.object({
+    newPassword: z.string().min(6),
+    oldPassword: z.string().min(6),
+  }).optional(),
+})
 export const updateBlogSchema = z.object({
   postId: z.string(),
   content: z.object({
@@ -54,3 +60,4 @@ export type CreateBlogType = z.infer<typeof createBlogSchema>;
 export type UpdateBlogType = z.infer<typeof updateBlogSchema>;
 export type CustomElementType = z.infer<typeof CustomElementSchema>;
 export type TexFormattingtType = z.infer<typeof TexFormattingtSchema>;
+export type UserUpdateDetailsType = z.infer<typeof userUpdateDetailsSchema>;

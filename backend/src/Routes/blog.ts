@@ -341,68 +341,54 @@ BlogRouter.post("/comment", authMiddleWare, async (ctx) => {
 });
 BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
   try {
-    const prisma = ctx.get('prisma')
+    const prisma = ctx.get('prisma');
     const postId = ctx.req.param("id");
 
     const post = await prisma.post.findUnique({
-      where: {
-        id: postId,
-      },
+      where: { id: postId },
       select: {
         id: true,
         blogJson: true,
         publishedDate: true,
         authorId: true,
         published: true,
-        title:true,
-        author: {
-          select: {
-            name: true,
-          },
-        },
-        tags:true,
-        reactions:true
+        title: true,
+        tags: { select: { title: true } },
+        author: { select: { name: true } },
+        reactions: true,
+        _count: { select: { comments: true } }
       },
     });
-    //count the likes/dislikes and reactions
-    const tags = post.tags.map(tag => (tag.title));
-    let like = 0,dislike=0,reaction=0;
-     post.reactions.forEach(react => {
-        if(react.likeDislike === 'LIKE'){
-          like++;
-        }
-        if(react.likeDislike === 'DISLIKE'){
-          dislike++;
-        }
-        if(react.reaction !== 'NONE'){
-          reaction++;
-        }
-    });
+
+    if (!post) {
+      ctx.status(404);
+      return ctx.json({ message: "Blog post not found" });
+    }
+
+    const tags = post.tags.map(tag => tag.title);
+
+    const { like, dislike, reaction } = countReactions(post.reactions);
+
     ctx.status(200);
     return ctx.json({
-       blog:{
-        id:post.id,
-        blogJson:post.blogJson,
-        published:post.published,
-        publishedDate:post.publishedDate,
-        authorId:post.authorId,
-        author:post.author,
-        title:post.title,
+      blog: {
+        id: post.id,
+        content: post.blogJson,
+        published: post.published,
+        publishedDate: post.publishedDate,
+        authorId: post.authorId,
+        author: post.author,
+        title: post.title,
         tags,
-        reactions:{
-          like,
-          dislike,
-          reaction
-        }
-       }
+        commentsCnt: post._count.comments,
+        reactions: { like, dislike, reaction }
+      }
     });
+
   } catch (error) {
-    console.log(error);
-    
+    console.error("Error in GET /:id:", error);
     ctx.status(500);
-    return ctx.json({
-      message: "Internal Server error!",
-    });
+    return ctx.json({ message: "Internal Server Error" });
   }
 });
 BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
@@ -430,3 +416,13 @@ BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
     });
   }
 });
+
+function countReactions(reactions) {
+  let like = 0, dislike = 0, reaction = 0;
+  for (const react of reactions) {
+    if (react.likeDislike === 'LIKE') like++;
+    if (react.likeDislike === 'DISLIKE') dislike++;
+    if (react.reaction !== 'NONE') reaction++;
+  }
+  return { like, dislike, reaction };
+}

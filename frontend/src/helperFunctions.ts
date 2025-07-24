@@ -28,6 +28,23 @@ export const initialValue = {
   ],
   tags:[]
 }
+export const initialValueFullBlog = {
+  title: '',
+  content: [
+    {
+      type: "paragraph",
+      children: [{ text: "" }],
+    },
+  ],
+  tags: [],
+  commentsCnt: 0,
+  reactions: {
+    like: 0,
+    dislike: 0,
+    reaction: 0
+  }
+};
+
 
 export const handleError = (error: any) => {
   if (error.response && error.response.data && error.response.data.message) {
