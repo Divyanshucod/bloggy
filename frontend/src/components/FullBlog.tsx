@@ -3,7 +3,7 @@ import { MainEditor } from "./Editor/MainEditor";
 import { withLinks } from "./Editor/utils/Link";
 import { withHistory } from "slate-history";
 import { withReact } from "slate-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SquarePen, User } from "lucide-react";
 import { Button } from "./Button";
 import { CircularProgress, Tooltip } from "@mui/material";
@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateBlog, type authorDetails, type BlogType } from "../features/Blogs/BlogSlice";
 import { toast, ToastContainer } from "react-toastify";
 import type { RootState } from "../store";
-import { useAppDispatch } from "../hooks";
+import { useAppDispatch, useElementInView } from "../hooks";
 import { type CustomElementType } from "@dev0000007/medium-web";
 import { setPreview, togglePreviewButton } from "../features/Preview/PreviewSlice";
 import { CommentSection } from "./CommentSection";
@@ -28,8 +28,10 @@ export const FullBlog = (props: FullBlogProps) => {
   const { isUpdating} = useSelector((state:RootState)=>state.BlogSlice)
   const [staleBlog,setStaleBlog] = useState<CustomElementType>([])
   const [isProfileOpen, setProfileOpen] = useState(false);
+  const [targetRef, isInView] = useElementInView({threshold:0.2})
   const dispatch = useAppDispatch()
   // const preview = useSelector((state:RootState) => state.PreviewSlice)
+  const parentRef = useRef(null)
   const dispatch2 = useDispatch()
   const [editor] = useState(() =>
     withLinks(withHistory(withReact(createEditor())))
@@ -52,7 +54,7 @@ export const FullBlog = (props: FullBlogProps) => {
     dispatch2(setPreview(true))
   },[])
   return (
-    <div className="w-full h-full pt-15 relative">
+    <div className="w-full h-full pt-15 relative" ref={parentRef}>
       {/* Top Actions */}
       {props.authorOrNot && (
         <div className="flex justify-between mb-4 items-center">
@@ -95,14 +97,16 @@ export const FullBlog = (props: FullBlogProps) => {
         </div>
       )}
       <div className={`${isProfileOpen ? 'visible':'invisible'} top-10 right-2`}>
-        <UserProfile setProfileOpen={setProfileOpen} isProfileOpen={isProfileOpen}/>
+        <UserProfile setProfileOpen={setProfileOpen} isProfileOpen={isProfileOpen} authorId={props.authorDetails.id}/>
       </div>
       {/* Editor */}
       <MainEditor
         blog={props.blog}
         editor={editor}
       />
-      <CommentSection blogId={props.blogId}/>
+      <div ref={targetRef}>
+      <CommentSection enablePaginationBar={isInView} blogId={props.blogId}/>
+      </div>
       <ToastContainer/>
     </div>
   );

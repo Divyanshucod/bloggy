@@ -306,10 +306,35 @@ BlogRouter.get("/comments/:blogId/:pageno", async (ctx) => {
       },
       take: 10,
       skip: 10 * pageno,
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        comment: true,
+        createdAt: true,
+        commentor: {
+          select: {
+            name: true,
+          },
+        },
+        reactions:true
+      },
     });
+    const newComments = comments.map((comment) => {
+      const { like, dislike,currentUserReactions } = countReactions(comment.reactions,ctx);
+      return {
+        id: comment.id,
+        comment: comment.comment,
+        createdAt: comment.createdAt,
+        commentor: comment.commentor,
+        reactionsCnt: { like, dislike },
+        currentUserReactions: currentUserReactions
+      };
+    })
     ctx.status(200);
     return ctx.json({
-      comments,
+      newComments,
     });
   } catch (error) {
     return HandleCatchErrors(error, ctx);
@@ -367,7 +392,7 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
 
     const tags = post.tags.map(tag => tag.title);
 
-    const { like, dislike, reaction } = countReactions(post.reactions);
+    const { like, dislike, reaction,currentUserReactions } = countReactions(post.reactions,ctx);
 
     ctx.status(200);
     return ctx.json({
@@ -381,7 +406,8 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
         title: post.title,
         tags,
         commentsCnt: post._count.comments,
-        reactions: { like, dislike, reaction }
+        reactions: { like, dislike, reaction },
+        currentUserReactions: currentUserReactions
       }
     });
 
@@ -394,6 +420,7 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
 BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
   const data = await ctx.req.json();
   const prisma = ctx.get("prisma");
+  // can get values like reaction 'like','dislike' or just comment
   // validate blog
   try {
     await prisma.comment.update({
@@ -405,6 +432,31 @@ BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
         comment: data.comment,
       },
     });
+    // if have reaction then update it
+    if (data.likeDislike && data.likeDislike.length > 0) {
+      const reaction = await prisma.commentreaction.findUnique({
+        where: {
+          commentId_userId: {
+            commentId: data.commentId,
+            userId: ctx.get("userId"),
+          },
+        },
+      });
+      if (reaction) {
+        await prisma.commentreaction.update({
+          where: { id: reaction.id },
+          data: { reaction: data.likeDislike },
+        });
+      } else {
+        await prisma.commentreaction.create({
+          data: {
+            likeDislike: data.likeDislike,
+            commentId: data.commentId,
+            userId: ctx.get("userId"),
+          },
+        });
+      }
+    }
     ctx.status(200);
     return ctx.json({
       message: "comment updated!",
@@ -417,12 +469,22 @@ BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
   }
 });
 
-function countReactions(reactions) {
+function countReactions(reactions,ctx) {
+  let currentUserReactions = {likeDislike: 'NONE', reaction: 'NONE'};
   let like = 0, dislike = 0, reaction = 0;
   for (const react of reactions) {
-    if (react.likeDislike === 'LIKE') like++;
-    if (react.likeDislike === 'DISLIKE') dislike++;
-    if (react.reaction !== 'NONE') reaction++;
+    if (react.likeDislike === 'LIKE'){
+      like++;
+      if(react.userId === ctx.get("userId")) currentUserReactions.likeDislike = 'LIKE';
+    } 
+    if (react.likeDislike === 'DISLIKE') {
+
+      dislike++
+      if(react.userId === ctx.get("userId")) currentUserReactions.likeDislike = 'DISLIKE';
+    };
+    if (react.reaction !== 'NONE') {
+      reaction++
+      if(react.userId === ctx.get("userId")) currentUserReactions.reaction = react.reaction;};
   }
-  return { like, dislike, reaction };
+  return { like, dislike, reaction,currentUserReactions };
 }

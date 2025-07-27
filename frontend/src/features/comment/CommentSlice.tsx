@@ -3,11 +3,13 @@ import type { RootState } from "../../store";
 import axios from "axios";
 import { BACKED_URL_LOCAL } from "../../config";
 
-interface commentType {
-    commentedAt:string,
-    comment:string,
-    id:string,
-    commentor:string
+export interface commentType {
+        id: string,
+        comment: string,
+        createdAt: string,
+        commentor: string,
+        reactionsCnt: { like:number, dislike:number },
+        currentUserReactions: string
 }
 interface CommentState {
     comment:string,

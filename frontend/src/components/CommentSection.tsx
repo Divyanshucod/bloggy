@@ -5,11 +5,13 @@ import { Pagination } from "./Pagination"
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { useAppDispatch } from "../hooks";
-import { fetchComments } from "../features/comment/CommentSlice";
+import { createComment, fetchComments } from "../features/comment/CommentSlice";
 import { toast } from "react-toastify";
 
-export const CommentSection = ({blogId}:{blogId:string}) => {
+
+export const CommentSection = ({blogId,enablePaginationBar=true}:{blogId:string,enablePaginationBar:boolean}) => {
   const { pageNo,} = useSelector((state:RootState)=>state.CommentSlice);
+  const { comments, isLoading,isCreatingComment} = useSelector((state:RootState)=>state.CommentSlice);
   const dispatch2 = useAppDispatch()
   useEffect(()=>{
     async function fetch(){
@@ -22,10 +24,16 @@ export const CommentSection = ({blogId}:{blogId:string}) => {
   }
   fetch();
   },[pageNo])
-  function handleClick(): void {
-   
+  async function handleClick(): void {
+      //create comment
+      try {
+         const res = await dispatch2(createComment({blogId:blogId})).unwrap()
+         toast.success(res)
+      } catch (error:any) {
+        toast.error(error)
+      }
   }
-
+  
   return (
     <div className="min-h-screen w-full flex flex-col items-center bg-white dark:bg-gray-900 px-4 py-20 relative">
       {/* Comment Input */}
@@ -37,8 +45,9 @@ export const CommentSection = ({blogId}:{blogId:string}) => {
         <div className="flex justify-end">
           <Button
             onClick={handleClick}
+            disableButton={isCreatingComment === 'pending'}
           >
-            Submit
+            {isCreatingComment === 'pending' ? 'Adding...' : 'Add Comment'}
           </Button>
         </div>
       </div>
@@ -55,12 +64,19 @@ export const CommentSection = ({blogId}:{blogId:string}) => {
 
       {/* Comment List */}
       <div className="w-full max-w-3xl space-y-6">
-        <CommentCard />
-        {/* Add more <CommentCard /> as needed */}
+      {isLoading === 'pending' ? (
+            <div className="space-y-4 animate-pulse">
+              <div className="h-[200px] bg-gray-200 dark:bg-gray-800 rounded-lg mt-4" />
+            </div>
+          ) : (
+            comments.map((comment) => (
+              <CommentCard key={comment.id} comment={comment.comment} commentor={comment.commentor} createdAt={comment.createdAt} currentUserReactions={comment.currentUserReactions} reactionsCnt={comment.reactionsCnt} id={comment.id}/>
+            ))
+          )}
       </div>
-      <footer className="fixed bottom-2 flex justify-center items-end">
+      {enablePaginationBar &&  <footer className="fixed bottom-2 flex justify-center items-end">
         <Pagination cnt={20} type="comments"/>
-      </footer>
+      </footer>}
     </div>
   )
 }

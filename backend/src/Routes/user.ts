@@ -1,7 +1,7 @@
 import { signInSchema, signUpSchema, userUpdateDetailsSchema, UserUpdateDetailsType } from "@dev0000007/medium-web";
 import { Hono } from "hono";
 import { sign } from "hono/jwt";
-import { hashPassword, hashPassword, verifyPassword } from "../passwordHashing";
+import { hashPassword, verifyPassword } from "../passwordHashing";
 import { cookie_name } from "../types";
 import { authMiddleWare } from "../middleware/authMiddleWare";
 import { serialize } from "cookie-es";
@@ -141,12 +141,12 @@ UserRouter.put('/follow',authMiddleWare,async (ctx:any)=>{
       await prisma.$transaction(async (tx:any)=>{
         await tx.user.update({
           where: {
-            id: userId,
+            id: body.follower,
           },
           data: {
             followedBy: {
               connect: {
-                id: body.follower,
+                id: userId,
               },
             },
           },
@@ -154,12 +154,12 @@ UserRouter.put('/follow',authMiddleWare,async (ctx:any)=>{
   
         await tx.user.update({
           where:{
-            id:body.follower
+            id:userId
           },
           data:{
             following: {
               connect: {
-                id: userId,
+                id: body.follower,
               },
             },
           }
@@ -185,24 +185,24 @@ UserRouter.put('/unfollow',authMiddleWare,async (ctx:any)=>{
       await prisma.$transaction(async (tx:any)=>{
         await tx.user.update({
           where: {
-            id: userId,
+            id: body.follower,
           },
           data: {
             followedBy: {
               disconnect: {
-                id: body.follower,
+                id: userId,
               },
             },
           },
         })
         await tx.user.update({
           where:{
-            id:body.follower
+            id:userId
           },
           data:{
             following: {
               disconnect: {
-                id: userId,
+                id: body.follower,
               },
             },
           }
@@ -210,7 +210,7 @@ UserRouter.put('/unfollow',authMiddleWare,async (ctx:any)=>{
       })
       ctx.status(200);
       return ctx.json({
-        message:'started following!'
+        message:'unfollowed successfully!'
       })
   }catch(error){
      ctx.status(500);
@@ -335,7 +335,7 @@ UserRouter.get('/user-details/:id',authMiddleWare,async (ctx:any)=>{
       })
       ctx.status(200);
       return ctx.json({
-        details:{
+        userDetails:{
           id: userDetails.id,
           name: userDetails.name,
           bio: userDetails.bio,

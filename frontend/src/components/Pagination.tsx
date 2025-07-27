@@ -17,7 +17,7 @@ export const Pagination = (props:paginationProps)=>{
     function getPageArray(){
         const arr = [];
         const Pagediff = noOfPages-activePage+1
-        const start = Pagediff >= 4 ? activePage : (Pagediff-4+activePage);
+        const start = Pagediff >= 4 ? activePage : (Pagediff-(Math.min(noOfPages,4))+activePage);
         const end = Pagediff >= 4 ? activePage+3 : noOfPages;
         console.log(start,end);
         for(let i=start;i<=end;i++){

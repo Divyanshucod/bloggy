@@ -2,9 +2,11 @@ import { Tooltip } from "@mui/material";
 import { Edit } from "lucide-react";
 
 import { Avatar } from "./Avatar";
+import type { commentType } from "../features/comment/CommentSlice";
+import { howLongAgo } from "../helperFunctions";
 // import { Reactions } from "./Reactions";
 
-export const CommentCard = () => {
+export const CommentCard = (props:commentType) => {
   return (
     <div className="bg-white dark:bg-gray-800 shadow rounded-xl p-5 relative dark:border-gray-700">
       {/* Edit Button */}
@@ -18,18 +20,16 @@ export const CommentCard = () => {
       <div className="flex items-center space-x-3 mb-3">
        <Avatar user="Dev"/>
         <div>
-          <div className="text-sm font-semibold text-gray-900 dark:text-white">Dev</div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">56 minutes ago</div>
+          <div className="text-sm font-semibold text-gray-900 dark:text-white">{props.commentor}</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">{howLongAgo(props.createdAt)}</div>
         </div>
       </div>
 
       {/* Comment Text */}
       <div className="text-gray-700 dark:text-gray-300 text-sm mb-4">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam unde accusantium vero repudiandae in! Cumque veniam mollitia repellat accusamus.
+        {props.comment}
       </div>
-
-      {/* Actions */}
-      {/* <Reactions/> */}
+     
     </div>
   );
 };
