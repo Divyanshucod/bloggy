@@ -328,6 +328,7 @@ BlogRouter.get("/comments/:blogId/:pageno", async (ctx) => {
         comment: comment.comment,
         createdAt: comment.createdAt,
         commentor: comment.commentor,
+        commentorId:comment.commentorId,
         reactionsCnt: { like, dislike },
         currentUserReactions: currentUserReactions
       };
@@ -423,17 +424,19 @@ BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
   // can get values like reaction 'like','dislike' or just comment
   // validate blog
   try {
-    await prisma.comment.update({
-      where: {
-        id: data.commentId,
-        commentorId: ctx.get("userId"),
-      },
-      data: {
-        comment: data.comment,
-      },
-    });
+    if(data.comment.length > 0){
+      await prisma.comment.update({
+        where: {
+          id: data.commentId,
+          commentorId: ctx.get("userId"),
+        },
+        data: {
+          comment: data.comment,
+        },
+      });
+    }
     // if have reaction then update it
-    if (data.likeDislike && data.likeDislike.length > 0) {
+    if (data.likeDislike && data.likeDislike !== 'NONE') {
       const reaction = await prisma.commentreaction.findUnique({
         where: {
           commentId_userId: {

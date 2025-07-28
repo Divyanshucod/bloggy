@@ -9,7 +9,8 @@ export interface commentType {
         createdAt: string,
         commentor: string,
         reactionsCnt: { like:number, dislike:number },
-        currentUserReactions: string
+        currentUserReactions: {likeDislike:string,reaction:string},
+        commentorId:string
 }
 interface CommentState {
     comment:string,
@@ -49,6 +50,16 @@ export const createComment = createAsyncThunk('comment/createComment',async ({bl
     }
 
 })
+export const updateComment = createAsyncThunk('comment/updateComment',async ({commentId,likeDislike='NONE',comment=''}:{commentId:string,likeDislike:string,comment:string}, thunkAPI)=>{
+    try {
+        const response = await axios.put(`${BACKED_URL_LOCAL}api/v1/blog/comment`,{commentId:commentId,comment:comment,likeDislike},{withCredentials:true})
+        return response.data.message;
+    } catch (err:any) {
+        return thunkAPI.rejectWithValue(
+            err?.response?.data?.message || "Something went wrong"
+          );
+    }
+})
 export const CommentSlice = createSlice({
     name:"comment",
     initialState,
@@ -85,6 +96,16 @@ export const CommentSlice = createSlice({
             state.isLoading = 'idle';
         })
         builder.addCase(createComment.rejected,(state)=>{
+            state.isCreatingComment = 'idle';
+        })
+        builder.addCase(updateComment.fulfilled,(state)=>{
+            state.comment = ''
+            state.isCreatingComment = "succeeded";
+        })
+        builder.addCase(updateComment.pending,(state)=>{
+            state.isCreatingComment = 'pending'
+        })
+        builder.addCase(updateComment.rejected,(state)=>{
             state.isCreatingComment = 'idle';
         })
     }

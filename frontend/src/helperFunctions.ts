@@ -42,6 +42,10 @@ export const initialValueFullBlog = {
     like: 0,
     dislike: 0,
     reaction: 0
+  },
+  currentUserReaction: {
+    likeDislike:'NONE',
+    reaction:'NONE'
   }
 };
 

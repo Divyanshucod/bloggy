@@ -5,13 +5,13 @@ import { Pagination } from "./Pagination"
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { useAppDispatch } from "../hooks";
-import { createComment, fetchComments } from "../features/comment/CommentSlice";
+import { createComment, fetchComments, setComment } from "../features/comment/CommentSlice";
 import { toast } from "react-toastify";
 
 
 export const CommentSection = ({blogId,enablePaginationBar=true}:{blogId:string,enablePaginationBar:boolean}) => {
   const { pageNo,} = useSelector((state:RootState)=>state.CommentSlice);
-  const { comments, isLoading,isCreatingComment} = useSelector((state:RootState)=>state.CommentSlice);
+  const { comments, isLoading,isCreatingComment,comment} = useSelector((state:RootState)=>state.CommentSlice);
   const dispatch2 = useAppDispatch()
   useEffect(()=>{
     async function fetch(){
@@ -41,6 +41,8 @@ export const CommentSection = ({blogId,enablePaginationBar=true}:{blogId:string,
         <textarea
           className="w-full bg-transparent resize-none outline-none text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 h-28"
           placeholder="Add comment..."
+          value={comment}
+          onChange={(e) => dispatch2(setComment(e.target.value))}
         ></textarea>
         <div className="flex justify-end">
           <Button
@@ -70,7 +72,7 @@ export const CommentSection = ({blogId,enablePaginationBar=true}:{blogId:string,
             </div>
           ) : (
             comments.map((comment) => (
-              <CommentCard key={comment.id} comment={comment.comment} commentor={comment.commentor} createdAt={comment.createdAt} currentUserReactions={comment.currentUserReactions} reactionsCnt={comment.reactionsCnt} id={comment.id}/>
+              <CommentCard key={comment.id} comment={comment.comment} commentor={comment.commentor} createdAt={comment.createdAt} currentUserReactions={comment.currentUserReactions} reactionsCnt={comment.reactionsCnt} id={comment.id} commentorId={comment.commentorId}/>
             ))
           )}
       </div>

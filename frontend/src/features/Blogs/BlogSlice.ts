@@ -15,7 +15,13 @@ interface Blogs {
     name: string;
   };
 }
-// 2025-06-21T15:08:03.091+00:00
+export type likeDislikeType = "LIKE" | "DISLIKE" | "NONE";
+export type reactionType =
+  | "HEART"
+  | "SMILE"
+  | "ANNOYED"
+  | "IDEA"
+  | "NONE";
 export interface authorDetails {
   id: string;
   publishedDate: string;
@@ -30,13 +36,17 @@ export interface BlogType {
   tags: string[];
   title: string;
 }
-type extras = {
+export type extras = {
   commentsCnt: number;
   reactions: {
     like: number;
     dislike: number;
     reaction: number;
   };
+  currentUserReaction: {
+    likeDislike: likeDislikeType;
+    reaction: reactionType;
+  }
 };
 
 interface CreateBlogProps {
@@ -221,6 +231,16 @@ export const updateBlog = createAsyncThunk(
     }
   }
 );
+export const addBlogReaction = createAsyncThunk('blog/addBlogReaction',async({blogId, reactions}:{blogId:string, reactions:{likeDislike:likeDislikeType,reaction:reactionType}},thunkAPI) => {
+  try {
+    const response = await axios.post(`${BACKED_URL_LOCAL}api/v1/blog/blog-reaction`,{postId:blogId, likeDislike:reactions.likeDislike,reaction:reactions.reaction},{withCredentials:true});
+    return response.data.message;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      error?.response?.data?.message || "Something went wrong"
+    );
+  }
+})
 export const BlogSlice = createSlice({
   name: "Blog",
   initialState: initialState,

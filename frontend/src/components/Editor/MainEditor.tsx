@@ -13,7 +13,6 @@ import { togglePreviewButton } from "../../features/Preview/PreviewSlice";
 import type { RootState } from "../../store";
 import { Tags } from "../Tags";
 import { useState } from "react";
-import  EmojiReactionToggler  from "../Reactions";
 
 interface editorType {
   blog: BlogType;
@@ -25,6 +24,7 @@ export const MainEditor = (props: editorType) => {
   const dispatch = useDispatch()
   const preview = useSelector((state:RootState) => state.PreviewSlice)
   const [tagOnFocused,setTagOnFocused] = useState(false)
+
   return (
     <div className="relative w-full h-screen rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pb-6 pt-3 shadow-sm transition-all">
       <Slate
@@ -59,9 +59,7 @@ export const MainEditor = (props: editorType) => {
             onFocus={()=> setTagOnFocused(false)}
           />
         </div>
-        {preview.isForUpdateBlog && <div className="absolute bottom-2 right-1.5">
-          <EmojiReactionToggler/></div>}
-        {/* Preview toggle (only when not update mode) */}
+
         {!preview.isForUpdateBlog && (
           <button
             onClick={() => {dispatch(togglePreviewButton())
