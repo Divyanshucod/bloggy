@@ -11,6 +11,8 @@ import {
   HandleCatchErrors,
   ValidateBlogId,
 } from "../HelperFunction/ValidateBlog";
+import { PrismaClient } from "../generated/prisma";
+import { withAccelerate } from "@prisma/extension-accelerate";
 
 export const BlogRouter = new Hono<{
   Bindings: {
@@ -112,6 +114,8 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
 BlogRouter.post("/blog-reaction", authMiddleWare, async (ctx) => {
   const blog_reaction = await ctx.req.json(); //{likeDislike,reaction,postId}
   const prisma = ctx.get('prisma')
+  console.log(blog_reaction);
+  
   try {
     //check if reaction of user already exists then update it.
     const reaction = await prisma.reaction.findUnique({
@@ -212,8 +216,16 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
   try {
     const prisma = ctx.get("prisma");
     // verify body using zod
-
-    const posts = await prisma.post.findMany({
+    const cnt = await prisma.post.count({
+      where: {
+        published: true,
+      },
+    });
+    
+    const blogs = await prisma.post.findMany({
+      where: {
+        published: true,
+      },
       select: {
         id: true,
         content: true,
@@ -226,9 +238,6 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
           },
         },
       },
-      where: {
-        published: true,
-      },
       orderBy: [
         {
           publishedDate: "desc",
@@ -240,7 +249,10 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
 
     ctx.status(200);
     return ctx.json({
-      posts,
+        Posts:{
+          blogs,
+          totalBlogs:cnt
+        }
     });
   } catch (error) {
     console.log(error);
@@ -255,8 +267,15 @@ BlogRouter.get("/user/:pageno", authMiddleWare, async (ctx) => {
   const page = parseInt(ctx.req.param("pageno")) || 0;
   try {
     const prisma = ctx.get("prisma");
-
-    const posts = await prisma.post.findMany({
+    const cnt = await prisma.user.count({
+      where: {
+        authorId: ctx.get("userId"),
+      }
+    })
+    const blogs = await prisma.post.findMany({
+      where: {
+        authorId: ctx.get("userId"),
+      },
       select: {
         id: true,
         content: true,
@@ -269,9 +288,6 @@ BlogRouter.get("/user/:pageno", authMiddleWare, async (ctx) => {
           },
         },
       },
-      where: {
-        authorId: ctx.get("userId"),
-      },
       orderBy: [
         {
           publishedDate: "desc",
@@ -282,7 +298,10 @@ BlogRouter.get("/user/:pageno", authMiddleWare, async (ctx) => {
     });
     ctx.status(200);
     return ctx.json({
-      posts,
+      Posts:{
+        blogs,
+        totalBlogs:cnt
+      },
     });
   } catch (error) {
     console.log(error);
@@ -307,12 +326,13 @@ BlogRouter.get("/comments/:blogId/:pageno", async (ctx) => {
       take: 10,
       skip: 10 * pageno,
       orderBy: {
-        createdAt: "desc",
+        commentedAt: "desc",
       },
       select: {
         id: true,
         comment: true,
-        createdAt: true,
+        commentedAt: true,
+        commentorId:true,
         commentor: {
           select: {
             name: true,
@@ -326,7 +346,7 @@ BlogRouter.get("/comments/:blogId/:pageno", async (ctx) => {
       return {
         id: comment.id,
         comment: comment.comment,
-        createdAt: comment.createdAt,
+        commentedAt: comment.commentedAt,
         commentor: comment.commentor,
         commentorId:comment.commentorId,
         reactionsCnt: { like, dislike },
@@ -335,9 +355,11 @@ BlogRouter.get("/comments/:blogId/:pageno", async (ctx) => {
     })
     ctx.status(200);
     return ctx.json({
-      newComments,
+      comments:newComments,
     });
   } catch (error) {
+    console.log(error);
+    
     return HandleCatchErrors(error, ctx);
   }
 });
@@ -421,6 +443,7 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
 BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
   const data = await ctx.req.json();
   const prisma = ctx.get("prisma");
+
   // can get values like reaction 'like','dislike' or just comment
   // validate blog
   try {
@@ -436,8 +459,8 @@ BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
       });
     }
     // if have reaction then update it
-    if (data.likeDislike && data.likeDislike !== 'NONE') {
-      const reaction = await prisma.commentreaction.findUnique({
+    if (data.likeDislike) {
+      const reaction = await prisma.commentReaction.findUnique({
         where: {
           commentId_userId: {
             commentId: data.commentId,
@@ -446,12 +469,12 @@ BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
         },
       });
       if (reaction) {
-        await prisma.commentreaction.update({
+        await prisma.commentReaction.update({
           where: { id: reaction.id },
-          data: { reaction: data.likeDislike },
+          data: { likeDislike: data.likeDislike },
         });
       } else {
-        await prisma.commentreaction.create({
+        await prisma.commentReaction.create({
           data: {
             likeDislike: data.likeDislike,
             commentId: data.commentId,
@@ -465,13 +488,76 @@ BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
       message: "comment updated!",
     });
   } catch (error) {
+    console.log(error);
+    
     ctx.status(500);
     return ctx.json({
       message: "something went wrong!",
     });
   }
 });
-
+BlogRouter.get('/filter/:query/:pageno',authMiddleWare, async (ctx) => {
+   try {
+     const prisma = ctx.get('prisma')
+    const query = ctx.req.param('query')
+    console.log(query);
+    console.log(ctx.req.param('pageno'));
+    
+    
+    const pageno = Number(ctx.req.param('pageno')) || 0;
+    const cnt = await prisma.tag.count({
+      where:{
+        title:{
+          contains:query,
+          mode:'insensitive'
+        }
+      },
+    })
+    
+    const blogs = await prisma.tag.findMany({
+      where:{
+        title:{
+          contains:query,
+          mode:'insensitive'
+        }
+      },
+      select:{
+        post:{
+          select:{
+            id: true,
+            content: true,
+            title: true,
+            publishedDate: true,
+            published: true,
+            author: {
+              select: {
+                name: true,
+              },
+            },
+          }
+        },
+      },
+      skip: 6*pageno,
+      take
+      : 6,
+    })
+    ctx.status(200);
+    return ctx.json({
+      filterBlogs:{
+        totalBlogs:cnt,
+        blogs
+      }
+    })
+   } catch (error) {
+    console.log(error);
+    
+      ctx.status(500)
+      return ctx.json({
+        message:'Got error while filtering blogs!'
+      })
+   }
+  
+})
 function countReactions(reactions,ctx) {
   let currentUserReactions = {likeDislike: 'NONE', reaction: 'NONE'};
   let like = 0, dislike = 0, reaction = 0;

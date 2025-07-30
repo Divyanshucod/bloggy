@@ -70,6 +70,8 @@ model CommentReaction{
   user User @relation(fields: [userId], references: [id])
   userId String
   commentId String
+
+  @@unique([commentId,userId])
 }
 model Tag{
   id Int @id @default(autoincrement())
@@ -88,7 +90,7 @@ enum LikeDislike {
 enum React{
   NONE
   SMILE
-  INSIGHTFULL
+  ANNOYED
   HEART
   IDEA
 }

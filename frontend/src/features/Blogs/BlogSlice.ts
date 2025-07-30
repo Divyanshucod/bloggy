@@ -27,6 +27,7 @@ export interface authorDetails {
   publishedDate: string;
   authorOrNot: false;
   published: true;
+  authorId: string;
   author: {
     name: string;
   };
@@ -43,7 +44,7 @@ export type extras = {
     dislike: number;
     reaction: number;
   };
-  currentUserReaction: {
+  currentUserReactions: {
     likeDislike: likeDislikeType;
     reaction: reactionType;
   }
@@ -51,38 +52,59 @@ export type extras = {
 
 interface CreateBlogProps {
   filteredBlogPages: number;
-  filteredBlogs: Blogs[];
+  filteredBlogs: {
+    totalBlogs:number,
+    blogs:Blogs[]
+  };
   Blog: BlogType & extras;
   BlogToCreate: BlogType;
   isloading: "idle" | "pending" | "succeeded";
   isPublishing_drafting: "idle" | "pending" | "succeeded";
   isUpdating: "idle" | "pending" | "succeeded";
-  UserBlogs: Blogs[];
-  AllBlogs: Blogs[];
+  UserBlogs: {
+    totalBlogs:number,
+    blogs:Blogs[]
+  };
+  AllBlogs: {
+    totalBlogs:number,
+    blogs:Blogs[]
+  };
   hasUserBlogFetched: boolean;
   hasAllBlogFetched: boolean;
   userBlogsPage: number;
   allBlogPages: number;
+  FilteredBlogPages:number
   authorDetails: authorDetails;
 }
 const initialState = {
   filteredBlogPages: 1,
-  filteredBlogs: [],
+  filteredBlogs: {
+    blogs:[],
+    totalBlogs:0
+  },
   Blog: initialValueFullBlog,
   BlogToCreate: initialValue,
   isPublishing_drafting: "idle",
   isloading: "idle",
   isUpdating: "idle",
-  UserBlogs: [],
-  AllBlogs: [],
+  UserBlogs: {
+    blogs:[],
+    totalBlogs:0
+  },
+  AllBlogs: {
+    blogs:[],
+    totalBlogs:0
+  },
   hasAllBlogFetched: false,
   hasUserBlogFetched: false,
   userBlogsPage: 1,
   allBlogPages: 1,
+  FilteredBlogPages:1,
   authorDetails: {
     id: "",
     publishedDate: "2025-06-21T15:08:03.091+00:00",
     authorOrNot: false,
+    authorId:"",
     published: true,
     author: {
       name: "Dev",
@@ -128,7 +150,7 @@ export const fetchUserBlogs = createAsyncThunk(
           withCredentials: true,
         }
       );
-      return response.data.posts;
+      return response.data.Posts;
     } catch (err) {
       return thunkAPI.rejectWithValue(
         err?.response?.data?.message || "Something went wrong"
@@ -148,15 +170,17 @@ export const fetchBlogById = createAsyncThunk(
           withCredentials: true,
         }
       );
+      
       const user_details = {
         id: response.data.blog.id,
-        publishedDate: response.data.blog.id,
+        publishedDate: response.data.blog.publishedDate,
         author: response.data.blog.author,
         authorOrNot: response.data.blog.authorId === state.UserSlice.user?.id,
         published: response.data.blog.published,
+        authorId: response.data.blog.authorId,
       };
       dispatch(BlogSlice.actions.setAuthorDetails(user_details));
-      const { content, title, tags, reactions, commentsCnt } =
+      const { content, title, tags, reactions, commentsCnt,currentUserReactions } =
         response.data.blog;
       return {
         content,
@@ -164,6 +188,7 @@ export const fetchBlogById = createAsyncThunk(
         tags,
         reactions,
         commentsCnt,
+        currentUserReactions,
       };
     } catch (err) {
       return thunkAPI.rejectWithValue(
@@ -176,9 +201,10 @@ export const fetchFilteredBlogs = createAsyncThunk('blogs/fetchFilteredBlogs', a
   try {
     const state: RootState = thunkAPI.getState() as RootState;
     const response = await axios.get(
-      `${BACKED_URL_LOCAL}api/v1/blog/filter/${filter}/${state.BlogSlice?.FilteredBlogPages - 1}`
+      `${BACKED_URL_LOCAL}api/v1/blog/filter/${filter}/${state.BlogSlice?.FilteredBlogPages - 1}`,
+      {withCredentials:true}
     );
-    return response.data.posts;
+    return response.data.filterBlogs;
   } catch (error) {
     return thunkAPI.rejectWithValue(
       error?.response?.data?.message || "Something went wrong"
@@ -196,7 +222,7 @@ export const fetchAllBlogs = createAsyncThunk(
           state.BlogSlice?.allBlogPages - 1
         }`
       );
-      return response.data.posts;
+      return response.data.Posts;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error?.response?.data?.message || "Something went wrong"
@@ -300,6 +326,15 @@ export const BlogSlice = createSlice({
     setDecrementPageAllBlogs: (state) => {
       state.allBlogPages = state.allBlogPages - 1;
     },
+    setCustomPageFilteredBlogs: (state, action) => {
+      state.filteredBlogPages = action.payload;
+    },
+    setIncrementPageFilteredBlogs: (state) => {
+      state.filteredBlogPages = state.filteredBlogPages + 1;
+    },
+    setDecrementPageFilteredBlogs: (state) => {
+      state.filteredBlogPages = state.filteredBlogPages - 1;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createBlog.fulfilled, (state) => {
@@ -385,6 +420,9 @@ export const {
   setDecrementPageAllBlogs,
   setDecrementPageMyBlogs,
   setIncrementPageAllBlogs,
-  setIncrementPageMyBlogs
+  setIncrementPageMyBlogs,
+  setIncrementPageFilteredBlogs,
+  setDecrementPageFilteredBlogs,
+  setCustomPageFilteredBlogs,
 } = BlogSlice.actions;
 export default BlogSlice.reducer;

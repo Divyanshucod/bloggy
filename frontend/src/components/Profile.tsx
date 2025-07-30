@@ -16,7 +16,7 @@ interface UserProfileType {
   meFollowing: boolean;
 }
 
-const UserProfile = ({ setProfileOpen, isProfileOpen, authorId}: { setProfileOpen: (prev: any) => void; isProfileOpen: boolean ,authorId:''}) => {
+const UserProfile = ({ setProfileOpen, isProfileOpen, authorId}: { setProfileOpen: (prev: any) => void; isProfileOpen: boolean ,authorId:string}) => {
   const [user, setUser] = useState<UserProfileType>({
     id: '',
     name: 'Loading...',
@@ -28,7 +28,7 @@ const UserProfile = ({ setProfileOpen, isProfileOpen, authorId}: { setProfileOpe
   });
   async function handleFollow_Unfollow(){
     try {
-      const res = await axios.put(`${BACKED_URL_LOCAL}api/v1/user/${user.meFollowing ? 'unfollow' : 'follow'}`,{follower: user.id},{withCredentials: true});
+      const res = await axios.put(`${BACKED_URL_LOCAL}api/v1/user/${user.meFollowing ? 'unfollow' : 'follow'}`,{follow: authorId},{withCredentials: true});
       toast.success(res.data.message);
     } catch (error) {
       handleError(error);
@@ -61,9 +61,12 @@ const UserProfile = ({ setProfileOpen, isProfileOpen, authorId}: { setProfileOpe
       {/* Profile Header */}
       <div className="flex items-center gap-4 mb-4">
         <Avatar user={user.name} />
-        <div className='text-lg font-semibold text-gray-900 dark:text-white'>{user.email}</div>
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{user.name}</h2>
+        <div className="text-lg font-semibold text-gray-900 dark:text-white">{user.name}</div>
+        <div className='text-sm text-gray-900 dark:text-gray-500'>{user.email}</div>
+        </div>
+        <div>
+         
           <div className="text-xs text-gray-500 dark:text-gray-400">
             {user.followers} followers • {user.totalBlogs} blogs
           </div>
@@ -73,7 +76,7 @@ const UserProfile = ({ setProfileOpen, isProfileOpen, authorId}: { setProfileOpe
       {/* Bio Section */}
       <div className="relative bg-gray-100 dark:bg-gray-700 p-3 rounded-md">
         <p className="text-sm text-gray-800 dark:text-gray-200">
-          {user.bio.length === 0 ? 'No bio added yet.': user.bio}
+          {!user.bio || user.bio.length == 0 ? 'No bio added yet.': user.bio}
         </p>
       </div>
       {/* Follow Button */}

@@ -2,11 +2,11 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { setCustomPage, setDecrementPage, setIncrementPage } from "../features/comment/CommentSlice"
 import type { RootState } from "../store"
-import { setCustomPageAllBlogs, setCustomPageMyBlogs, setDecrementPageAllBlogs, setDecrementPageMyBlogs, setIncrementPageAllBlogs, setIncrementPageMyBlogs } from "../features/Blogs/BlogSlice"
+import { setCustomPageAllBlogs, setCustomPageMyBlogs, setDecrementPageAllBlogs, setDecrementPageMyBlogs, setIncrementPageAllBlogs, setIncrementPageMyBlogs,setCustomPageFilteredBlogs,setIncrementPageFilteredBlogs,setDecrementPageFilteredBlogs } from "../features/Blogs/BlogSlice"
 
 interface paginationProps {
     cnt:number,
-    type:'blogs'|'myBlogs'|'comments',
+    type:'blogs'|'myBlogs'|'comments'|"filteredBlogs",
 }
 export const Pagination = (props:paginationProps)=>{
     const activePage = useSelector((state:RootState) => props.type === 'comments' ? state.CommentSlice.pageNo : props.type === 'myBlogs' ? state.BlogSlice.userBlogsPage : state.BlogSlice.allBlogPages);
@@ -31,6 +31,8 @@ export const Pagination = (props:paginationProps)=>{
             dispatch(setDecrementPage())
         }else if(props.type === 'myBlogs'){
             dispatch(setDecrementPageMyBlogs())
+        }else if(props.type === 'filteredBlogs'){
+          dispatch(setDecrementPageFilteredBlogs())
         }else{
             dispatch(setDecrementPageAllBlogs())
         }
@@ -40,6 +42,8 @@ export const Pagination = (props:paginationProps)=>{
             dispatch(setIncrementPage())
         }else if(props.type === 'myBlogs'){
             dispatch(setIncrementPageMyBlogs())
+        }else if(props.type === 'filteredBlogs'){
+          dispatch(setIncrementPageFilteredBlogs())
         }else{
             dispatch(setIncrementPageAllBlogs())
         }
@@ -49,6 +53,8 @@ export const Pagination = (props:paginationProps)=>{
             dispatch(setCustomPage(val))
         }else if(props.type === 'myBlogs'){
             dispatch(setCustomPageMyBlogs(val))
+        }else if(props.type === 'filteredBlogs'){
+          dispatch(setCustomPageFilteredBlogs(val))
         }else{
             dispatch(setCustomPageAllBlogs(val))
         }

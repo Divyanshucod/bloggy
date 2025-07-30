@@ -6,8 +6,10 @@ import { BACKED_URL_LOCAL } from "../../config";
 export interface commentType {
         id: string,
         comment: string,
-        createdAt: string,
-        commentor: string,
+        commentedAt: string,
+        commentor: {
+            name:string
+        },
         reactionsCnt: { like:number, dislike:number },
         currentUserReactions: {likeDislike:string,reaction:string},
         commentorId:string
@@ -50,7 +52,7 @@ export const createComment = createAsyncThunk('comment/createComment',async ({bl
     }
 
 })
-export const updateComment = createAsyncThunk('comment/updateComment',async ({commentId,likeDislike='NONE',comment=''}:{commentId:string,likeDislike:string,comment:string}, thunkAPI)=>{
+export const updateComment = createAsyncThunk('comment/updateComment',async ({commentId,likeDislike='NONE',comment=''}:{commentId:string,likeDislike:string,comment?:string}, thunkAPI)=>{
     try {
         const response = await axios.put(`${BACKED_URL_LOCAL}api/v1/blog/comment`,{commentId:commentId,comment:comment,likeDislike},{withCredentials:true})
         return response.data.message;

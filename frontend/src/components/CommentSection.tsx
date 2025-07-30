@@ -6,10 +6,9 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { useAppDispatch } from "../hooks";
 import { createComment, fetchComments, setComment } from "../features/comment/CommentSlice";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
-
-export const CommentSection = ({blogId,enablePaginationBar=true}:{blogId:string,enablePaginationBar:boolean}) => {
+export const CommentSection = ({blogId,enablePaginationBar=true,commentCnt=0}:{blogId:string,enablePaginationBar:boolean,commentCnt:number}) => {
   const { pageNo,} = useSelector((state:RootState)=>state.CommentSlice);
   const { comments, isLoading,isCreatingComment,comment} = useSelector((state:RootState)=>state.CommentSlice);
   const dispatch2 = useAppDispatch()
@@ -49,7 +48,7 @@ export const CommentSection = ({blogId,enablePaginationBar=true}:{blogId:string,
             onClick={handleClick}
             disableButton={isCreatingComment === 'pending'}
           >
-            {isCreatingComment === 'pending' ? 'Adding...' : 'Add Comment'}
+            {'Add Comment'}
           </Button>
         </div>
       </div>
@@ -57,7 +56,7 @@ export const CommentSection = ({blogId,enablePaginationBar=true}:{blogId:string,
 
       {/* Comments Header */}
       <div className="w-full max-w-3xl flex justify-between items-center mb-4 px-2 dark:text-white">
-        <h3 className="font-semibold text-lg">Comments <span className="ml-1 text-green-600">(25)</span></h3>
+        <h3 className="font-semibold text-lg">Comments <span className="ml-1 text-green-600">{commentCnt}</span></h3>
         <select className="border px-2 py-1 rounded dark:bg-gray-800 dark:text-white">
           <option value="recent">Most Recent</option>
           <option value="upvote">Most Liked</option>
@@ -65,20 +64,21 @@ export const CommentSection = ({blogId,enablePaginationBar=true}:{blogId:string,
       </div>
 
       {/* Comment List */}
-      <div className="w-full max-w-3xl space-y-6">
+      <div className="w-full max-w-3xl space-y-6 max-h-full overflow-y-auto">
       {isLoading === 'pending' ? (
             <div className="space-y-4 animate-pulse">
               <div className="h-[200px] bg-gray-200 dark:bg-gray-800 rounded-lg mt-4" />
             </div>
           ) : (
-            comments.map((comment) => (
-              <CommentCard key={comment.id} comment={comment.comment} commentor={comment.commentor} createdAt={comment.createdAt} currentUserReactions={comment.currentUserReactions} reactionsCnt={comment.reactionsCnt} id={comment.id} commentorId={comment.commentorId}/>
+            comments?.length === 0 ? <div className="text-center dark:text-white">No comments yet</div> : comments?.map((comment) => (
+              <CommentCard key={comment.id} comment={comment.comment} commentor={comment.commentor} commentedAt={comment.commentedAt} currentUserReactions={comment.currentUserReactions} reactionsCnt={comment.reactionsCnt} id={comment.id} commentorId={comment.commentorId}/>
             ))
           )}
       </div>
       {enablePaginationBar &&  <footer className="fixed bottom-2 flex justify-center items-end">
         <Pagination cnt={20} type="comments"/>
       </footer>}
+      <ToastContainer/>
     </div>
   )
 }

@@ -8,10 +8,12 @@ import React, { useEffect } from "react";
 import {fetchFilteredBlogs } from "../features/Blogs/BlogSlice";
 import { useAppDispatch } from "../hooks";
 import { Pagination } from "../components/Pagination";
-import { useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export const FilteredBlogs = React.memo(() => {
-  const filter = useSearchParams()[0].get("filter") || "all";
+  const location = useLocation()
+  const searchUrl = new URLSearchParams(location.search)
+  const filter = searchUrl.get('filter') || "all"
   const { isloading,filteredBlogPages,filteredBlogs } = useSelector((state:RootState)=>state.BlogSlice);
   const dispatch = useAppDispatch()
   useEffect(()=>{
@@ -34,25 +36,25 @@ export const FilteredBlogs = React.memo(() => {
             <BlogsSkeleton key={index} />
           ))}
         </div>
-      ) : filteredBlogs.length === 0 ? (
+      ) : filteredBlogs.blogs.length === 0 ? (
         <div className=" h-screen text-center text-gray-600 dark:text-gray-300 text-lg mt-20">
           <NoBlogs />
         </div>
       ) : (
         <div className="flex min-h-screen flex-col gap-6 max-w-3xl mx-auto mt-8 w-full">
-          {filteredBlogs.map((val) => (
+          {filteredBlogs.blogs.map((val) => (
             <BlogCard
-              key={val.id}
-              id={val.id}
-              authorName={val.author?.name}
-              publishedDate={val.publishedDate}
-              title={val.title}
-              content={val.content}
-              published={val.published}
+              key={val.post.id}
+              id={val.post.id}
+              authorName={val.post.author?.name}
+              publishedDate={val.post.publishedDate}
+              title={val.post.title}
+              content={val.post.content}
+              published={val.post.published}
             />
           ))}
           <footer className="fixed bottom-2 right-[50%] translate-x-[50%]">
-        <Pagination cnt={42} type="blogs"/> //adjust the type and count as needed
+        <Pagination cnt={filteredBlogs.totalBlogs} type="filteredBlogs"/> 
       </footer>
         </div>
       )}

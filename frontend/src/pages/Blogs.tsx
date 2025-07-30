@@ -34,14 +34,14 @@ export const Blogs = React.memo(() => {
             <BlogsSkeleton key={index} />
           ))}
         </div>
-      ) : AllBlogs.length === 0 ? (
+      ) : AllBlogs.blogs.length === 0 ? (
         <div className=" h-screen text-center text-gray-600 dark:text-gray-300 text-lg mt-20">
           <NoBlogs />
         </div>
       ) : (
         
         <div className="flex min-h-screen flex-col gap-6 max-w-3xl mx-auto mt-8 w-full">
-          {AllBlogs.map((val) => (
+          {AllBlogs.blogs.map((val) => (
             <BlogCard
               key={val.id}
               id={val.id}
@@ -53,7 +53,7 @@ export const Blogs = React.memo(() => {
             />
           ))}
           <footer className="fixed bottom-2 right-[50%] translate-x-[50%]">
-        <Pagination cnt={42} type="blogs"/>
+        <Pagination cnt={AllBlogs.totalBlogs} type="blogs"/>
       </footer>
         </div>
       )}

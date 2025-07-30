@@ -6,10 +6,10 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { fetchBlogById } from "../features/Blogs/BlogSlice";
 import { toast } from "react-toastify";
-import EmojiReactionToggler from "../components/Reactions";
 const Blog = () => {
   const { id } = useParams();
-  const { isloading, Blog, authorDetails } = useSelector((state:RootState)=>state.BlogSlice)
+  const { isloading, Blog, authorDetails 
+  } = useSelector((state:RootState)=>state.BlogSlice)
   const dispatch = useAppDispatch()
   useEffect(()=>{
     async function fetch(){
@@ -41,10 +41,9 @@ const Blog = () => {
               blogId={id || ""}
             />
           )}
+
         </div>
       </div>
-      {<div className="absolute bottom-2 right-1.5">
-        <EmojiReactionToggler  props={Blog} blogId={id || ''}/></div>}
     </div>
   );
 };

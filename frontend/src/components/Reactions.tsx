@@ -8,7 +8,12 @@ import {
   Annoyed,
   SmilePlus,
 } from "lucide-react";
-import { addBlogReaction, type extras, type likeDislikeType } from "../features/Blogs/BlogSlice";
+import {
+  addBlogReaction,
+  type extras,
+  type likeDislikeType,
+  type reactionType,
+} from "../features/Blogs/BlogSlice";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "../hooks";
 
@@ -28,38 +33,67 @@ const EmojiReactionToggler = ({
 }) => {
   const [mainOpen, setMainOpen] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
-  const [reactionCnt,setReactionCnt] = useState(props.reactions)
-  const [react, setReact] = useState(props.currentUserReaction);
+  const [reactionCnt, setReactionCnt] = useState({
+    like: 0,
+    dislike: 0,
+    reaction: 0,
+  });
+  const [react, setReact] = useState({
+    likeDislike: "NONE",
+    reaction: "NONE",
+  } as extras["currentUserReactions"]);
   const dispatch = useAppDispatch();
-  function handleCntUpdate(isActive:boolean,type:likeDislikeType){
-    if(isActive){
-      if(type === 'LIKE'){
+  function handleCntUpdate(isActive: boolean, type: likeDislikeType) {
+    if (isActive) {
+      if (type === "LIKE") {
         setReactionCnt({
           ...reactionCnt,
-          like: reactionCnt.like+1
+          like: reactionCnt.like + 1,
         });
-      }
-      else{
+      } else {
         setReactionCnt({
           ...reactionCnt,
-          dislike: reactionCnt.dislike+1
+          dislike: reactionCnt.dislike + 1,
         });
       }
-    }else{
+    } else {
       setReactionCnt({
         ...reactionCnt,
-        like: reactionCnt.like-1,
-        dislike:reactionCnt.dislike-1
+        like: reactionCnt.like - 1,
+        dislike: reactionCnt.dislike - 1,
       });
     }
   }
-  async function handleReactionUpdate() {
+  useEffect(() => {
+    console.log(props.currentUserReactions);
+
+    if (props.currentUserReactions) {
+      console.log(props.currentUserReactions);
+
+      setReact(props.currentUserReactions);
+    }
+    if (props.reactions) {
+      setReactionCnt(props.reactions);
+    }
+  }, [props.currentUserReactions, props.reactions]);
+
+  async function handleReactionUpdate({
+    likeDislike,
+    reaction,
+  }: {
+    likeDislike: likeDislikeType;
+    reaction: reactionType;
+  }) {
     let val;
+    console.log(react, "reaction state before update");
+
     clearTimeout(val);
     val = setTimeout(async () => {
       try {
-        await dispatch(addBlogReaction({ blogId, reactions: react })).unwrap();
-      } catch (error) {
+        await dispatch(
+          addBlogReaction({ blogId, reactions: { likeDislike, reaction } })
+        ).unwrap();
+      } catch (error: any) {
         toast.error(error);
       }
     }, 1000);
@@ -81,8 +115,7 @@ const EmojiReactionToggler = ({
     const emoji = emojis.find((e) => e.id === id);
     if (!emoji) return null;
     return React.createElement(emoji.icon, {
-      className: `w-4 h-4 text-${emoji.color}-500`,
-      fill: "currentColor",
+      className: `w-5 h-5 stroke-${emoji.color}-500`,
     });
   };
 
@@ -148,6 +181,7 @@ const EmojiReactionToggler = ({
               const color = type === "LIKE" ? "blue" : "red";
               const Icon = type === "LIKE" ? ThumbsUp : ThumbsDown;
               return (
+                <div className="relative">
                 <button
                   key={type}
                   onClick={() => {
@@ -155,9 +189,12 @@ const EmojiReactionToggler = ({
                       ...react,
                       likeDislike: isActive ? "NONE" : type,
                     });
-                    handleCntUpdate(isActive,type)
+                    handleCntUpdate(isActive, type as likeDislikeType);
                     setMainOpen(false);
-                    handleReactionUpdate();
+                    handleReactionUpdate({
+                      likeDislike: isActive ? "NONE" : type,
+                      reaction: react.reaction as reactionType,
+                    });
                   }}
                   className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
                     isActive
@@ -170,8 +207,13 @@ const EmojiReactionToggler = ({
                     fill={isActive ? "currentColor" : "none"}
                   />
                 </button>
+                <span className="absolute top-0 right-0 dark:text-gray-500">
+                  {type === 'LIKE' ? reactionCnt.like : reactionCnt.dislike}
+                </span>
+                </div>
               );
             })}
+            <div className="relative">
             <button
               onClick={() => {
                 setEmojiOpen(!emojiOpen);
@@ -189,6 +231,10 @@ const EmojiReactionToggler = ({
                 <Smile className="w-5 h-5 text-gray-400 dark:text-gray-500" />
               )}
             </button>
+            <span className="absolute top-0 right-0 dark:text-gray-500">
+                  {reactionCnt.reaction}
+                </span>
+            </div>
           </div>
         </div>
 
@@ -203,28 +249,44 @@ const EmojiReactionToggler = ({
         >
           <div className="flex p-2 space-x-1">
             {emojis.map(({ id, icon: Icon, color }) => (
+          
               <button
                 key={id}
                 onClick={() => {
                   setReact({
                     ...react,
-                    reaction: react.reaction === id ? "NONE" : id,
+                    reaction:
+                      react.reaction === id ? "NONE" : (id as reactionType),
                   });
-                  setReactionCnt({...reactionCnt,reaction:react.reaction === id ? reactionCnt.reaction-1 : reactionCnt.reaction+1})
+                  setReactionCnt({
+                    ...reactionCnt,
+                    reaction:
+                      react.reaction === id
+                        ? reactionCnt.reaction - 1
+                        : reactionCnt.reaction + 1,
+                  });
                   setEmojiOpen(false);
-                  handleReactionUpdate();
+                  handleReactionUpdate({
+                    likeDislike: react.likeDislike as likeDislikeType,
+                    reaction:
+                      react.reaction === id ? "NONE" : (id as reactionType),
+                  });
                 }}
                 className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all transform hover:scale-105 active:scale-95 ${
-                  reaction.emoji === id
+                  react.reaction === id
                     ? `bg-${color}-100 dark:bg-${color}-900/30 text-${color}-500`
                     : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
                 }`}
               >
                 <Icon
-                  className="w-5 h-5"
-                  fill={react.reaction === id ? "currentColor" : "none"}
+                  className={`w-5 h-5 ${
+                    react.reaction === id
+                      ? `stroke-${color}-500`
+                      : "stroke-gray-500"
+                  }`}
                 />
               </button>
+            
             ))}
           </div>
         </div>

@@ -5,7 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { NoBlogs } from "../components/NoBlogs";
 import {useSelector } from "react-redux";
 import { useEffect } from "react";
-import { fetchUserBlogs, setUserPages } from "../features/Blogs/BlogSlice";
+import { fetchUserBlogs } from "../features/Blogs/BlogSlice";
 import type { RootState } from "../store";
 import { Pagination } from "../components/Pagination";
 
@@ -34,12 +34,12 @@ export const MyBlogs = () => {
            <BlogsSkeleton key={index} />
          ))}
        </div>
-      ) : UserBlogs.length === 0 ? (
+      ) : UserBlogs.blogs.length === 0 ? (
         <div className="text-center text-gray-600 dark:text-gray-300 text-lg mt-20">
           <NoBlogs />
         </div> ) : (
         <div className="flex flex-col gap-6 max-w-3xl mx-auto mt-8">
-          {UserBlogs.map((val) => (
+          {UserBlogs.blogs.map((val) => (
             <BlogCard
               key={val.id}
               id={val.id}
@@ -52,7 +52,7 @@ export const MyBlogs = () => {
             />
           ))}
           <footer className="fixed bottom-2 right-[50%] translate-x-[50%]">
-        <Pagination cnt={42} type="myBlogs"/>
+        <Pagination cnt={UserBlogs.totalBlogs} type="myBlogs"/>
       </footer>
         </div>
       )}

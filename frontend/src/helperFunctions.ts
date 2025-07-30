@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Node } from "slate";
 import { BACKED_URL_LOCAL } from "./config";
+import type { likeDislikeType, reactionType } from "./features/Blogs/BlogSlice";
 
 export function formattedDate(date: string) {
   const dateFormate = new Date(date);
@@ -43,9 +44,9 @@ export const initialValueFullBlog = {
     dislike: 0,
     reaction: 0
   },
-  currentUserReaction: {
-    likeDislike:'NONE',
-    reaction:'NONE'
+  currentUserReactions: {
+    likeDislike:'NONE' as likeDislikeType,
+    reaction:'NONE' as reactionType
   }
 };
 

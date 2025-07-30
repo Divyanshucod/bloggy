@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { RootState } from "../store";
 import { Check } from "lucide-react";
 import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from "react-router-dom";
 interface tagsType {
     tags: string[];
     isCreatingBlog?:boolean,
@@ -26,7 +27,6 @@ export const Tags = (props:tagsType)=>{
         }
         setTagTitle('')
     }
-    console.log(props.tags);
     
     return <div>
         <div className="">
@@ -52,6 +52,7 @@ export const Tags = (props:tagsType)=>{
 const Tag = ({ title, isCreatingBlog }: { title: string; isCreatingBlog?: boolean }) => {
   const dispatch = useDispatch();
   const preview = useSelector((state:RootState) => state.PreviewSlice)
+  const navigate = useNavigate()
   function handleRemoveTags() {
     if (isCreatingBlog) {
       dispatch(deleteCreateBlogTags(title));
@@ -61,7 +62,7 @@ const Tag = ({ title, isCreatingBlog }: { title: string; isCreatingBlog?: boolea
   }
 
   return (
-    <div className="relative inline-flex items-center px-3 py-1 pr-6 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 rounded-full text-sm font-medium shadow-sm transition-all cursor-pointer">
+    <div className="relative inline-flex items-center px-3 py-1 pr-6 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 rounded-full text-sm font-medium shadow-sm transition-all cursor-pointer " onClick={()=> navigate(`/blog/filtered?filter=${title}`)}>
       {title}
       {!preview.value && <button
         onClick={handleRemoveTags}

@@ -12,6 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 import Settings from "@mui/icons-material/Settings";
+import PersonIcon from '@mui/icons-material/Person'
 import Logout from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -120,14 +121,19 @@ export default function AccountMenu({
         </MenuItem>
 
         <Divider />
-
+        <MenuItem onClick={()=>navigate('/user/profile')}>
+          <ListItemIcon>
+            <PersonIcon fontSize="small" />
+          </ListItemIcon>
+          Profile
+        </MenuItem>
         <MenuItem onClick={()=>navigate('/blog/user/myblogs')}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           MyBlogs
         </MenuItem>
-
+         
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
