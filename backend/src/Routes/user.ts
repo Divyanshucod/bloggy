@@ -115,8 +115,6 @@ UserRouter.post("/signin", async (ctx) => {
     });
   } catch (error) {
     ctx.status(500);
-    console.log(error);
-
     return ctx.json({
       message: "Server Error!",
     });
@@ -142,8 +140,7 @@ UserRouter.put("/follow", authMiddleWare, async (ctx: any) => {
     const prisma = ctx.get("prisma");
     const body = await ctx.req.json();
     const userId = ctx.get("userId");
-    console.log(body);
-    
+
     //adding an entry to follow and followed table
     await prisma.$transaction(async (tx: any) => {
       await tx.user.update({
@@ -177,8 +174,6 @@ UserRouter.put("/follow", authMiddleWare, async (ctx: any) => {
       message: "started following!",
     });
   } catch (error) {
-    console.log(error);
-    
     ctx.status(500);
     return ctx.json({
       message: "something happened following user!",
@@ -320,7 +315,7 @@ UserRouter.get(`/followers_following`, authMiddleWare, async (ctx: any) => {
 UserRouter.get("/user-details/:id", authMiddleWare, async (ctx: any) => {
   try {
     const prisma = ctx.get("prisma");
-    const id =  ctx.req.param('id');
+    const id = ctx.req.param("id");
     const userDetails = await prisma.user.findUnique({
       where: {
         id,
@@ -345,17 +340,15 @@ UserRouter.get("/user-details/:id", authMiddleWare, async (ctx: any) => {
         message: "user not found!",
       });
     }
-    console.log(userDetails);
-    
+
     let meFollowing = false;
-    for(let i=0;i<userDetails.followedBy.length;i++){
-      if(userDetails.followedBy[i].id === ctx.get("userId")){
+    for (let i = 0; i < userDetails.followedBy.length; i++) {
+      if (userDetails.followedBy[i].id === ctx.get("userId")) {
         meFollowing = true;
         break;
       }
     }
-    console.log(meFollowing);
-    
+
     ctx.status(200);
     return ctx.json({
       userDetails: {
@@ -370,8 +363,6 @@ UserRouter.get("/user-details/:id", authMiddleWare, async (ctx: any) => {
       },
     });
   } catch (error) {
-    console.log(error);
-
     ctx.status(500);
     return ctx.json({
       message: "something happened while fetching user details!",

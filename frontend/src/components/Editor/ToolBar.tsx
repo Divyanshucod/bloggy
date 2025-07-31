@@ -19,7 +19,7 @@ import { ToolBarButton, type TextFormateButtonProps } from "../ToolBarButton";
 import { LinkComp } from "../LinkComponent";
 import { useSelector } from "react-redux";
 import { createBlog } from "../../features/Blogs/BlogSlice";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import type { RootState } from "../../store";
 import { useAppDispatch } from "../../hooks";
 import { checkBlog } from "../../helperFunctions";
@@ -45,13 +45,14 @@ export const ToolBar = () => {
   };
   const handleDraft = async()=>{
     try {
-      if(checkBlog(BlogToCreate.content).length === 0){
+      const val = checkBlog(BlogToCreate.content)
+      
+      if(val.length === 0){
         toast.error("Blog can't be empty!");
         return;
       }
       const res = await dispatch(createBlog({ createDraft: false })).unwrap()
       toast.success(res)
-      window.location.reload()
     } catch (error:any) {
       toast.error(error)
     }
@@ -70,7 +71,6 @@ export const ToolBar = () => {
       }
       const res = await dispatch(createBlog({ createDraft: true })).unwrap()
       toast.success(res)
-      window.location.reload()
     } catch (error:any) {
       toast.error(error)
     }
@@ -86,7 +86,7 @@ export const ToolBar = () => {
          <ImageModel setIsImage={setIsImage} editor={editor}/>
       )}
       {isVideo && (<VideoComponent editor={editor} setIsVideo={setIsVideo}/>)}
-      <div className="flex gap-2 items-center p-3 bg-white border border-gray-200 rounded-lg shadow-sm mb-4 justify-between overflow-x-auto dark:bg-slate-900 dark:text-white dark:border-gray-800">
+      <div className="flex gap-2 md:gap-5 items-center p-3 bg-white border border-gray-200 rounded-lg shadow-sm mb-4 justify-between md:justify-center overflow-x-auto dark:bg-slate-900 dark:text-white dark:border-gray-800">
         <div className="flex gap-2 items-center">
           <select
             className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white  dark:border-gray-800"
@@ -143,6 +143,7 @@ export const ToolBar = () => {
           </Button>}
         </div>
       </div>
+      <ToastContainer className='mt-20'/>
     </>
   );
 };

@@ -1,2 +1,2 @@
-export const BACKED_URL="https://backend.ultimateg657.workers.dev/"
-export const BACKED_URL_LOCAL="http://localhost:8787/"
+export const BACKED_URL=import.meta.env.VITE_REACT_APP_BACKEND_URL_PROD
+export const BACKED_URL_LOCAL=import.meta.env.VITE_REACT_APP_BACKEND_URL_LOCAL

@@ -12,13 +12,13 @@ import {
   useTheme,
 } from "@mui/material";
 import Settings from "@mui/icons-material/Settings";
-import PersonIcon from '@mui/icons-material/Person'
+import PersonIcon from "@mui/icons-material/Person";
 import Logout from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { BACKED_URL_LOCAL } from "../config";
-import {handleError} from "../helperFunctions";
+import { handleError } from "../helperFunctions";
 import { clearUserDetails } from "../features/User/UserSlice";
 
 export default function AccountMenu({
@@ -28,8 +28,8 @@ export default function AccountMenu({
   username: string;
   email: string;
 }) {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
@@ -41,16 +41,18 @@ export default function AccountMenu({
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
-  const handleLogout = async ()=>{
+
+  const handleLogout = async () => {
     try {
-      await axios.get(`${BACKED_URL_LOCAL}api/v1/user/logout`,{withCredentials:true})
-      dispatch(clearUserDetails())
-      window.location.reload()
+      await axios.get(`${BACKED_URL_LOCAL}api/v1/user/logout`, {
+        withCredentials: true,
+      });
+      dispatch(clearUserDetails());
+      window.location.reload();
     } catch (error) {
-        handleError(error)
+      handleError(error);
     }
-  }
+  };
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -121,19 +123,19 @@ export default function AccountMenu({
         </MenuItem>
 
         <Divider />
-        <MenuItem onClick={()=>navigate('/user/profile')}>
+        <MenuItem onClick={() => navigate("/user/profile")}>
           <ListItemIcon>
             <PersonIcon fontSize="small" />
           </ListItemIcon>
           Profile
         </MenuItem>
-        <MenuItem onClick={()=>navigate('/blog/user/myblogs')}>
+        <MenuItem onClick={() => navigate("/blog/user/myblogs")}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           MyBlogs
         </MenuItem>
-         
+
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />

@@ -1,34 +1,27 @@
-
-import {
-  createContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import {type AppDispatch } from "../store";
+import { createContext, useEffect, useRef, useState } from "react";
+import { type AppDispatch } from "../store";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { fetchMe } from "../features/User/UserSlice";
-export const useAuth = ()=>{
-    const dispatch = useAppDispatch();
-    const {isloading,hasData} = useSelector((state:RootState) => state.UserSlice);
-    useEffect(() => {
-       async function fetchData(){
-           await dispatch(fetchMe());
-        }
-        if(!hasData){
-        fetchData()
-      }
-    }, []); 
-    return {isloading};
-}
+export const useAuth = () => {
+  const dispatch = useAppDispatch();
+  const { isloading, hasData } = useSelector(
+    (state: RootState) => state.UserSlice
+  );
+  useEffect(() => {
+    async function fetchData() {
+      await dispatch(fetchMe());
+    }
+    if (!hasData) {
+      fetchData();
+    }
+  }, []);
+  return { isloading };
+};
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
-
-
-
-export const useElementInView = (options:any) => {
+export const useElementInView = (options: any) => {
   const [isInView, setIsInView] = useState(false);
   const targetRef = useRef(null);
 
@@ -51,4 +44,3 @@ export const useElementInView = (options:any) => {
 
   return [targetRef, isInView];
 };
-

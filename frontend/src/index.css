@@ -2,25 +2,27 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* For modern browsers */
-::-webkit-scrollbar {
-    width: 1px;
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 2px;
+    height: 1px;
   }
-  ::-webkit-scrollbar-thumb {
-    background-color: #4b5563; /* Tailwind: gray-600 */
-    border-radius: 9999px;
-/* padding effect */
+
+  .scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #f7f4ed;
   }
-  
-  /* Dark mode support */
-  .dark ::-webkit-scrollbar-track {
-    background: #0f172a; /* Tailwind: slate-900 */
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #e0cbcb;
+    border-radius: 100vh;
+    border: 3px solid #f6f7ed;
   }
-  
-  .dark ::-webkit-scrollbar-thumb {
-    background-color: #334155; /* Tailwind: slate-700 */
-    border-color: #0f172a;
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #c0a0b9;
   }
+}
   
   /* Firefox support */
   

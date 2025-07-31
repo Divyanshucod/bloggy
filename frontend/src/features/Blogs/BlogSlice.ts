@@ -16,12 +16,7 @@ interface Blogs {
   };
 }
 export type likeDislikeType = "LIKE" | "DISLIKE" | "NONE";
-export type reactionType =
-  | "HEART"
-  | "SMILE"
-  | "ANNOYED"
-  | "IDEA"
-  | "NONE";
+export type reactionType = "HEART" | "SMILE" | "ANNOYED" | "IDEA" | "NONE";
 export interface authorDetails {
   id: string;
   publishedDate: string;
@@ -47,14 +42,14 @@ export type extras = {
   currentUserReactions: {
     likeDislike: likeDislikeType;
     reaction: reactionType;
-  }
+  };
 };
 
 interface CreateBlogProps {
   filteredBlogPages: number;
   filteredBlogs: {
-    totalBlogs:number,
-    blogs:Blogs[]
+    totalBlogs: number;
+    blogs: Blogs[];
   };
   Blog: BlogType & extras;
   BlogToCreate: BlogType;
@@ -62,25 +57,25 @@ interface CreateBlogProps {
   isPublishing_drafting: "idle" | "pending" | "succeeded";
   isUpdating: "idle" | "pending" | "succeeded";
   UserBlogs: {
-    totalBlogs:number,
-    blogs:Blogs[]
+    totalBlogs: number;
+    blogs: Blogs[];
   };
   AllBlogs: {
-    totalBlogs:number,
-    blogs:Blogs[]
+    totalBlogs: number;
+    blogs: Blogs[];
   };
   hasUserBlogFetched: boolean;
   hasAllBlogFetched: boolean;
   userBlogsPage: number;
   allBlogPages: number;
-  FilteredBlogPages:number
+  FilteredBlogPages: number;
   authorDetails: authorDetails;
 }
 const initialState = {
   filteredBlogPages: 1,
   filteredBlogs: {
-    blogs:[],
-    totalBlogs:0
+    blogs: [],
+    totalBlogs: 0,
   },
   Blog: initialValueFullBlog,
   BlogToCreate: initialValue,
@@ -88,23 +83,23 @@ const initialState = {
   isloading: "idle",
   isUpdating: "idle",
   UserBlogs: {
-    blogs:[],
-    totalBlogs:0
+    blogs: [],
+    totalBlogs: 0,
   },
   AllBlogs: {
-    blogs:[],
-    totalBlogs:0
+    blogs: [],
+    totalBlogs: 0,
   },
   hasAllBlogFetched: false,
   hasUserBlogFetched: false,
   userBlogsPage: 1,
   allBlogPages: 1,
-  FilteredBlogPages:1,
+  FilteredBlogPages: 1,
   authorDetails: {
     id: "",
     publishedDate: "2025-06-21T15:08:03.091+00:00",
     authorOrNot: false,
-    authorId:"",
+    authorId: "",
     published: true,
     author: {
       name: "Dev",
@@ -170,7 +165,7 @@ export const fetchBlogById = createAsyncThunk(
           withCredentials: true,
         }
       );
-      
+
       const user_details = {
         id: response.data.blog.id,
         publishedDate: response.data.blog.publishedDate,
@@ -180,8 +175,14 @@ export const fetchBlogById = createAsyncThunk(
         authorId: response.data.blog.authorId,
       };
       dispatch(BlogSlice.actions.setAuthorDetails(user_details));
-      const { content, title, tags, reactions, commentsCnt,currentUserReactions } =
-        response.data.blog;
+      const {
+        content,
+        title,
+        tags,
+        reactions,
+        commentsCnt,
+        currentUserReactions,
+      } = response.data.blog;
       return {
         content,
         title,
@@ -197,21 +198,25 @@ export const fetchBlogById = createAsyncThunk(
     }
   }
 );
-export const fetchFilteredBlogs = createAsyncThunk('blogs/fetchFilteredBlogs', async ({filter}:{filter:string},thunkAPI) => {
-  try {
-    const state: RootState = thunkAPI.getState() as RootState;
-    const response = await axios.get(
-      `${BACKED_URL_LOCAL}api/v1/blog/filter/${filter}/${state.BlogSlice?.FilteredBlogPages - 1}`,
-      {withCredentials:true}
-    );
-    return response.data.filterBlogs;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(
-      error?.response?.data?.message || "Something went wrong"
-    );
+export const fetchFilteredBlogs = createAsyncThunk(
+  "blogs/fetchFilteredBlogs",
+  async ({ filter }: { filter: string }, thunkAPI) => {
+    try {
+      const state: RootState = thunkAPI.getState() as RootState;
+      const response = await axios.get(
+        `${BACKED_URL_LOCAL}api/v1/blog/filter/${filter}/${
+          state.BlogSlice?.FilteredBlogPages - 1
+        }`,
+        { withCredentials: true }
+      );
+      return response.data.filterBlogs;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error?.response?.data?.message || "Something went wrong"
+      );
+    }
   }
-
-})
+);
 export const fetchAllBlogs = createAsyncThunk(
   "blog/fetchAllBlogs",
   async (_arg, thunkAPI) => {
@@ -257,16 +262,36 @@ export const updateBlog = createAsyncThunk(
     }
   }
 );
-export const addBlogReaction = createAsyncThunk('blog/addBlogReaction',async({blogId, reactions}:{blogId:string, reactions:{likeDislike:likeDislikeType,reaction:reactionType}},thunkAPI) => {
-  try {
-    const response = await axios.post(`${BACKED_URL_LOCAL}api/v1/blog/blog-reaction`,{postId:blogId, likeDislike:reactions.likeDislike,reaction:reactions.reaction},{withCredentials:true});
-    return response.data.message;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(
-      error?.response?.data?.message || "Something went wrong"
-    );
+export const addBlogReaction = createAsyncThunk(
+  "blog/addBlogReaction",
+  async (
+    {
+      blogId,
+      reactions,
+    }: {
+      blogId: string;
+      reactions: { likeDislike: likeDislikeType; reaction: reactionType };
+    },
+    thunkAPI
+  ) => {
+    try {
+      const response = await axios.post(
+        `${BACKED_URL_LOCAL}api/v1/blog/blog-reaction`,
+        {
+          postId: blogId,
+          likeDislike: reactions.likeDislike,
+          reaction: reactions.reaction,
+        },
+        { withCredentials: true }
+      );
+      return response.data.message;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error?.response?.data?.message || "Something went wrong"
+      );
+    }
   }
-})
+);
 export const BlogSlice = createSlice({
   name: "Blog",
   initialState: initialState,
@@ -340,8 +365,6 @@ export const BlogSlice = createSlice({
     builder.addCase(createBlog.fulfilled, (state) => {
       state.isPublishing_drafting = "succeeded";
       state.BlogToCreate = initialValue;
-      // state.hasAllBlogFetched = false;
-      // state.hasUserBlogFetched = false;
     });
     builder.addCase(createBlog.pending, (state) => {
       state.isPublishing_drafting = "pending";
@@ -351,7 +374,6 @@ export const BlogSlice = createSlice({
     });
     builder.addCase(fetchUserBlogs.fulfilled, (state, action) => {
       state.UserBlogs = action.payload;
-      // state.hasUserBlogFetched = true
       state.isloading = "succeeded";
     });
     builder.addCase(fetchUserBlogs.pending, (state) => {
@@ -362,7 +384,6 @@ export const BlogSlice = createSlice({
     });
     builder.addCase(fetchAllBlogs.fulfilled, (state, action) => {
       state.AllBlogs = action.payload;
-      // state.hasAllBlogFetched = true
       state.isloading = "succeeded";
     });
     builder.addCase(fetchAllBlogs.pending, (state) => {

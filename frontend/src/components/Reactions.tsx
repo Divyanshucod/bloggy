@@ -65,11 +65,7 @@ const EmojiReactionToggler = ({
     }
   }
   useEffect(() => {
-    console.log(props.currentUserReactions);
-
     if (props.currentUserReactions) {
-      console.log(props.currentUserReactions);
-
       setReact(props.currentUserReactions);
     }
     if (props.reactions) {
@@ -85,7 +81,6 @@ const EmojiReactionToggler = ({
     reaction: reactionType;
   }) {
     let val;
-    console.log(react, "reaction state before update");
 
     clearTimeout(val);
     val = setTimeout(async () => {
@@ -159,7 +154,7 @@ const EmojiReactionToggler = ({
             setMainOpen(!mainOpen);
             setEmojiOpen(false);
           }}
-          className={`w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center dark:border-1 transform hover:scale-105 active:scale-95 ${
+          className={`w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center dark:border-gray-600 justify-center transform hover:scale-105 active:scale-95 cursor-pointer ${
             mainOpen ? "ring-2 ring-blue-300 dark:ring-blue-600" : ""
           }`}
         >
@@ -169,7 +164,7 @@ const EmojiReactionToggler = ({
         {/* Main Menu */}
         <div
           ref={refs.mainMenu}
-          className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border transition-all duration-300 origin-bottom ${
+          className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl dark:border transition-all duration-300 origin-bottom ${
             mainOpen
               ? "opacity-100 scale-100"
               : "opacity-0 scale-95 pointer-events-none"
@@ -182,58 +177,58 @@ const EmojiReactionToggler = ({
               const Icon = type === "LIKE" ? ThumbsUp : ThumbsDown;
               return (
                 <div className="relative">
-                <button
-                  key={type}
-                  onClick={() => {
-                    setReact({
-                      ...react,
-                      likeDislike: isActive ? "NONE" : type,
-                    });
-                    handleCntUpdate(isActive, type as likeDislikeType);
-                    setMainOpen(false);
-                    handleReactionUpdate({
-                      likeDislike: isActive ? "NONE" : type,
-                      reaction: react.reaction as reactionType,
-                    });
-                  }}
-                  className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
-                    isActive
-                      ? `bg-${color}-100 dark:bg-${color}-900/30 text-${color}-600 dark:text-${color}-400`
-                      : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
-                  }`}
-                >
-                  <Icon
-                    className="w-5 h-5"
-                    fill={isActive ? "currentColor" : "none"}
-                  />
-                </button>
-                <span className="absolute top-0 right-0 dark:text-gray-500">
-                  {type === 'LIKE' ? reactionCnt.like : reactionCnt.dislike}
-                </span>
+                  <button
+                    key={type}
+                    onClick={() => {
+                      setReact({
+                        ...react,
+                        likeDislike: isActive ? "NONE" : type,
+                      });
+                      handleCntUpdate(isActive, type as likeDislikeType);
+                      setMainOpen(false);
+                      handleReactionUpdate({
+                        likeDislike: isActive ? "NONE" : type,
+                        reaction: react.reaction as reactionType,
+                      });
+                    }}
+                    className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
+                      isActive
+                        ? `bg-${color}-100 dark:bg-${color}-900/30 text-${color}-600 dark:text-${color}-400`
+                        : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+                    }`}
+                  >
+                    <Icon
+                      className="w-5 h-5"
+                      fill={isActive ? "currentColor" : "none"}
+                    />
+                  </button>
+                  <span className="absolute top-0 right-0 text-gray-500 ">
+                    {type === "LIKE" ? reactionCnt.like : reactionCnt.dislike}
+                  </span>
                 </div>
               );
             })}
             <div className="relative">
-            <button
-              onClick={() => {
-                setEmojiOpen(!emojiOpen);
-                setMainOpen(false);
-              }}
-              className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
-                react.reaction !== "NONE"
-                  ? "bg-yellow-100 dark:bg-yellow-900/30"
-                  : "hover:bg-gray-100 dark:hover:bg-gray-700"
-              }`}
-            >
-              {react.reaction !== "NONE" ? (
-                getEmojiIcon(react.reaction)
-              ) : (
-                <Smile className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-              )}
-            </button>
-            <span className="absolute top-0 right-0 dark:text-gray-500">
-                  {reactionCnt.reaction}
-                </span>
+              <button
+                onClick={() => {
+                  setEmojiOpen(!emojiOpen);
+                  setMainOpen(false);
+                }}
+                className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
+                  react.reaction !== "NONE"
+                    ? "bg-yellow-100 dark:bg-yellow-900/30"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                }`}
+              >
+                {react.reaction !== "NONE" ? (
+                  getEmojiIcon(react.reaction)
+                ) : (
+                  <Smile className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                )}
+              </button>
+              <span className="absolute top-0 right-0 text-gray-500">
+                {reactionCnt.reaction}
+              </span>
             </div>
           </div>
         </div>
@@ -241,7 +236,7 @@ const EmojiReactionToggler = ({
         {/* Emoji Menu */}
         <div
           ref={refs.emojiMenu}
-          className={`absolute top-0 right-full mr-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border transition-all duration-300 origin-right ${
+          className={`absolute top-0 right-full mr-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl dark:border transition-all duration-300 origin-right ${
             emojiOpen
               ? "opacity-100 scale-100"
               : "opacity-0 scale-95 pointer-events-none"
@@ -249,7 +244,6 @@ const EmojiReactionToggler = ({
         >
           <div className="flex p-2 space-x-1">
             {emojis.map(({ id, icon: Icon, color }) => (
-          
               <button
                 key={id}
                 onClick={() => {
@@ -286,7 +280,6 @@ const EmojiReactionToggler = ({
                   }`}
                 />
               </button>
-            
             ))}
           </div>
         </div>

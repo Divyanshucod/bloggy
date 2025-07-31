@@ -9,20 +9,25 @@ const app = new Hono<{
   Bindings: {
     MY_SECRET: string;
     DATABASE_URL: string;
-    ENVIRONMENT:string;
-    PRO_ORIGIN:string;
+    ENVIRONMENT: string;
+    PRO_ORIGIN: string;
   };
   Variables: {
     userId: string;
     prisma: any;
   };
 }>();
-app.use('*', cors({
-  credentials: true, 
-  origin: (origin,ctx)=>{
-    return ctx.env.ENVIRONMENT === 'dev' ? 'http://localhost:5173':ctx.env.PRO_ORIGIN;
-  }
-}))
+app.use(
+  "*",
+  cors({
+    credentials: true,
+    origin: (origin, ctx) => {
+      return ctx.env.ENVIRONMENT === "dev"
+        ? "http://localhost:5173"
+        : ctx.env.PRO_ORIGIN;
+    },
+  })
+);
 app.use("*", async (ctx, next) => {
   const prisma = new PrismaClient({
     datasourceUrl: ctx.env.DATABASE_URL,

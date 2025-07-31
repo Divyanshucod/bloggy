@@ -1,20 +1,8 @@
 
-export type customeElement = {
-    type: string;
-        children: customElementChildren;
-        url?: string | undefined;
-        align?: string | undefined;
-    }
+export const cookie_name = "medium-cookie";
 
-export type customElementChildren = {
+export type summarizeType = {
     text: string;
-    code?: boolean | undefined;
-    bold?: boolean | undefined;
-    superscript?: boolean | undefined;
-    italic?: boolean | undefined;
-    underline?: boolean | undefined;
-    subscript?: boolean | undefined;
-    highlight?: boolean | undefined;
-    strikethrough?: boolean | undefined;
-}[];
-export const cookie_name = 'medium-cookie'
+    summary_length:string;
+    output_language:string;
+}

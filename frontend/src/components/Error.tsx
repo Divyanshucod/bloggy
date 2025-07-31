@@ -5,7 +5,8 @@ export const Error = () => {
         Something went wrong!
       </h1>
       <p className="text-gray-600 dark:text-gray-400 text-lg max-w-md mb-6">
-        We're having trouble connecting to the server. Please try again later or check your network connection.
+        We're having trouble connecting to the server. Please try again later or
+        check your network connection.
       </p>
       <button
         onClick={() => window.location.reload()}

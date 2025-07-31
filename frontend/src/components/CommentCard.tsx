@@ -2,8 +2,11 @@ import { Tooltip } from "@mui/material";
 import { Edit } from "lucide-react";
 
 import { Avatar } from "./Avatar";
-import { updateComment, type commentType } from "../features/comment/CommentSlice";
-import {  howLongAgo } from "../helperFunctions";
+import {
+  updateComment,
+  type commentType,
+} from "../features/comment/CommentSlice";
+import { howLongAgo } from "../helperFunctions";
 import LikeDislikeUI from "./LikeDislikeUI";
 import { useState } from "react";
 import { Button } from "./Button";
@@ -18,15 +21,21 @@ export const CommentCard = (props: commentType) => {
   const [comment, setComment] = useState(props.comment);
   const [isEditng, setIsEditing] = useState(false);
   async function handleCommentUpdate() {
-    if( comment.trim() === ""){
-         toast.error("Comment cannot be empty");
-         return;
+    if (comment.trim() === "") {
+      toast.error("Comment cannot be empty");
+      return;
     }
     try {
-       const res = await dispatch(updateComment({ commentId:props.id, comment:comment,likeDislike:'NONE'})).unwrap();
-       toast.success(res);
-    } catch (error:any) {
-      toast.error(error)
+      const res = await dispatch(
+        updateComment({
+          commentId: props.id,
+          comment: comment,
+          likeDislike: "NONE",
+        })
+      ).unwrap();
+      toast.success(res);
+    } catch (error: any) {
+      toast.error(error);
     }
     setIsEditing(false);
   }
@@ -34,9 +43,15 @@ export const CommentCard = (props: commentType) => {
     <div className="bg-white dark:bg-gray-800 shadow rounded-xl p-5 relative dark:border-gray-700">
       {/* Edit Button */}
       <button className="absolute top-2 right-2 p-1.5 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
-         {user?.id === props.commentorId && !isEditng && <Tooltip title="Edit" placement="top-start">
-          <Edit size={18} className="text-gray-700 dark:text-white" onClick={() => setIsEditing(true)}/>
-        </Tooltip>}
+        {user?.id === props.commentorId && !isEditng && (
+          <Tooltip title="Edit" placement="top-start">
+            <Edit
+              size={18}
+              className="text-gray-700 dark:text-white"
+              onClick={() => setIsEditing(true)}
+            />
+          </Tooltip>
+        )}
       </button>
 
       {/* Header: Avatar, Name, Time */}

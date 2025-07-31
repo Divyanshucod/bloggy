@@ -11,8 +11,7 @@ import {
   HandleCatchErrors,
   ValidateBlogId,
 } from "../HelperFunction/ValidateBlog";
-import { PrismaClient } from "../generated/prisma";
-import { withAccelerate } from "@prisma/extension-accelerate";
+import { summarizeType } from "../types";
 
 export const BlogRouter = new Hono<{
   Bindings: {
@@ -20,6 +19,7 @@ export const BlogRouter = new Hono<{
     DATABASE_URL: string;
     ENVIRONMENT: string;
     PRO_ORIGIN: string;
+    apy_key: string;
   };
   Variables: {
     userId: string;
@@ -28,10 +28,9 @@ export const BlogRouter = new Hono<{
 }>();
 
 BlogRouter.put("/", authMiddleWare, async (ctx) => {
-  
   try {
-    const prisma = ctx.get('prisma')
-    const body = await ctx.req.json();    
+    const prisma = ctx.get("prisma");
+    const body = await ctx.req.json();
     const { success } = updateBlogSchema.safeParse(body);
     if (!success) {
       ctx.status(411);
@@ -40,19 +39,19 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
       });
     }
     const data = body as UpdateBlogType;
-    
+
     const post = await ValidateBlogId(data.postId, prisma);
     // get title and preview (check title empty or not)
-    if(data.content.title.length === 0 && post.published === true){
+    if (data.content.title.length === 0 && post.published === true) {
       ctx.status(411);
       return ctx.json({
-        message:"Title can't be empty!"
-      })
+        message: "Title can't be empty!",
+      });
     }
-    await prisma.$transaction(async(tx)=>{
+    await prisma.$transaction(async (tx) => {
       await tx.post.update({
         data: {
-          title:data.content.title,
+          title: data.content.title,
           blogJson: data.content.content,
           published: data.published ? data.published : post.published,
         },
@@ -77,12 +76,12 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
       const removeAbleTags = tags
         .filter((tag) => !map.get(tag.title))
         .map((tag) => tag.title);
-  
-        const needToAdd = data.content.tags
+
+      const needToAdd = data.content.tags
         .filter((tag) => !map2.get(tag))
         .map((tag) => tag);
-      
-      if(removeAbleTags.length > 0){
+
+      if (removeAbleTags.length > 0) {
         await tx.tag.deleteMany({
           where: {
             postId: data.postId,
@@ -102,7 +101,7 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
           skipDuplicates: true,
         });
       }
-    })
+    });
     ctx.status(200);
     return ctx.json({
       message: "blog updated!",
@@ -113,17 +112,16 @@ BlogRouter.put("/", authMiddleWare, async (ctx) => {
 });
 BlogRouter.post("/blog-reaction", authMiddleWare, async (ctx) => {
   const blog_reaction = await ctx.req.json(); //{likeDislike,reaction,postId}
-  const prisma = ctx.get('prisma')
-  console.log(blog_reaction);
-  
+  const prisma = ctx.get("prisma");
+
   try {
     //check if reaction of user already exists then update it.
     const reaction = await prisma.reaction.findUnique({
       where: {
-        postId_userId:{
+        postId_userId: {
           userId: ctx.get("userId"),
           postId: blog_reaction.postId,
-        }
+        },
       },
     });
     if (reaction) {
@@ -163,7 +161,7 @@ BlogRouter.post("/", authMiddleWare, async (ctx) => {
     const prisma = ctx.get("prisma");
     const body = await ctx.req.json();
     //zod validation
-    const {success} = createBlogSchema.safeParse(body);
+    const { success } = createBlogSchema.safeParse(body);
     if (!success) {
       ctx.status(411);
       return ctx.json({
@@ -171,18 +169,17 @@ BlogRouter.post("/", authMiddleWare, async (ctx) => {
       });
     }
     const data = body as CreateBlogType;
-    // get title and preview , TODO: thing better solution so that all blog should have title and if not then make them a draft
-    const {preview } = ExtractSmart(data.content.content);
-    if (data.content.title.length === 0) {
+    const { preview } = ExtractSmart(data.content.content);
+    if (data.content.title.length === 0 && data.published == true) {
       ctx.status(411);
       return ctx.json({
-        message:"Title can't be empty!"
-      })
+        message: "Title can't be empty!",
+      });
     }
-    await prisma.$transaction(async(tx)=>{
+    await prisma.$transaction(async (tx) => {
       const post = await tx.post.create({
         data: {
-          title:data.content.title,
+          title: data.content.title,
           content: preview,
           blogJson: data.content.content,
           authorId: ctx.get("userId"),
@@ -199,7 +196,7 @@ BlogRouter.post("/", authMiddleWare, async (ctx) => {
           skipDuplicates: true,
         });
       }
-    })
+    });
     ctx.status(200);
     return ctx.json({
       message: "blog added!",
@@ -221,7 +218,7 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
         published: true,
       },
     });
-    
+
     const blogs = await prisma.post.findMany({
       where: {
         published: true,
@@ -249,14 +246,12 @@ BlogRouter.get("/bulk/:pageno", async (ctx) => {
 
     ctx.status(200);
     return ctx.json({
-        Posts:{
-          blogs,
-          totalBlogs:cnt
-        }
+      Posts: {
+        blogs,
+        totalBlogs: cnt,
+      },
     });
   } catch (error) {
-    console.log(error);
-
     ctx.status(500);
     return ctx.json({
       message: "Internal Server error!",
@@ -269,9 +264,9 @@ BlogRouter.get("/user/:pageno", authMiddleWare, async (ctx) => {
     const prisma = ctx.get("prisma");
     const cnt = await prisma.user.count({
       where: {
-        authorId: ctx.get("userId"),
-      }
-    })
+        id: ctx.get("userId"),
+      },
+    });
     const blogs = await prisma.post.findMany({
       where: {
         authorId: ctx.get("userId"),
@@ -298,14 +293,12 @@ BlogRouter.get("/user/:pageno", authMiddleWare, async (ctx) => {
     });
     ctx.status(200);
     return ctx.json({
-      Posts:{
+      Posts: {
         blogs,
-        totalBlogs:cnt
+        totalBlogs: cnt,
       },
     });
   } catch (error) {
-    console.log(error);
-
     ctx.status(500);
     return ctx.json({
       message: "Internal Server error!",
@@ -332,34 +325,35 @@ BlogRouter.get("/comments/:blogId/:pageno", async (ctx) => {
         id: true,
         comment: true,
         commentedAt: true,
-        commentorId:true,
+        commentorId: true,
         commentor: {
           select: {
             name: true,
           },
         },
-        reactions:true
+        reactions: true,
       },
     });
     const newComments = comments.map((comment) => {
-      const { like, dislike,currentUserReactions } = countReactions(comment.reactions,ctx);
+      const { like, dislike, currentUserReactions } = countReactions(
+        comment.reactions,
+        ctx
+      );
       return {
         id: comment.id,
         comment: comment.comment,
         commentedAt: comment.commentedAt,
         commentor: comment.commentor,
-        commentorId:comment.commentorId,
+        commentorId: comment.commentorId,
         reactionsCnt: { like, dislike },
-        currentUserReactions: currentUserReactions
+        currentUserReactions: currentUserReactions,
       };
-    })
+    });
     ctx.status(200);
     return ctx.json({
-      comments:newComments,
+      comments: newComments,
     });
   } catch (error) {
-    console.log(error);
-    
     return HandleCatchErrors(error, ctx);
   }
 });
@@ -382,14 +376,12 @@ BlogRouter.post("/comment", authMiddleWare, async (ctx) => {
       message: "comment added!",
     });
   } catch (error) {
-    console.log(error);
-    
     return HandleCatchErrors(error, ctx);
   }
 });
 BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
   try {
-    const prisma = ctx.get('prisma');
+    const prisma = ctx.get("prisma");
     const postId = ctx.req.param("id");
 
     const post = await prisma.post.findUnique({
@@ -404,7 +396,7 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
         tags: { select: { title: true } },
         author: { select: { name: true } },
         reactions: true,
-        _count: { select: { comments: true } }
+        _count: { select: { comments: true } },
       },
     });
 
@@ -413,9 +405,12 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
       return ctx.json({ message: "Blog post not found" });
     }
 
-    const tags = post.tags.map(tag => tag.title);
+    const tags = post.tags.map((tag) => tag.title);
 
-    const { like, dislike, reaction,currentUserReactions } = countReactions(post.reactions,ctx);
+    const { like, dislike, reaction, currentUserReactions } = countReactions(
+      post.reactions,
+      ctx
+    );
 
     ctx.status(200);
     return ctx.json({
@@ -430,10 +425,9 @@ BlogRouter.get("/:id", authMiddleWare, async (ctx) => {
         tags,
         commentsCnt: post._count.comments,
         reactions: { like, dislike, reaction },
-        currentUserReactions: currentUserReactions
-      }
+        currentUserReactions: currentUserReactions,
+      },
     });
-
   } catch (error) {
     console.error("Error in GET /:id:", error);
     ctx.status(500);
@@ -447,7 +441,7 @@ BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
   // can get values like reaction 'like','dislike' or just comment
   // validate blog
   try {
-    if(data.comment.length > 0){
+    if (data.comment.length > 0) {
       await prisma.comment.update({
         where: {
           id: data.commentId,
@@ -488,42 +482,37 @@ BlogRouter.put("/comment", authMiddleWare, async (ctx) => {
       message: "comment updated!",
     });
   } catch (error) {
-    console.log(error);
-    
     ctx.status(500);
     return ctx.json({
       message: "something went wrong!",
     });
   }
 });
-BlogRouter.get('/filter/:query/:pageno',authMiddleWare, async (ctx) => {
-   try {
-     const prisma = ctx.get('prisma')
-    const query = ctx.req.param('query')
-    console.log(query);
-    console.log(ctx.req.param('pageno'));
-    
-    
-    const pageno = Number(ctx.req.param('pageno')) || 0;
+BlogRouter.get("/filter/:query/:pageno", authMiddleWare, async (ctx) => {
+  try {
+    const prisma = ctx.get("prisma");
+    const query = ctx.req.param("query");
+
+    const pageno = Number(ctx.req.param("pageno")) || 0;
     const cnt = await prisma.tag.count({
-      where:{
-        title:{
-          contains:query,
-          mode:'insensitive'
-        }
+      where: {
+        title: {
+          contains: query,
+          mode: "insensitive",
+        },
       },
-    })
-    
+    });
+
     const blogs = await prisma.tag.findMany({
-      where:{
-        title:{
-          contains:query,
-          mode:'insensitive'
-        }
+      where: {
+        title: {
+          contains: query,
+          mode: "insensitive",
+        },
       },
-      select:{
-        post:{
-          select:{
+      select: {
+        post: {
+          select: {
             id: true,
             content: true,
             title: true,
@@ -534,46 +523,47 @@ BlogRouter.get('/filter/:query/:pageno',authMiddleWare, async (ctx) => {
                 name: true,
               },
             },
-          }
+          },
         },
       },
-      skip: 6*pageno,
-      take
-      : 6,
-    })
+      skip: 6 * pageno,
+      take: 6,
+    });
     ctx.status(200);
     return ctx.json({
-      filterBlogs:{
-        totalBlogs:cnt,
-        blogs
-      }
-    })
-   } catch (error) {
-    console.log(error);
-    
-      ctx.status(500)
-      return ctx.json({
-        message:'Got error while filtering blogs!'
-      })
-   }
-  
-})
-function countReactions(reactions,ctx) {
-  let currentUserReactions = {likeDislike: 'NONE', reaction: 'NONE'};
-  let like = 0, dislike = 0, reaction = 0;
-  for (const react of reactions) {
-    if (react.likeDislike === 'LIKE'){
-      like++;
-      if(react.userId === ctx.get("userId")) currentUserReactions.likeDislike = 'LIKE';
-    } 
-    if (react.likeDislike === 'DISLIKE') {
-
-      dislike++
-      if(react.userId === ctx.get("userId")) currentUserReactions.likeDislike = 'DISLIKE';
-    };
-    if (react.reaction !== 'NONE') {
-      reaction++
-      if(react.userId === ctx.get("userId")) currentUserReactions.reaction = react.reaction;};
+      filterBlogs: {
+        totalBlogs: cnt,
+        blogs,
+      },
+    });
+  } catch (error) {
+    ctx.status(500);
+    return ctx.json({
+      message: "Got error while filtering blogs!",
+    });
   }
-  return { like, dislike, reaction,currentUserReactions };
+});
+function countReactions(reactions, ctx) {
+  let currentUserReactions = { likeDislike: "NONE", reaction: "NONE" };
+  let like = 0,
+    dislike = 0,
+    reaction = 0;
+  for (const react of reactions) {
+    if (react.likeDislike === "LIKE") {
+      like++;
+      if (react.userId === ctx.get("userId"))
+        currentUserReactions.likeDislike = "LIKE";
+    }
+    if (react.likeDislike === "DISLIKE") {
+      dislike++;
+      if (react.userId === ctx.get("userId"))
+        currentUserReactions.likeDislike = "DISLIKE";
+    }
+    if (react.reaction !== "NONE") {
+      reaction++;
+      if (react.userId === ctx.get("userId"))
+        currentUserReactions.reaction = react.reaction;
+    }
+  }
+  return { like, dislike, reaction, currentUserReactions };
 }

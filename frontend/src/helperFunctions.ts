@@ -78,7 +78,7 @@ export const getS3Url = async (file: File) => {
 
     return response.data.publicUrl;
   } catch (error) {
-    console.log(error);
+    ;
     handleError(error);
     return "";
   }

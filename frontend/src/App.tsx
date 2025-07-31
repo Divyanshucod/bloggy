@@ -12,37 +12,73 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { Home } from "./pages/Home";
 import { Protector } from "./components/Protector";
 import { ToastContainer } from "react-toastify";
-import { CommentCard } from "./components/CommentCard";
-import { CommentSection } from "./components/CommentSection";
 import UserProfilePage from "./components/UserProfile";
 import { FilteredBlogs } from "./pages/FilteredBlogs";
 
-
 function App() {
   return (
-    <ThemeProvider> 
-          <AppBar />
+    <ThemeProvider>
+      <AppBar />
       <Routes>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
-        <Route path="/blog/user/myblogs" element={
-          <Protector>
-          <MyBlogs/>
-          </Protector>
-          }/>
-        <Route path="/blog/:id" element={
-          <Protector>
-          <Blog />
-          </Protector>
-          } />
-        <Route path="/blogs" element={<Protector>
-         <Blogs /></Protector>} />
-        <Route path="/blog/create" element={
-         <Protector> <BlogCreate /></Protector>
-          } />
-        <Route path="/" element={<Protector><Home/></Protector>}/>
-        <Route path="/user/profile" element={<Protector><UserProfilePage/></Protector>}/>
-        <Route path="/blog/filtered" element={<Protector><FilteredBlogs/></Protector>}/>
+        <Route
+          path="/blog/user/myblogs"
+          element={
+            <Protector>
+              <MyBlogs />
+            </Protector>
+          }
+        />
+        <Route
+          path="/blog/:id"
+          element={
+            <Protector>
+              <Blog />
+            </Protector>
+          }
+        />
+        <Route
+          path="/blogs"
+          element={
+            <Protector>
+              <Blogs />
+            </Protector>
+          }
+        />
+        <Route
+          path="/blog/create"
+          element={
+            <Protector>
+              {" "}
+              <BlogCreate />
+            </Protector>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <Protector>
+              <Home />
+            </Protector>
+          }
+        />
+        <Route
+          path="/user/profile"
+          element={
+            <Protector>
+              <UserProfilePage />
+            </Protector>
+          }
+        />
+        <Route
+          path="/blog/filtered"
+          element={
+            <Protector>
+              <FilteredBlogs />
+            </Protector>
+          }
+        />
       </Routes>
       <ToastContainer
         position="top-right"
@@ -52,7 +88,7 @@ function App() {
         closeOnClick
         pauseOnHover
         draggable
-        theme="colored" 
+        theme="colored"
       />
     </ThemeProvider>
   );

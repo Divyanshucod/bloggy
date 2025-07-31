@@ -5,7 +5,7 @@ import type { RootState } from "../store";
 
 export default function ThemeToggleButton() {
   const dispatch = useDispatch();
-  const theme = useSelector((state:RootState) => state.ThemeSlice.value);
+  const theme = useSelector((state: RootState) => state.ThemeSlice.value);
 
   const handleToggle = () => {
     dispatch(toggleTheme());

@@ -21,7 +21,9 @@ const LikeDislikeUI: React.FC<LikeDislikeUIProps> = ({
   likeDislikeCnt,
   commentId,
 }) => {
-  const [likeDislike, setLikeDislike] = React.useState(userReaction.likeDislike);
+  const [likeDislike, setLikeDislike] = React.useState(
+    userReaction.likeDislike
+  );
   const [likeCnt, setLikeCnt] = React.useState(likeDislikeCnt.like);
   const [dislikeCnt, setDislikeCnt] = React.useState(likeDislikeCnt.dislike);
   const dispatch = useAppDispatch();
@@ -29,7 +31,9 @@ const LikeDislikeUI: React.FC<LikeDislikeUIProps> = ({
   function handleUpdate(nextReaction: "LIKE" | "DISLIKE" | "NONE") {
     const val = setTimeout(async () => {
       try {
-        await dispatch(updateComment({ commentId, likeDislike: nextReaction })).unwrap();
+        await dispatch(
+          updateComment({ commentId, likeDislike: nextReaction })
+        ).unwrap();
       } catch (error: any) {
         toast.error(error);
       }
@@ -43,13 +47,21 @@ const LikeDislikeUI: React.FC<LikeDislikeUIProps> = ({
 
     if (likeDislike === type) {
       nextReaction = "NONE";
-      if(type === "LIKE"){ setLikeCnt((prev) => prev - 1) } else { setDislikeCnt((prev) => prev - 1)};
+      if (type === "LIKE") {
+        setLikeCnt((prev) => prev - 1);
+      } else {
+        setDislikeCnt((prev) => prev - 1);
+      }
     } else {
       // Switching or activating new reaction
       if (likeDislike === "LIKE") setLikeCnt((prev) => prev - 1);
       if (likeDislike === "DISLIKE") setDislikeCnt((prev) => prev - 1);
 
-      if(type === "LIKE"){ setLikeCnt((prev) => prev + 1) } else { setDislikeCnt((prev) => prev + 1)};
+      if (type === "LIKE") {
+        setLikeCnt((prev) => prev + 1);
+      } else {
+        setDislikeCnt((prev) => prev + 1);
+      }
 
       nextReaction = type;
     }
@@ -69,7 +81,9 @@ const LikeDislikeUI: React.FC<LikeDislikeUIProps> = ({
       >
         <ThumbsUp
           className={`w-5 h-5 transition-all ${
-            likeDislike === "LIKE" ? "text-blue-500 fill-blue-500" : "text-gray-500"
+            likeDislike === "LIKE"
+              ? "text-blue-500 fill-blue-500"
+              : "text-gray-500"
           }`}
         />
         <span>{likeCnt}</span>
@@ -84,7 +98,9 @@ const LikeDislikeUI: React.FC<LikeDislikeUIProps> = ({
       >
         <ThumbsDown
           className={`w-5 h-5 transition-all ${
-            likeDislike === "DISLIKE" ? "text-red-500 fill-red-500" : "text-gray-500"
+            likeDislike === "DISLIKE"
+              ? "text-red-500 fill-red-500"
+              : "text-gray-500"
           }`}
         />
         <span>{dislikeCnt}</span>

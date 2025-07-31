@@ -15,12 +15,12 @@ interface BlogCardProps {
 
 export const BlogCard = React.memo((props: BlogCardProps) => {
   return (
-      <div className="min-w-full px-4 py-3 flex mx-auto flex-col">
-          <Link to={`/blog/${props.id}`} className="w-full flex justify-center">
+    <div className="min-w-full px-4 py-3 flex mx-auto flex-col">
+      <Link to={`/blog/${props.id}`} className="w-full flex justify-center">
         <div className="w-full max-w-3xl p-6 rounded-lg shadow bg-white dark:bg-gray-900 transition">
           <div className="flex flex-col gap-2 min-h-44">
             <div className="flex gap-3 items-center mb-2 text-sm">
-             <Avatar user={props.authorName??[0]}/>
+              <Avatar user={props.authorName ?? [0]} />
               <p className="text-slate-700 dark:text-slate-200 font-semibold">
                 {props.authorName}
               </p>
@@ -51,7 +51,7 @@ export const BlogCard = React.memo((props: BlogCardProps) => {
             </p>
           </div>
         </div>
-        </Link>
-      </div>
+      </Link>
+    </div>
   );
 });

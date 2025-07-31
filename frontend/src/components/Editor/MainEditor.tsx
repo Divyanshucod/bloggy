@@ -26,7 +26,7 @@ export const MainEditor = (props: editorType) => {
   const [tagOnFocused,setTagOnFocused] = useState(false)
 
   return (
-    <div className="relative w-full h-screen rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pb-6 pt-3 shadow-sm transition-all">
+    <div className="relative w-full h-screen rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-1 md:px-4 pb-6 pt-3 shadow-sm transition-all">
       <Slate
         editor={props.editor}
         initialValue={props.blog.content}
@@ -39,9 +39,9 @@ export const MainEditor = (props: editorType) => {
             />
           </div>
         ) : null}
-        <div className="overflow-y-auto rounded-md bg-white  dark:bg-gray-700 px-4 py-3 focus:outline-none text-gray-800 dark:text-gray-100 text-base leading-relaxed whitespace-pre-wrap h-[450px] md:h-[90%]">
+        <div className="overflow-y-auto rounded-md bg-white  dark:bg-gray-700 px-4 py-3 focus:outline-none text-gray-800 dark:text-gray-100 text-base leading-relaxed whitespace-pre-wrap h-[90%]">
         {/* header */}
-        <textarea onFocus={() => setTagOnFocused(false)} placeholder="title" autoFocus className="field-sizing-content w-full text-3xl focus:outline-none font-bold p-0 border-r-white resize-none overflow-hidden" rows={1} readOnly={preview.value} value={props.blog.title} onChange={(e) => props.isCreatingBlog ? dispatch(setCreateBlogTitle(e.target.value)) : dispatch(setUpdateBlogTitle(e.target.value))}/>
+        <textarea onFocus={() => setTagOnFocused(false)} placeholder="title" className="field-sizing-content w-full text-3xl focus:outline-none font-bold p-0 border-r-white resize-none overflow-hidden" rows={1} readOnly={preview.value} value={props.blog.title} onChange={(e) => props.isCreatingBlog ? dispatch(setCreateBlogTitle(e.target.value)) : dispatch(setUpdateBlogTitle(e.target.value))}/>
         {/* tags */}
         <div className="mb-2">
         <Tags isCreatingBlog={props.isCreatingBlog} onFocused={tagOnFocused} setOnFocused={setTagOnFocused} tags={props.blog.tags}/>
@@ -49,13 +49,14 @@ export const MainEditor = (props: editorType) => {
                 {/* Main Editable Area */}
           <Editable
             readOnly={preview.value}
+            autoFocus
             name="Post"
             placeholder="Write your story..."
             renderLeaf={RenderLeaf}
             onKeyDown={(event) => onKeyDown({ event, editor: props.editor })}
             renderElement={RenderElement}
             className="min-h-[450px] max-h-full focus:outline-none"
-            style={{maxHeight:'650px', overflowY:'auto', minHeight:'200px'}}
+            style={{maxHeight:'100%', overflowY:'auto', minHeight:'200px'}}
             onFocus={()=> setTagOnFocused(false)}
           />
         </div>

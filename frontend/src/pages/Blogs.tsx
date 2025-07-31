@@ -10,25 +10,27 @@ import { useAppDispatch } from "../hooks";
 import { Pagination } from "../components/Pagination";
 
 export const Blogs = React.memo(() => {
-  const { isloading, AllBlogs,allBlogPages, hasAllBlogFetched } = useSelector((state:RootState)=>state.BlogSlice);
-  const dispatch = useAppDispatch()
-  useEffect(()=>{
-    async function fetch(){
+  const { isloading, AllBlogs, allBlogPages, hasAllBlogFetched } = useSelector(
+    (state: RootState) => state.BlogSlice
+  );
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    async function fetch() {
       try {
-         await dispatch(fetchAllBlogs()).unwrap();
-     } catch (error:any) {
-       toast(error)
-     }
+        await dispatch(fetchAllBlogs()).unwrap();
+      } catch (error: any) {
+        toast(error);
+      }
     }
-    if(!hasAllBlogFetched){
-    fetch()
+    if (!hasAllBlogFetched) {
+      fetch();
     }
-  },[allBlogPages])
+  }, [allBlogPages]);
   return (
     <div className="min-h-screen w-screen px-4 py-6 md:px-8 bg-gray-50 dark:bg-gray-950 transition-all">
       <ToastContainer />
 
-      {isloading === 'pending' ? (
+      {isloading === "pending" ? (
         <div className="flex flex-col gap-6 max-w-3xl mx-auto mt-8">
           {Array.from({ length: 5 }).map((_, index) => (
             <BlogsSkeleton key={index} />
@@ -39,7 +41,6 @@ export const Blogs = React.memo(() => {
           <NoBlogs />
         </div>
       ) : (
-        
         <div className="flex min-h-screen flex-col gap-6 max-w-3xl mx-auto mt-8 w-full">
           {AllBlogs.blogs.map((val) => (
             <BlogCard
@@ -53,8 +54,8 @@ export const Blogs = React.memo(() => {
             />
           ))}
           <footer className="fixed bottom-2 right-[50%] translate-x-[50%]">
-        <Pagination cnt={AllBlogs.totalBlogs} type="blogs"/>
-      </footer>
+            <Pagination cnt={AllBlogs.totalBlogs} type="blogs" />
+          </footer>
         </div>
       )}
     </div>

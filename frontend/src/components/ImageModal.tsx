@@ -5,7 +5,13 @@ import { insertImageOrVideo } from "./Editor/utils";
 import { getS3Url } from "../helperFunctions";
 import { LinkInput } from "./LinkInput";
 
-export const ImageModel = ({ setIsImage, editor }: { setIsImage: (val: boolean) => void; editor: EditorType }) => {
+export const ImageModel = ({
+  setIsImage,
+  editor,
+}: {
+  setIsImage: (val: boolean) => void;
+  editor: EditorType;
+}) => {
   const imageRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
@@ -16,11 +22,10 @@ export const ImageModel = ({ setIsImage, editor }: { setIsImage: (val: boolean) 
       return;
     }
 
-    const success = insertImageOrVideo(editor, url,'image');
-    console.log(success);
-    
-    if(!success){
-      setError('enter a valid image url jpg,png,jpeg')
+    const success = insertImageOrVideo(editor, url, "image");
+
+    if (!success) {
+      setError("enter a valid image url jpg,png,jpeg");
       return;
     }
     setIsImage(false);
@@ -34,28 +39,28 @@ export const ImageModel = ({ setIsImage, editor }: { setIsImage: (val: boolean) 
     if (!e.target.files) return;
     const file = e.target.files[0];
     //if check the size is greate then 5 MB (5*1000*1000)
-    console.log(file);
     const fileSize = file.size / 1024 / 1024;
-    if(fileSize > 5 )
-    {
-      setError("Image size can't be more then 5MB")
+    if (fileSize > 5) {
+      setError("Image size can't be more then 5MB");
       return;
     }
-    const url = await getS3Url(file)
-    if(url.length == "")return;
-    insertImageOrVideo(editor, url,'image');
+    const url = await getS3Url(file);
+    if (url.length == "") return;
+    insertImageOrVideo(editor, url, "image");
     setIsImage(false);
   };
 
   return (
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2  z-100 w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] max-w-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl p-6 space-y-6 transition-all">
-      
       {/* URL Input */}
-      <LinkInput setUrl={setUrl} handleSubmit={handleImageInUrl} error={error} url={url}/>
-      <div className="space-y-2">                    
-        <Button onClick={handleImageInUrl}>
-          Insert from URL
-        </Button>
+      <LinkInput
+        setUrl={setUrl}
+        handleSubmit={handleImageInUrl}
+        error={error}
+        url={url}
+      />
+      <div className="space-y-2">
+        <Button onClick={handleImageInUrl}>Insert from URL</Button>
       </div>
 
       {/* OR Separator */}
@@ -70,7 +75,13 @@ export const ImageModel = ({ setIsImage, editor }: { setIsImage: (val: boolean) 
         <Button color="secondary" onClick={handleImage}>
           Upload Image
         </Button>
-        <input hidden ref={imageRef} type="file" accept="image/*" onChange={handleImageUpload} />
+        <input
+          hidden
+          ref={imageRef}
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+        />
       </div>
 
       {/* Cancel */}
