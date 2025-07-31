@@ -11,6 +11,8 @@ export const RenderElement = ({
 
   switch (element.type) {
     case "link":
+      console.log(children, "children in link");
+      
       return (
         <a
           {...attributes}
@@ -22,6 +24,7 @@ export const RenderElement = ({
             if (e.metaKey) {
               window.open(element.url, "_blank");
             }
+            
           }}
         >
           {children}

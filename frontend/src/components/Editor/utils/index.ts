@@ -1,5 +1,6 @@
 import { Editor, Element, Path, Transforms, Range, Node } from "slate";
 import type { AlignKey, CustomElement, EditorType, ElementKey, MarkKey } from "../types";
+import type { ElementType } from "react";
 
 export const isMarkActive = (editor: EditorType, format: MarkKey) => {
   return !!Editor.marks(editor)?.[format];
@@ -86,37 +87,55 @@ const isUrlValid = (url: string, format: ElementKey): boolean => {
   }
 };
 
-
-export const wrapLink = (editor: Editor, url: string) => {
-  if (!url) return false;
+const isLinkActive = (editor: EditorType): boolean => {
+  const [link] = Editor.nodes(editor, {
+    match: n =>
+      !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link',
+  })
+  return !!link
+}
+const unwrapLink = (editor: EditorType) => {
+  Transforms.unwrapNodes(editor, {
+    match: n =>
+      !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link',
+  })
+}
+export const wrapLink = (editor: EditorType, url: string) => {
+  if (!isUrlValid(url,'link')) return false;
   const { selection } = editor;
   if (!selection || Range.isCollapsed(selection)) return false;
-
-  // If already inside a link, unwrap first
-  const [match] = Editor.nodes(editor, {
-    match: n =>
-      !Editor.isEditor(n) &&
-      Element.isElement(n) &&
-      n.type === 'link',
-  });
-  if (match) {
-    Transforms.unwrapNodes(editor, {
-      match: n =>
-        !Editor.isEditor(n) &&
-        Element.isElement(n) &&
-        n.type === 'link',
-    });
+  if (isLinkActive(editor)) {
+    Transforms.setNodes(
+      editor,
+      { url },
+      {
+        match: (n) =>
+          !Editor.isEditor(n) && Element.isElement(n) && n.type === "link",
+      }
+    );
+  } else {
+    // Create new inline link
+    const link: Element = {
+      type: "link",
+      url,
+      children: [],
+    };
+ 
+    Transforms.wrapNodes(editor, link, { split: true });
   }
-
-  // Wrap the selected text in an inline link node
-  Transforms.wrapNodes(
-    editor,
-    { type: 'link', url, children: [] },
-    { split: true }
-  );
-  Transforms.collapse(editor, { edge: 'end' });
+ 
+  Transforms.collapse(editor, { edge: "end" });
+  const { selection: newSelection } = editor;
+  if (newSelection) {
+    const after = Editor.after(editor, newSelection);
+    if (after) {
+      Transforms.select(editor, after);
+    }
+  }
+ 
   return true;
-};
+ };
+
 
 
 export const insertImageOrVideo = (editor:EditorType,url:string,format:ElementKey) => {
