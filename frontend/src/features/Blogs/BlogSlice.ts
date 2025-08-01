@@ -2,7 +2,7 @@ import { type CustomElementType } from "@dev0000007/medium-web";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import axios from "axios";
-import { BACKED_URL_LOCAL } from "../../config";
+import { BACKED_URL } from "../../config";
 import type { RootState } from "../../store";
 import { initialValue, initialValueFullBlog } from "../../helperFunctions";
 interface Blogs {
@@ -114,7 +114,7 @@ export const createBlog = createAsyncThunk(
       const state: RootState = thunkAPI.getState() as RootState;
 
       const response = await axios.post(
-        `${BACKED_URL_LOCAL}api/v1/blog`,
+        `${BACKED_URL}api/v1/blog`,
         {
           content: state.BlogSlice.BlogToCreate,
           published: createDraft,
@@ -138,7 +138,7 @@ export const fetchUserBlogs = createAsyncThunk(
     try {
       const state: RootState = thunkAPI.getState() as RootState;
       const response = await axios.get(
-        `${BACKED_URL_LOCAL}api/v1/blog/user/${
+        `${BACKED_URL}api/v1/blog/user/${
           state.BlogSlice?.userBlogsPage - 1
         }`,
         {
@@ -160,7 +160,7 @@ export const fetchBlogById = createAsyncThunk(
       const state = thunkAPI.getState() as RootState;
       const dispatch = thunkAPI.dispatch;
       const response = await axios.get(
-        `${BACKED_URL_LOCAL}api/v1/blog/${blogId}`,
+        `${BACKED_URL}api/v1/blog/${blogId}`,
         {
           withCredentials: true,
         }
@@ -204,7 +204,7 @@ export const fetchFilteredBlogs = createAsyncThunk(
     try {
       const state: RootState = thunkAPI.getState() as RootState;
       const response = await axios.get(
-        `${BACKED_URL_LOCAL}api/v1/blog/filter/${filter}/${
+        `${BACKED_URL}api/v1/blog/filter/${filter}/${
           state.BlogSlice?.FilteredBlogPages - 1
         }`,
         { withCredentials: true }
@@ -223,7 +223,7 @@ export const fetchAllBlogs = createAsyncThunk(
     try {
       const state: RootState = thunkAPI.getState() as RootState;
       const response = await axios.get(
-        `${BACKED_URL_LOCAL}api/v1/blog/bulk/${
+        `${BACKED_URL}api/v1/blog/bulk/${
           state.BlogSlice?.allBlogPages - 1
         }`
       );
@@ -250,7 +250,7 @@ export const updateBlog = createAsyncThunk(
     try {
       const state: RootState = thunkAPI.getState() as RootState;
       const response = await axios.put(
-        `${BACKED_URL_LOCAL}api/v1/blog`,
+        `${BACKED_URL}api/v1/blog`,
         { content: state.BlogSlice?.Blog, postId: blogId, published },
         { withCredentials: true }
       );
@@ -276,7 +276,7 @@ export const addBlogReaction = createAsyncThunk(
   ) => {
     try {
       const response = await axios.post(
-        `${BACKED_URL_LOCAL}api/v1/blog/blog-reaction`,
+        `${BACKED_URL}api/v1/blog/blog-reaction`,
         {
           postId: blogId,
           likeDislike: reactions.likeDislike,

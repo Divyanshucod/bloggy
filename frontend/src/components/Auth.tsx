@@ -6,7 +6,7 @@ import type { SignInType, SignUpType } from "@dev0000007/medium-web";
 import { Button } from "./Button";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { BACKED_URL_LOCAL } from "../config";
+import { BACKED_URL } from "../config";
 import { useAppDispatch } from "../hooks";
 import { fetchMe } from "../features/User/UserSlice";
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
@@ -26,7 +26,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     startTransition(async () => {
       try {
         await axios.post(
-          `${BACKED_URL_LOCAL}api/v1/user/signup`,
+          `${BACKED_URL}api/v1/user/signup`,
           signUpDetails,
           { withCredentials: true }
         );
@@ -50,7 +50,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     startTransition(async () => {
       try {
         await axios.post(
-          `${BACKED_URL_LOCAL}api/v1/user/signin`,
+          `${BACKED_URL}api/v1/user/signin`,
           signInDetails,
           { withCredentials: true }
         );

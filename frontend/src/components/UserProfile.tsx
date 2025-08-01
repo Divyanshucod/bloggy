@@ -3,7 +3,7 @@ import { X, Pen, Eye, EyeOff } from "lucide-react";
 import { Avatar } from "./Avatar";
 import { handleError } from "../helperFunctions";
 import axios from "axios";
-import { BACKED_URL_LOCAL } from "../config";
+import { BACKED_URL } from "../config";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { toast, ToastContainer } from "react-toastify";
@@ -50,7 +50,7 @@ export default function UserProfilePage() {
   async function updateBio() {
     try {
       const res = await axios.put(
-        `${BACKED_URL_LOCAL}api/v1/user/user-details`,
+        `${BACKED_URL}api/v1/user/user-details`,
         { bio },
         { withCredentials: true }
       );
@@ -63,7 +63,7 @@ export default function UserProfilePage() {
   async function updatePassword() {
     try {
       const res = await axios.put(
-        `${BACKED_URL_LOCAL}api/v1/user/user-details`,
+        `${BACKED_URL}api/v1/user/user-details`,
         { password: passwordData },
         { withCredentials: true }
       );
@@ -77,7 +77,7 @@ export default function UserProfilePage() {
     try {
       setIsFetchingList(true);
       const res = await axios.get(
-        `${BACKED_URL_LOCAL}api/v1/user/followers_following`,
+        `${BACKED_URL}api/v1/user/followers_following`,
         { withCredentials: true }
       );
       setFollowers_following({
@@ -94,7 +94,7 @@ export default function UserProfilePage() {
       try {
         setIsFetchingUserDetails(true);
         const res = await axios.get(
-          `${BACKED_URL_LOCAL}api/v1/user/user-details/${user?.id}`,
+          `${BACKED_URL}api/v1/user/user-details/${user?.id}`,
           { withCredentials: true }
         );
         setUserDetails(res.data.userDetails);

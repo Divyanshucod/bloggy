@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Avatar } from "./Avatar";
 import axios from "axios";
-import { BACKED_URL_LOCAL } from "../config";
+import { BACKED_URL } from "../config";
 import { handleError } from "../helperFunctions";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
@@ -40,7 +40,7 @@ const UserProfile = ({
   async function handleFollow_Unfollow() {
     try {
       const res = await axios.put(
-        `${BACKED_URL_LOCAL}api/v1/user/${
+        `${BACKED_URL}api/v1/user/${
           user.meFollowing ? "unfollow" : "follow"
         }`,
         { follow: authorId },
@@ -55,7 +55,7 @@ const UserProfile = ({
     const fetchUserData = async () => {
       try {
         const res = await axios.get(
-          `${BACKED_URL_LOCAL}api/v1/user/user-details/${authorId}`,
+          `${BACKED_URL}api/v1/user/user-details/${authorId}`,
           { withCredentials: true }
         );
         setUser(res.data.userDetails);

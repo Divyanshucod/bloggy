@@ -3,7 +3,7 @@ import type { CustomElementType } from "@dev0000007/medium-web";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Node } from "slate";
-import { BACKED_URL_LOCAL } from "./config";
+import { BACKED_URL } from "./config";
 import type { likeDislikeType, reactionType } from "./features/Blogs/BlogSlice";
 
 export function formattedDate(date: string) {
@@ -67,7 +67,7 @@ export const getS3Url = async (file: File) => {
 
   try {
     const response = await axios.get(
-      `${BACKED_URL_LOCAL}api/v1/presigned?type=${file.type}`,
+      `${BACKED_URL}api/v1/presigned?type=${file.type}`,
       { withCredentials: true }
     );
     await axios.put(response.data.url, file, {
@@ -86,7 +86,7 @@ export const getS3Url = async (file: File) => {
 
 export const deleteImage = async (urls:string[])=>{
   try {
-     const response = await axios.post(`${BACKED_URL_LOCAL}api/v1/removeImages`,urls, {withCredentials:true})
+     const response = await axios.post(`${BACKED_URL}api/v1/removeImages`,urls, {withCredentials:true})
      toast.success(response.data.message)
   } catch (error) {
      handleError(error)

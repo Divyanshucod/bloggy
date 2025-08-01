@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BACKED_URL_LOCAL } from "../../config";
+import { BACKED_URL } from "../../config";
 
 interface User {
   id: string;
@@ -19,7 +19,7 @@ const initialState = {
   hasData: false,
 } satisfies userProps as userProps;
 export const fetchMe = createAsyncThunk("user/fetchme", async () => {
-  const response = await axios.get(`${BACKED_URL_LOCAL}api/v1/me`, {
+  const response = await axios.get(`${BACKED_URL}api/v1/me`, {
     withCredentials: true,
   });
   const userData = response.data.userDetails as User;

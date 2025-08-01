@@ -17,7 +17,7 @@ import Logout from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { BACKED_URL_LOCAL } from "../config";
+import { BACKED_URL } from "../config";
 import { handleError } from "../helperFunctions";
 import { clearUserDetails } from "../features/User/UserSlice";
 
@@ -44,7 +44,7 @@ export default function AccountMenu({
 
   const handleLogout = async () => {
     try {
-      await axios.get(`${BACKED_URL_LOCAL}api/v1/user/logout`, {
+      await axios.get(`${BACKED_URL}api/v1/user/logout`, {
         withCredentials: true,
       });
       dispatch(clearUserDetails());

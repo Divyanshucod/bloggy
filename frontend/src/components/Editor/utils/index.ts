@@ -1,7 +1,5 @@
-import { Editor, Element, Path, Transforms, Range, Node } from "slate";
+import { Editor, Element, Transforms, Range } from "slate";
 import type { AlignKey, CustomElement, EditorType, ElementKey, MarkKey } from "../types";
-import type { ElementType } from "react";
-
 export const isMarkActive = (editor: EditorType, format: MarkKey) => {
   return !!Editor.marks(editor)?.[format];
 };

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 import axios from "axios";
-import { BACKED_URL_LOCAL } from "../../config";
+import { BACKED_URL } from "../../config";
 
 export interface commentType {
   id: string;
@@ -34,7 +34,7 @@ export const fetchComments = createAsyncThunk(
     const state = thunkAPI.getState() as RootState;
     try {
       const response = await axios.get(
-        `${BACKED_URL_LOCAL}api/v1/blog/comments/${blogId}/${
+        `${BACKED_URL}api/v1/blog/comments/${blogId}/${
           state.CommentSlice.pageNo - 1
         }`,
         { withCredentials: true }
@@ -53,7 +53,7 @@ export const createComment = createAsyncThunk(
     const state = thunkAPI.getState() as RootState;
     try {
       const response = await axios.post(
-        `${BACKED_URL_LOCAL}api/v1/blog/comment`,
+        `${BACKED_URL}api/v1/blog/comment`,
         { postId: blogId, comment: state.CommentSlice.comment },
         { withCredentials: true }
       );
@@ -77,7 +77,7 @@ export const updateComment = createAsyncThunk(
   ) => {
     try {
       const response = await axios.put(
-        `${BACKED_URL_LOCAL}api/v1/blog/comment`,
+        `${BACKED_URL}api/v1/blog/comment`,
         { commentId: commentId, comment: comment, likeDislike },
         { withCredentials: true }
       );

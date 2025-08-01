@@ -1,6 +1,6 @@
 import { withReact } from "slate-react";
 import React, { useEffect, useState } from "react";
-import { createEditor, type Descendant } from "slate";
+import { createEditor } from "slate";
 import type { CustomElement, CustomText, EditorType } from "./types";
 import { withHistory } from "slate-history";
 import { withLinks } from "./utils/Link";
