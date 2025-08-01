@@ -45,7 +45,7 @@ export const Tags = (props: tagsType) => {
             onChange={(e) => setTagTitle(e.target.value)}
             placeholder="Tags..."
             onFocus={() => props.setOnFocused(true)}
-            className="w-2xl rounded-md border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none border-transparent transition text-xl"
+            className="w-2xl rounded-md border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none border-transparent transition text-[16px]"
           />
           {props.onFocused && (
             <button

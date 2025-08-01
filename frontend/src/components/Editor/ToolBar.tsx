@@ -25,10 +25,12 @@ import { useAppDispatch } from "../../hooks";
 import { checkBlog } from "../../helperFunctions";
 import { ImageModel } from "../ImageModal";
 import { VideoComponent } from "../VideoComponent";
+import { useNavigate } from "react-router-dom";
 export const ToolBar = () => {
   const dispatch = useAppDispatch()
   const {isPublishing_drafting,BlogToCreate} = useSelector((state:RootState)=>state.BlogSlice)
   const editor = useSlate();
+  const navigate = useNavigate()
   const [mode, setMode] = useState<"none" | "link">("none");
   const [isImage,setIsImage] = useState(false)
   const [isVideo,setIsVideo] = useState(false)
@@ -53,6 +55,8 @@ export const ToolBar = () => {
       }
       const res = await dispatch(createBlog({ createDraft: false })).unwrap()
       toast.success(res)
+      new Promise((resolve)=> setTimeout(resolve,1000))
+      navigate('/blog/user/myblogs')
     } catch (error:any) {
       toast.error(error)
     }
@@ -71,6 +75,8 @@ export const ToolBar = () => {
       }
       const res = await dispatch(createBlog({ createDraft: true })).unwrap()
       toast.success(res)
+      new Promise((resolve)=> setTimeout(resolve,1000))
+      navigate('/blog/user/myblogs')
     } catch (error:any) {
       toast.error(error)
     }

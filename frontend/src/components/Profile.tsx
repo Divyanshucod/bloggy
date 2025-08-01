@@ -27,7 +27,7 @@ const UserProfile = ({
   isProfileOpen: boolean;
   authorId: string;
 }) => {
-  const { id } = useSelector((state: RootState) => state.UserSlice).user;
+  const { id } = useSelector((state: RootState) => state.UserSlice).user || "";
   const [user, setUser] = useState<UserProfileType>({
     id: "",
     name: "Loading...",

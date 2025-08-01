@@ -107,7 +107,7 @@ export const CommentSection = ({
       </div>
       {enablePaginationBar && (
         <footer className="fixed bottom-2 flex justify-center items-end">
-          <Pagination cnt={20} type="comments" />
+          <Pagination cnt={commentCnt} type="comments" />
         </footer>
       )}
       <ToastContainer />

@@ -11,8 +11,6 @@ export const RenderElement = ({
 
   switch (element.type) {
     case "link":
-      console.log(children, "children in link");
-      
       return (
         <a
           {...attributes}

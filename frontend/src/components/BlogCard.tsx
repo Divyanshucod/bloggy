@@ -43,8 +43,8 @@ export const BlogCard = React.memo((props: BlogCardProps) => {
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
               {props.title}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-base ">
-              {props.content}
+            <p className="text-gray-600 dark:text-gray-400 text-base">
+              {props.content.slice(0,130)}{props.content.length > 130 ? '...' : ''}
             </p>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-4">
               {Math.max(1, Math.floor(props.content?.length / 100))} min read

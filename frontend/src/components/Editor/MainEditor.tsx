@@ -41,7 +41,7 @@ export const MainEditor = (props: editorType) => {
         ) : null}
         <div className="overflow-y-auto rounded-md bg-white  dark:bg-gray-700 px-4 py-3 focus:outline-none text-gray-800 dark:text-gray-100 text-base leading-relaxed whitespace-pre-wrap h-[90%]">
         {/* header */}
-        <textarea onFocus={() => setTagOnFocused(false)} placeholder="title" className="field-sizing-content w-full text-3xl focus:outline-none font-bold p-0 border-r-white resize-none overflow-hidden" rows={1} readOnly={preview.value} value={props.blog.title} onChange={(e) => props.isCreatingBlog ? dispatch(setCreateBlogTitle(e.target.value)) : dispatch(setUpdateBlogTitle(e.target.value))}/>
+        <textarea onFocus={() => setTagOnFocused(false)} placeholder="title" className="field-sizing-content w-full text-3xl md:text-4xl focus:outline-none font-bold p-0 border-r-white resize-none overflow-hidden" rows={1} readOnly={preview.value} value={props.blog.title} onChange={(e) => props.isCreatingBlog ? dispatch(setCreateBlogTitle(e.target.value)) : dispatch(setUpdateBlogTitle(e.target.value))}/>
         {/* tags */}
         <div className="mb-2">
         <Tags isCreatingBlog={props.isCreatingBlog} onFocused={tagOnFocused} setOnFocused={setTagOnFocused} tags={props.blog.tags}/>
@@ -56,7 +56,7 @@ export const MainEditor = (props: editorType) => {
             onKeyDown={(event) => onKeyDown({ event, editor: props.editor })}
             renderElement={RenderElement}
             className="min-h-[450px] max-h-full focus:outline-none"
-            style={{maxHeight:'100%', overflowY:'auto', minHeight:'200px'}}
+            style={{maxHeight:'100%', minHeight:'200px'}}
             onFocus={()=> setTagOnFocused(false)}
           />
         </div>
