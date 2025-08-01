@@ -1,6 +1,7 @@
 import type { BaseEditor, Descendant } from "slate";
 import type { HistoryEditor } from "slate-history";
 import type { ReactEditor } from "slate-react";
+import type { RichTextAction } from "../constants";
 
 export type EditorType = BaseEditor & ReactEditor & HistoryEditor;
 export type CustomText = {
@@ -40,3 +41,5 @@ export type ElementKey =
   | "link"
   | "image"
   | "video"
+
+export type RichTextAction =  typeof RichTextAction[keyof typeof RichTextAction];

@@ -1,7 +1,7 @@
 import { type CustomElementType } from "@dev0000007/medium-web";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { BACKED_URL } from "../../config";
 import type { RootState } from "../../store";
 import { initialValue, initialValueFullBlog } from "../../helperFunctions";
@@ -49,7 +49,7 @@ interface CreateBlogProps {
   filteredBlogPages: number;
   filteredBlogs: {
     totalBlogs: number;
-    blogs: Blogs[];
+    blogs:{post:Blogs}[];
   };
   Blog: BlogType & extras;
   BlogToCreate: BlogType;
@@ -127,7 +127,7 @@ export const createBlog = createAsyncThunk(
       return response.data.message;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err?.response?.data?.message || "Something went wrong"
+        (err as AxiosError<{ message: string }>)?.response?.data?.message || "Something went wrong"
       );
     }
   }
@@ -148,7 +148,7 @@ export const fetchUserBlogs = createAsyncThunk(
       return response.data.Posts;
     } catch (err) {
       return thunkAPI.rejectWithValue(
-        err?.response?.data?.message || "Something went wrong"
+        (err as AxiosError<{ message: string }>)?.response?.data?.message || "Something went wrong"
       );
     }
   }
@@ -193,7 +193,7 @@ export const fetchBlogById = createAsyncThunk(
       };
     } catch (err) {
       return thunkAPI.rejectWithValue(
-        err?.response?.data?.message || "Something went wrong"
+        (err as AxiosError<{ message: string }>)?.response?.data?.message || "Something went wrong"
       );
     }
   }
@@ -210,9 +210,9 @@ export const fetchFilteredBlogs = createAsyncThunk(
         { withCredentials: true }
       );
       return response.data.filterBlogs;
-    } catch (error) {
+    } catch (err:any) {
       return thunkAPI.rejectWithValue(
-        error?.response?.data?.message || "Something went wrong"
+        (err as AxiosError<{ message: string }>)?.response?.data?.message || "Something went wrong"
       );
     }
   }
@@ -228,9 +228,9 @@ export const fetchAllBlogs = createAsyncThunk(
         }`
       );
       return response.data.Posts;
-    } catch (error) {
+    } catch (err:any) {
       return thunkAPI.rejectWithValue(
-        error?.response?.data?.message || "Something went wrong"
+        (err as AxiosError<{ message: string }>)?.response?.data?.message || "Something went wrong"
       );
     }
   }
@@ -255,9 +255,9 @@ export const updateBlog = createAsyncThunk(
         { withCredentials: true }
       );
       return response.data.message;
-    } catch (error) {
+    } catch (err:any) {
       return thunkAPI.rejectWithValue(
-        error?.response?.data?.message || "Something went wrong!"
+        (err as AxiosError<{ message: string }>)?.response?.data?.message || "Something went wrong"
       );
     }
   }
@@ -285,9 +285,10 @@ export const addBlogReaction = createAsyncThunk(
         { withCredentials: true }
       );
       return response.data.message;
-    } catch (error) {
+    } catch (err:any) {
       return thunkAPI.rejectWithValue(
-        error?.response?.data?.message || "Something went wrong"
+        (err as AxiosError<{ message: string }>)?.response?.data?.message || "Something went wrong"
+
       );
     }
   }

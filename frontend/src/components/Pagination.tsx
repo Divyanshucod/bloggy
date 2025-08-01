@@ -30,8 +30,8 @@ export const Pagination = (props: paginationProps) => {
       ? state.BlogSlice.userBlogsPage
       : state.BlogSlice.allBlogPages
   );
-  const [noOfPages, setNoOfPages] = useState<number>(Math.floor(props.cnt / 6));
-  const [pageArray, setPageArray] = useState<number>([]);
+  const [noOfPages,] = useState<number>(Math.floor(props.cnt / 6));
+  const [pageArray, setPageArray] = useState<number[]>([]);
   const dispatch = useDispatch();
 
   function getPageArray() {

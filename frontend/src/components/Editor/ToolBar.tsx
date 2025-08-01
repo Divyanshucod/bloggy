@@ -3,7 +3,6 @@ import {
   HEADINGS,
   TEXT_FORMAT_OPTIONS,
   TEXT_BLOCK_OPTIONS,
-  RichTextAction,
 } from "./constants";
 import {
   isBlockActive,
@@ -11,7 +10,7 @@ import {
   toggleBlock,
   toggleMark,
 } from "./utils";
-import type { ElementKey, MarkKey } from "./types";
+import type { ElementKey, MarkKey, RichTextAction } from "./types";
 import { useState } from "react";
 import { Button } from "../Button";
 import { CircularProgress } from "@mui/material";

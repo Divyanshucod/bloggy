@@ -23,7 +23,7 @@ const emojis = [
   { id: "IDEA", icon: Lightbulb, color: "amber" },
   { id: "ANNOYED", icon: Annoyed, color: "yellow" },
 ];
-
+type ReactionType = "SMILE" | "HEART" | "IDEA" | "ANNOYED" | "NONE";
 const EmojiReactionToggler = ({
   props,
   blogId,
@@ -94,10 +94,11 @@ const EmojiReactionToggler = ({
     }, 1000);
   }
   const refs = {
-    mainMenu: useRef(null),
-    emojiMenu: useRef(null),
-    toggler: useRef(null),
+    mainMenu: useRef<HTMLDivElement>(null),
+    emojiMenu: useRef<HTMLDivElement>(null),
+    toggler: useRef<HTMLButtonElement>(null),
   };
+  
 
   const iconMap = {
     LIKE: <ThumbsUp className="w-4 h-4 text-blue-500" fill="currentColor" />,
@@ -106,7 +107,7 @@ const EmojiReactionToggler = ({
     ),
   };
 
-  const getEmojiIcon = (id) => {
+  const getEmojiIcon = (id:ReactionType) => {
     const emoji = emojis.find((e) => e.id === id);
     if (!emoji) return null;
     return React.createElement(emoji.icon, {
@@ -130,15 +131,15 @@ const EmojiReactionToggler = ({
   };
 
   useEffect(() => {
-    const handler = (e) => {
+    const handler = (e: MouseEvent) => {
       if (
-        !refs.mainMenu.current?.contains(e.target) &&
-        !refs.toggler.current?.contains(e.target)
+      !refs.mainMenu.current?.contains(e.target as Node) &&
+      !refs.toggler.current?.contains(e.target as Node)
       ) {
-        setMainOpen(false);
+      setMainOpen(false);
       }
-      if (!refs.emojiMenu.current?.contains(e.target)) {
-        setEmojiOpen(false);
+      if (!refs.emojiMenu.current?.contains(e.target as Node)) {
+      setEmojiOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -182,12 +183,12 @@ const EmojiReactionToggler = ({
                     onClick={() => {
                       setReact({
                         ...react,
-                        likeDislike: isActive ? "NONE" : type,
+                        likeDislike: isActive ? "NONE" : type as likeDislikeType,
                       });
                       handleCntUpdate(isActive, type as likeDislikeType);
                       setMainOpen(false);
                       handleReactionUpdate({
-                        likeDislike: isActive ? "NONE" : type,
+                        likeDislike: isActive ? "NONE" : type as likeDislikeType,
                         reaction: react.reaction as reactionType,
                       });
                     }}

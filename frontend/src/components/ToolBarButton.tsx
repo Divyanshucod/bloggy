@@ -1,6 +1,6 @@
 import type { LucideProps } from "lucide-react";
-import { RichTextAction } from "./Editor/constants";
 import { Tooltip } from "@mui/material";
+import type { RichTextAction } from "./Editor/types";
 
 export interface TextFormateButtonProps {
   id: RichTextAction;

@@ -129,9 +129,9 @@ export const FullBlog = (props: FullBlogProps) => {
           <EmojiReactionToggler props={props.blog} blogId={props.blogId} />
         </div>
       </div>
-      <div ref={targetRef} className="">
+      <div ref={targetRef as React.Ref<HTMLDivElement>} className="">
         <CommentSection
-          enablePaginationBar={isInView}
+          enablePaginationBar={!!isInView}
           blogId={props.blogId}
           commentCnt={props.blog.commentsCnt}
         />

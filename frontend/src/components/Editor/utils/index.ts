@@ -92,12 +92,6 @@ const isLinkActive = (editor: EditorType): boolean => {
   })
   return !!link
 }
-const unwrapLink = (editor: EditorType) => {
-  Transforms.unwrapNodes(editor, {
-    match: n =>
-      !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link',
-  })
-}
 export const wrapLink = (editor: EditorType, url: string) => {
   if (!isUrlValid(url,'link')) return false;
   const { selection } = editor;

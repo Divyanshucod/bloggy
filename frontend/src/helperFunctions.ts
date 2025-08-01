@@ -59,8 +59,8 @@ export const handleError = (error: any) => {
   }
 }
 
-export const checkBlog = (nodes:CustomElementType)=>{
-  return nodes.map(n => Node.string(n)).join('\n')
+export const checkBlog = (node:CustomElementType[])=>{
+  return node.map(n => Node.string(n)).join('\n')
 }
 
 export const getS3Url = async (file: File) => {

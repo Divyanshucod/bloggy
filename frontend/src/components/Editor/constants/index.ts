@@ -19,29 +19,29 @@ import {
   Video
 } from "lucide-react";
 
-export enum RichTextAction {
-  Bold = "bold",
-  Italics = "italic",
-  Underline = "underline",
-  Strikethrough = "strikethrough",
-  Superscript = "superscript",
-  Subscript = "subscript",
-  Highlight = "highlight",
-  Code = "code",
-  LeftAlign = "left",
-  CenterAlign = "center",
-  RightAlign = "right",
-  JustifyAlign = "justify",
-  Divider = "divider",
-  BlockQuote = "block-quote",
-  NumberedList = "numbered-list",
-  BulletedList = "bulleted-list",
-  Undo = "undo",
-  Redo = "redo",
-  Link = "link",
-  Image = "image",
-  Video = 'video'
-}
+export const RichTextAction = {
+  Bold: "bold",
+  Italics: "italic",
+  Underline: "underline",
+  Strikethrough: "strikethrough",
+  Superscript: "superscript",
+  Subscript: "subscript",
+  Highlight: "highlight",
+  Code: "code",
+  LeftAlign: "left",
+  CenterAlign: "center",
+  RightAlign: "right",
+  JustifyAlign: "justify",
+  Divider: "divider",
+  BlockQuote: "block-quote",
+  NumberedList: "numbered-list",
+  BulletedList: "bulleted-list",
+  Undo: "undo",
+  Redo: "redo",
+  Link: "link",
+  Image: "image",
+  Video: "video",
+} as const;
 
 export const TEXT_FORMAT_OPTIONS = [
   { id: RichTextAction.Bold, icon: Bold, label: "Bold" },

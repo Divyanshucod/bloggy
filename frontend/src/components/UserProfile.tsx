@@ -18,6 +18,11 @@ interface UserProfileType {
   followers: number;
   totalBlogs: number;
 }
+type Follower_Following = {
+  id: string;
+  name: string;
+  email: string;
+}
 export default function UserProfilePage() {
   const [showPanel, setShowPanel] = useState<"followers" | "following" | null>(
     null
@@ -33,8 +38,8 @@ export default function UserProfilePage() {
   const [isFetchingUserDeatils, setIsFetchingUserDetails] = useState(false);
   const [isFetchingList, setIsFetchingList] = useState(false);
   const [followers_following, setFollowers_following] = useState({
-    followers: [],
-    following: [],
+    followers: [] as Follower_Following[],
+    following: [] as Follower_Following[],
   });
   const [showPassword, setShowPassword] = useState(false);
   const [userDetails, setUserDetails] = useState<UserProfileType>({

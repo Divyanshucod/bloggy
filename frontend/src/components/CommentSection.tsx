@@ -37,7 +37,7 @@ export const CommentSection = ({
     }
     fetch();
   }, [pageNo]);
-  async function handleClick(): void {
+  async function handleClick(){
     //create comment
     try {
       const res = await dispatch2(createComment({ blogId: blogId })).unwrap();
