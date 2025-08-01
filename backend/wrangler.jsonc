@@ -4,7 +4,13 @@
     "main": "src/index.ts",
     "compatibility_date": "2025-06-17",
     "vars": {
-      
+      "DATABASE_URL":"your_prisma_accelerator_url",
+      "MY_SECRET":"your_secret",
+      "ENVIRONMENT":"prod | dev",
+      "PRO_ORIGIN":"your_frontend_production_url",
+      "AWS_ACCESS_KEY_ID":"accessId_for_imageUpload_download",
+      "AWS_SECRET_ACCESS_KEY":"accessKey_for_imageUpload_download", 
+      "AWS_BUCKET_NAME":"bucket_name",
     }
     // "compatibility_flags": [
     //   "nodejs_compat"
